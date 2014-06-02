@@ -1,0 +1,5 @@
+syntax:glob
+bower_components
+*.pyc
+.vagrant
+*~

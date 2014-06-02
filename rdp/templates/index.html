@@ -1,0 +1,64 @@
+{% extends 'project_base.html' %}
+
+{% block page_title%}Programs{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block body%}
+<div class="col-xs-12">
+
+  {% include '_menu.html' %}
+
+  <h2>Programs</h2>
+
+  <form role="form">
+    <div class="form-group">
+      <button class="btn btn-primary">
+        Add Program
+      </button>
+    </div>
+  </form>
+
+  <div class="panel panel-default ">
+    <table class="table table-striped">
+      <tr>
+        <th></th>
+        <th>Package</th>
+        <th>Description</th>
+        <th width="120">Updated</th>
+      </tr>
+      <tr class="success">
+        <td width="10"><input type="checkbox" checked></td>
+        <td>IE8</td>
+        <td>A web browser from the cretaceous period.</td>
+        <td>14-05-2014</td>
+      </tr>
+      <tr class="success">
+        <td><input type="checkbox" checked></td>
+        <td>Outlook</td>
+        <td></td>
+        <td>14-05-2014</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox"></td>
+        <td>Word</td>
+        <td></td>
+        <td>14-05-2014</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox"></td>
+        <td>NeteBlanketKlient</td>
+        <td></td>
+        <td>14-05-2014</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox"></td>
+        <td>Excel</td>
+        <td></td>
+        <td>14-05-2014</td>
+      </tr>
+    </table>
+  </div>
+
+
+</div>
+{% endblock%}

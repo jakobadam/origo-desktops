@@ -1,0 +1,71 @@
+{% extends 'project_base.html' %}
+
+{% block page_title%}Add Program{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block body%}
+<div class="col-xs-12">
+
+  {% include '_menu.html' %}
+
+  <h2>Add Program</h2>
+
+  <div class="col-md-12 panel panel-default" 
+       style="padding:5px;background-color:#f7f7f9">
+
+    <table class="table">
+
+      <tr>
+        <th>File name</th>
+        <th>Options</th>
+      </tr>
+
+      <tr>
+        <td>NetBlanketKlient_Citrix_2012.msi</td>
+        <td>
+          <input type="text" class="form-control"
+                 value='ALLUSERS="1"'>
+        </td>
+      </tr>
+
+      <tr>
+        <td>REP.reg</td>
+        <td><span class="glyphicon glyphicon-pencil"></span>&nbsp;Add arguments</td>
+      </tr>
+
+      <tr>
+        <td colspan="2">
+          <input type="file" id="file">
+        </td>
+      </tr>
+
+    </table>
+  </div>
+
+
+  <form role="form">
+    <div class="form-group">
+      <label for="program">Program</label>
+      <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Password</label>
+      <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+    </div>
+
+    <div class="form-group">
+      <label for="file">Select MSI</label>
+      <input type="file" id="file">
+      <p class="help-block">Example block-level help text here.</p>
+    </div>
+
+    <div class="checkbox">
+      <label>
+        <input type="checkbox"> Check me out
+      </label>
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+  </form>
+
+</div>
+{% endblock%}

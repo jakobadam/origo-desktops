@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block page_title%}{% endblock %} | {% block site_title%}{% endblock %}</title>
+
+    <link href="{% static 'bootstrap/dist/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'Flat-UI/css/flat-ui.css' %}" rel="stylesheet">
+
+    <link rel="shortcut icon" href="{{STATIC_URL}}favicon.png">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="{% static 'html5shiv/dist/html5shiv.min.js' %}"></script>
+        <script src="{% static 'respond/dest/respond.min.js' %}"></script>
+    <![endif]-->
+
+    {% block extra_js %}{% endblock %}
+    {% block ga%}{% endblock %}
+  </head>
+  <body>
+
+    {% include '_navbar.html' %}
+
+    <div class="container">
+      <div class="row">
+    {% if messages %}
+
+      {% for message in messages %}
+        {% if message.level == 40 %}
+        <div class="alert alert-danger">{{ message | safe }}</div>
+        {% endif %}
+
+        {% if message.level == 20 %}
+        <div class="alert alert-info">{{ message | safe }}</div>
+        {% endif %}
+
+        {% if message.level == 25 %}
+        <div class="alert alert-success">{{ message | safe }}</div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+    {% block pre_body %}{% endblock %}
+
+    {% block body %}{% endblock %}
+      </div>
+    </div>
+
+    {% include '_footer.html' %}
+
+
+    <script src="{% static 'jquery/jquery.js' %}"></script>
+    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+    <!-- <script src="{{STATIC_URL}}js/jquery-ui-1.10.3.custom.min.js"></script> -->
+    <!-- <script src="{{STATIC_URL}}js/jquery.ui.touch-punch.min.js"></script> -->
+    <!-- <script src="{{STATIC_URL}}js/bootstrap-select.js"></script> -->
+    <!-- <script src="{{STATIC_URL}}js/bootstrap-switch.js"></script> -->
+    <!-- <script src="{{STATIC_URL}}js/flatui-checkbox.js"></script> -->
+    <!-- <script src="{{STATIC_URL}}js/flatui-radio.js"></script> -->
+    <!-- <script src="{{STATIC_URL}}js/jquery.tagsinput.js"></script> -->
+    <!-- <script src="{{STATIC_URL}}js/jquery.placeholder.js"></script> -->
+    <!-- <script src="{{STATIC_URL}}js/jquery.stacktable.js"></script> -->
+    <!-- <script src="http://vjs.zencdn.net/4.3/video.js"></script> -->
+    <!-- <script src="js/application.js"></script> -->
+
+    {% block scripts %}{% endblock %}
+
+  </body>
+</html>

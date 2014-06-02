@@ -1,0 +1,63 @@
+<style>
+.btn-noborder{
+background-color: transparent;
+background-image: none;
+border: 1px solid transparent;
+}
+</style>
+<header class="navbar navbar-default navbar-embossed" role="banner">
+
+  <div class="container">
+
+    <div class="navbar-header">
+
+      <span class="navbar-brand" href="">
+        <span>
+          <!-- <span class="glyphicon glyphicon-print"> -->
+          {% include '_navbar_title.html' %}
+          </span>
+      </span>
+    </div>
+
+    <div class="collapse navbar-collapse" role="navigation">
+
+      <ul class="nav navbar-nav navbar-left">
+        <li>
+          <div class="navbar-form dropdown">
+            <button class="btn btn-primary dropdown-toggle dropdown" data-toggle="dropdown">
+              Go
+              <span class="caret"></span>
+            </button>
+            <span class="dropdown-arrow dropdown-arrow-inverse"></span>
+
+            <ul class="dropdown-menu dropdown-inverse">
+              <li>
+                <a target="_blank" href="" id="">To somewhere</a>
+              </li>
+            </ul>
+
+          </div>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <div class="navbar-form dropdown">
+            <button class="btn-noborder dropdown-toggle dropdown" data-toggle="dropdown">
+              <span class="fui-gear"></span>
+            </button>
+            <span class="dropdown-arrow dropdown-arrow-inverse"></span>
+
+            <ul class="dropdown-menu dropdown-inverse">
+              <li>
+                <a target="_blank" href="" id="mailLogin">Something</a>
+              </li>
+            </ul>
+
+          </div>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</header>
