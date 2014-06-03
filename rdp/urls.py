@@ -11,7 +11,8 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', TemplateView.as_view(template_name='index.html'), name="index"),
-    url(r'^add_program/$', 'rdp.views.add_program', name="add_software"),
+    url(r'^$', 'rdp.views.programs', name="programs"),
+    url(r'^programs/add/$', 'rdp.views.add_program', name="add_program"),
+    url(r'^programs/delete/$', 'rdp.views.delete_program', name="delete_program"),
 
 )

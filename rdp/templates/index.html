@@ -10,52 +10,26 @@
 
   <h2>Programs</h2>
 
-  <form role="form">
-    <div class="form-group">
-      <button class="btn btn-primary">
-        Add Program
-      </button>
-    </div>
-  </form>
+  <div class="form-group">
+    <a href="{% url 'add_program' %}" class="btn btn-lg btn-primary">Add program</a>
+  </div>
 
   <div class="panel panel-default ">
     <table class="table table-striped">
       <tr>
-        <th></th>
-        <th>Package</th>
-        <th>Description</th>
-        <th width="120">Updated</th>
+        <th>Filename</th>
       </tr>
+      {% for p in packages %}
       <tr class="success">
-        <td width="10"><input type="checkbox" checked></td>
-        <td>IE8</td>
-        <td>A web browser from the cretaceous period.</td>
-        <td>14-05-2014</td>
+        <td>{{p}}</td>
+        <td>
+          <form method="POST" action="{% url 'delete_program' %}" class="pull-right">
+            <input type="hidden" name="filename" value="{{p}}" />
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </td>
       </tr>
-      <tr class="success">
-        <td><input type="checkbox" checked></td>
-        <td>Outlook</td>
-        <td></td>
-        <td>14-05-2014</td>
-      </tr>
-      <tr>
-        <td><input type="checkbox"></td>
-        <td>Word</td>
-        <td></td>
-        <td>14-05-2014</td>
-      </tr>
-      <tr>
-        <td><input type="checkbox"></td>
-        <td>NeteBlanketKlient</td>
-        <td></td>
-        <td>14-05-2014</td>
-      </tr>
-      <tr>
-        <td><input type="checkbox"></td>
-        <td>Excel</td>
-        <td></td>
-        <td>14-05-2014</td>
-      </tr>
+      {% endfor %}
     </table>
   </div>
 
