@@ -1,0 +1,4 @@
+SERVERS=(
+        'rdp-control 8000 /srv/www/rdps 4'
+)
+RUN_AS='www-data'
