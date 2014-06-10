@@ -1,4 +1,5 @@
 . ./run.sh
 
-ps 'Install-WindowsFeature -Name Remote-Desktop-Services'
+ps 'Get-WindowsFeature'
+# ps 'Install-WindowsFeature -Name Remote-Desktop-Services'
 
