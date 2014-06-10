@@ -5,8 +5,18 @@ IP='192.168.123.196'
 
 run(){
     local cmd="${1}"
-    echo ./winexe -U $USER%$PASSWORD //$IP "$cmd"
+    echo -e ./winexe -U $USER%$PASSWORD //$IP "'$cmd'"
     ./winexe -U $USER%$PASSWORD //$IP "$cmd"
+}
+
+cmd(){
+    local cmd="${1}"
+    run "cmd.exe /c $cmd"
+}
+
+ps(){
+    local cmd="${1}"
+    run "powershell $cmd"
 }
 
 if_main(){
