@@ -6,10 +6,17 @@ usage() {
     echo "Usage: ${0} "
     echo
     echo "Available commands are:"
-    echo -e "\tcmd\trun command with cmd.exe /c"
-    echo -e "\tps\trun command as powershell"
     echo -e "\trun\trun command"
+    echo -e "\tps\trun command as powershell"
+    echo -e "\t<file>\tto execute"
     echo
+    echo "Files with ps1 extension are executed with powershell"
+}
+
+error(){
+    local msg="${1}"
+    echo "${msg}"
+    exit 1
 }
 
 run(){
@@ -28,22 +35,35 @@ ps(){
     run "powershell $cmd"
 }
 
+run_file(){
+    # Execute file
+    local cmd_file=$cmd_type
+    [ -x "$cmd_file" ] || usage
+
+    # ${string##substring}: Deletes longest match of $substring from front of $string.
+
+    # commands=$(<$cmd_file)
+    local suffix=${cmd_file##*.}
+
+    case "$suffix" in
+        ps1)
+            # strip comments and newlines
+            # separate commands with ';'
+            commands=`sed '/#/d' $cmd_file | tr '\n' '; '`
+            ps "$commands"
+            ;;
+        *) cmd "$commands" ;;
+    esac
+}
+
 main(){
-
-    echo "Main: ${1}"
-    [ "$2" ] || usage || exit 1
-
     local scriptname='run.sh'
+    [ `basename $0` == $scriptname ] || return 1
+
     local cmd_type="$1"
     local cmd_arg="$2"
 
-    [ `basename $0` == $scriptname ] || return 1
-
-    echo "$cmd_type"
     case "$cmd_type" in
-        run)
-            run $cmd_arg
-            ;;
         cmd)
             cmd $cmd_arg
             ;;
@@ -51,18 +71,10 @@ main(){
             ps $cmd_arg
             ;;
         *)
-            usage
-            exit 1
+            run_file $cmd_file
             ;;
     esac
 
-    # OPTSTRING=h
-    # while getopts ${OPTSTRING} OPT
-    # do
-    #     case ${OPT} in
-    #         h) usage;;
-    #     esac
-    # done
 }
 
 main $*
