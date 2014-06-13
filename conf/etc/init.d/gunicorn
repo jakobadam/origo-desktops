@@ -1,13 +1,12 @@
 #!/bin/sh
-
 ### BEGIN INIT INFO
-# Provides:          gunicorn
-# Required-Start:    $all
-# Required-Stop:     $all
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
+# Provides: gunicorn
+# Required-Start: $all
+# Required-Stop: $all
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
 # Short-Description: starts the gunicorn server
-# Description:       starts gunicorn using start-stop-daemon
+# Description: starts gunicorn using start-stop-daemon
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -24,7 +23,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 APP_MODULE='rdp.wsgi:application'
 
 [ -x "$DAEMON" ] || exit 0
-[ ! -d /var/run/gunicorn ] && mkdir /var/run/gunicorn
+[ ! -d /var/run/gunicorn ] && mkdir /var/run/gunicorn && chown www-data: /var/run/gunicorn
 
 start () {
     ARGS="--start --chuid $USER:$GROUP --chdir $ROOT --pidfile $PIDFILE --background --exec $DAEMON"
