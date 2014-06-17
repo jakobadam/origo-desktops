@@ -12,12 +12,19 @@ Vagrant.configure("2") do |config|
     c.vm.provision "shell", path: "install.sh"
   end
 
+
   config.vm.define :windows do |c|
     c.vm.hostname = "windows-server"
     c.vm.box = "windows-2012R2"
-    # c.vm.network :private_network, ip: "192.168.123.155"
-    c.vm.network "private_network", type: "dhcp"
+
+    # Static network stuff seems not to work for windows
+    # Hmm. When setting type to dhcp we ssh into the ubuntu machine 
+    # c.vm.network :private_network, type: "dhcp"
+
+    c.vm.network :private_network, ip: "192.168.123.191"
+
     c.vm.network :forwarded_port, guest: 3389, host: 3389
+    c.vm.network :forwarded_port, guest: 80, host: 8001
 
     # Use NFS as a shared folder
     # c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"

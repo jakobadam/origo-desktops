@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
-HERE=$(dirname $(readlink -f $0))
+
+# NOTE: When run with vagrant this script is present in /tmp
+rsync -avp /vagrant/conf/ /
+
+mkdir -p /srv/www
+ln -s /vagrant /srv/www/rdps
 
 apt-get --yes install python-pip samba nginx
 
@@ -10,7 +15,7 @@ pip install django gunicorn django-crispy-forms django-bower
 mkdir /var/run/gunicorn
 chown www-data: /var/run/gunicorn
 rm /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
-mkdir -p /srv/www
+ln -s /etc/nginx/sites-available/rdps /etc/nginx/sites-enabled/rdps
 
 # setup samba
 mkdir -p /srv/samba
@@ -22,14 +27,27 @@ service smbd restart
 cat >> /etc/samba/smb.conf <<EOF
 [share]
     comment = Software
+    writable = yes
     path = /srv/samba
     browsable = yes
     guest ok = yes
     read only = no
     create mask = 0755
+
+[source]
+    comment = Source
+    writable = yes
+    path = /vagrant
+    browsable = yes
+    guest ok = yes
+    read only = no
+    create mask = 0777
 EOF
 
-rsync -avp conf/ /
+# winexe
+ln -s /vagrant/windowsscripts/winexe /usr/local/bin
+
+
 # setup rabbitmq-server
 # apt-get --yes install rabbitmq-server
 # # # add ghost user / group
@@ -41,11 +59,11 @@ rsync -avp conf/ /
 # unzip -uo /tmp/ghost.zip -d /srv/www/ghost
 # cd /srv/www/ghost ; npm install --production
 
-# rsync -av $HERE/conf/ /
 
-# # start ghost service on startup
+
+# start gunicorn on startup
 update-rc.d gunicorn defaults
 update-rc.d gunicorn enable
 
-service ghost start
+service gunicorn start
 service nginx restart
