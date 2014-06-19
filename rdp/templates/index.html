@@ -27,6 +27,12 @@
             <input type="hidden" name="filename" value="{{p}}" />
             <button type="submit" class="btn btn-danger">Delete</button>
           </form>
+
+          <form method="POST" action="{% url 'deploy_program' %}" class="pull-right">
+            <input type="hidden" name="filename" value="{{p}}" />
+            <button type="submit" class="btn btn-primary">Deploy</button>
+          </form>
+
         </td>
       </tr>
       {% endfor %}

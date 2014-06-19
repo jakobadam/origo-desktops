@@ -8,11 +8,12 @@ from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 
 from .forms import UploadProgramForm
+from .models import Package
 
 UPLOAD_DIR = '/srv/samba/'
 
-def _handle_upload(f, name):
-    with open('%s%s' % (UPLOAD_DIR,name), 'wb+') as destination:
+def _handle_upload(f):
+    with open('%s%s' % (UPLOAD_DIR,f.name), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
@@ -29,7 +30,7 @@ def add_program(request):
     if request.method == 'POST':
         form = UploadProgramForm(request.POST, request.FILES)
         if form.is_valid():
-            _handle_upload(request.FILES['file'], request.POST['filename'])
+            _handle_upload(request.FILES['file'])
             return http.HttpResponseRedirect(reverse('programs'))
     else:
         form = UploadProgramForm()
@@ -46,3 +47,17 @@ def delete_program(request):
 
 def programs(request):
     return render(request, 'index.html', {'packages': _list_packages()})
+
+@require_http_methods(['POST'])
+def deploy_program(request):
+    filename = request.POST['filename']
+    output,success = Package.deploy(filename)
+
+    if success:
+        msg = 'Deploying %s. %s' % (filename,output)
+        messages.info(request, msg)
+    else:
+        msg = 'Error deploying %s. %s' % (filename,output)
+        messages.error(request, msg)
+
+    return http.HttpResponseRedirect(reverse('programs'))

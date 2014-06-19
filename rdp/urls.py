@@ -14,5 +14,7 @@ urlpatterns = patterns('',
     url(r'^$', 'rdp.views.programs', name="programs"),
     url(r'^programs/add/$', 'rdp.views.add_program', name="add_program"),
     url(r'^programs/delete/$', 'rdp.views.delete_program', name="delete_program"),
+    url(r'^programs/deploy/$', 'rdp.views.deploy_program', name="deploy_program"),
+
 
 )

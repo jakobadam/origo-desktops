@@ -4,3 +4,4 @@ bower_components
 .vagrant
 *~
 static
+*.pyc
