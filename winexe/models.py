@@ -29,7 +29,7 @@ class Request(object):
         if self.method == 'file':
             self.cmd = parser.parse(self.file)
 
-        if self.method == 'cmd':
+        elif self.method == 'cmd':
             self.cmd = parser.parse_cmd(self.cmd)
 
         elif self.method == 'ps':
