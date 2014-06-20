@@ -30,3 +30,26 @@ wexe.py -u vagrant -p vagrant -i 192.168.123.191 file whoami.bat
 net use b: \\ubuntu\share
 ```
 Instead I specify the fully qualified path.
+
+## Vagrant
+
+I use vagrant to setup a test environment with a Ubuntu server and
+Windows server.
+
+Install vagrant
+Link here
+
+Install vagrant-kvm plugin
+
+**More: Website: https://github.com/adrahon/vagrant-kvm/blob/master/README.md**
+```bash
+$ sudo adduser ~~usrname~~ libvirtd
+$ sudo apt-get install qemu libvirt-dev libvirt-bin nfs-kernel-server nfs-common build-essential redir
+$ sudo vagrant plugin install vagrant-kvm
+```
+
+To avoid libvirt permission error:
+```bash
+$ sudo apt-get install apparmor-profiles apparmor-utils
+$ sudo aa-complain /usr/lib/libvirt/virt-aa-helper
+```
