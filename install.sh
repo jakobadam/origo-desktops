@@ -17,9 +17,9 @@ npm install -g bower
 # setup django
 pip install django gunicorn django-crispy-forms django-bower
 
-./manage.py syncdb --noinput
-yes | ./manage.py bower install 
-./manage.py collectstatic --noinput
+/vagrant/manage.py syncdb --noinput
+su vagrant -c 'yes n | /vagrant/manage.py bower install'
+/vagrant/manage.py collectstatic --noinput
 
 # setup webserver
 mkdir /var/run/gunicorn
@@ -56,20 +56,6 @@ EOF
 
 # winexe
 ln -s /vagrant/windowsscripts/winexe /usr/local/bin
-
-
-# setup rabbitmq-server
-# apt-get --yes install rabbitmq-server
-# # # add ghost user / group
-# useradd -r ghost -U
-
-# # # install ghost
-
-# curl -L https://ghost.org/zip/ghost-latest.zip -o /tmp/ghost.zip
-# unzip -uo /tmp/ghost.zip -d /srv/www/ghost
-# cd /srv/www/ghost ; npm install --production
-
-
 
 # start gunicorn on startup
 update-rc.d gunicorn defaults
