@@ -6,10 +6,10 @@ rsync -avp /vagrant/conf/ /
 mkdir -p /srv/www
 ln -s /vagrant /srv/www/rdps
 
-apt-get --yes install python-pip samba nginx
+apt-get --yes install python-pip samba nginx sqlite3
 
 # setup django
-pip install django gunicorn django-crispy-forms django-bower sqlite3
+pip install django gunicorn django-crispy-forms django-bower
 
 # setup webserver
 mkdir /var/run/gunicorn
