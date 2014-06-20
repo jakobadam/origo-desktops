@@ -21,15 +21,15 @@
       </tr>
       {% for p in packages %}
       <tr class="success">
-        <td>{{p}}</td>
+        <td>{{p.name}}</td>
         <td>
           <form method="POST" action="{% url 'delete_program' %}" class="pull-right">
-            <input type="hidden" name="filename" value="{{p}}" />
+            <input type="hidden" name="id" value="{{p.id}}" />
             <button type="submit" class="btn btn-danger">Delete</button>
           </form>
 
           <form method="POST" action="{% url 'deploy_program' %}" class="pull-right">
-            <input type="hidden" name="filename" value="{{p}}" />
+            <input type="hidden" name="id" value="{{p.id}}" />
             <button type="submit" class="btn btn-primary">Deploy</button>
           </form>
 
