@@ -9,7 +9,7 @@ ln -s /vagrant /srv/www/rdps
 apt-get --yes install python-pip samba nginx
 
 # setup django
-pip install django gunicorn django-crispy-forms django-bower
+pip install django gunicorn django-crispy-forms django-bower sqlite3
 
 # setup webserver
 mkdir /var/run/gunicorn
