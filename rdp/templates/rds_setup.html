@@ -9,9 +9,11 @@
 
   {% include '_menu.html' %}
 
-  {{form|crispy}}
+  <form method="POST" action="{% url 'rds_setup' %}">
+    {{form|crispy}}
 
-    <input type="submit" class="btn btn-primary" value="Do" />
+    <input type="submit" class="btn btn-primary" value="Next" />
+  </form>
 
 </div>
 {% endblock%}

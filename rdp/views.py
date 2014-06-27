@@ -59,5 +59,5 @@ def rds_setup(request):
             return http.HttpResponseRedirect(reverse('rds_setup'))
     else:
         form = RDSForm()
-        
+
     return shortcuts.render(request, 'rds_setup.html', {'form':form})
