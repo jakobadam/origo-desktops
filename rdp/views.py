@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 
-from .forms import PackageForm
+from .forms import PackageForm, RDSForm
 from .models import Package
 
 PACKAGE_DIR = '/srv/samba/'
@@ -51,3 +51,13 @@ def deploy_program(request):
         messages.error(request, msg)
 
     return http.HttpResponseRedirect(reverse('programs'))
+
+def rds_setup(request):
+    if request.method == 'POST':
+        form = RDSForm(request.POST)
+        if form.is_valid():
+            return http.HttpResponseRedirect(reverse('rds_setup'))
+    else:
+        form = RDSForm()
+        
+    return shortcuts.render(request, 'rds_setup.html', {'form':form})

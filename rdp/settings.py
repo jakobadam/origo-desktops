@@ -16,7 +16,6 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 INSTALLED_APPS = (
@@ -99,3 +98,9 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
 }
+
+from django.conf import global_settings
+
+TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+    'django.core.context_processors.request',
+)

@@ -14,30 +14,31 @@
     <a href="{% url 'add_program' %}" class="btn btn-lg btn-primary">Add program</a>
   </div>
 
-  <div class="panel panel-default ">
-    <table class="table table-striped">
-      <tr>
-        <th>Filename</th>
-      </tr>
-      {% for p in packages %}
-      <tr class="success">
-        <td>{{p.name}}</td>
-        <td>
-          <form method="POST" action="{% url 'delete_program' %}" class="pull-right">
-            <input type="hidden" name="id" value="{{p.id}}" />
-            <button type="submit" class="btn btn-danger">Delete</button>
-          </form>
+  {% if packages %}
+  <table class="table table-striped">
+    <tr>
+      <th>Filename</th>
+    </tr>
+    {% for p in packages %}
+    <tr class="success">
+      <td>{{p.name}}</td>
+      <td>
+        <form method="POST" action="{% url 'delete_program' %}" class="pull-right">
+          <input type="hidden" name="id" value="{{p.id}}" />
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
 
-          <form method="POST" action="{% url 'deploy_program' %}" class="pull-right">
-            <input type="hidden" name="id" value="{{p.id}}" />
-            <button type="submit" class="btn btn-primary">Deploy</button>
-          </form>
-
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
+        <form method="POST" action="{% url 'deploy_program' %}" class="pull-right">
+          <input type="hidden" name="id" value="{{p.id}}" />
+          <button type="submit" class="btn btn-primary">Deploy</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  No packages yet
+  {% endif %}
 
 
 </div>

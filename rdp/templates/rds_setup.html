@@ -1,0 +1,17 @@
+{% extends 'project_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title%}Setup{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block body%}
+<div class="col-xs-12">
+
+  {% include '_menu.html' %}
+
+  {{form|crispy}}
+
+    <input type="submit" class="btn btn-primary" value="Do" />
+
+</div>
+{% endblock%}
