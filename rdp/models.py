@@ -4,6 +4,7 @@ import os
 import winexe
 
 PACKAGE_DIR = '/srv/samba/'
+WINDOWS_IP = '192.168.123.12'
 
 def _add_package(f):
     """Saves package in package dir
@@ -48,5 +49,5 @@ class Package(models.Model):
         return winexe.cmd(
             user='vagrant',
             password='vagrant',
-            host='192.168.123.191',
+            host=WINDOWS_IP,
             cmd=cmd)

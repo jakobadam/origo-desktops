@@ -1,12 +1,12 @@
 {% load active %}
 
-{% url 'rds_setup' as rds_setup %}
+{% url 'setup' as setup %}
 {% url 'programs' as programs %}
 
 <ul class="nav nav-tabs">
 
-  <li class="{% active rds_setup %}">
-    <a href="{{rds_setup}}">RDS Setup <span class="glyphicon fui-gear"></span></a>
+  <li class="{% active setup %}">
+    <a href="{{setup}}">Setup <span class="glyphicon fui-gear"></span></a>
   </li>
 
   <li class="{% active programs %}">

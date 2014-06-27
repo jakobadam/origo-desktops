@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 
-from .forms import PackageForm, RDSForm
+from .forms import *
 from .models import Package
 
 PACKAGE_DIR = '/srv/samba/'
@@ -52,12 +52,34 @@ def deploy_program(request):
 
     return http.HttpResponseRedirect(reverse('programs'))
 
-def rds_setup(request):
-    if request.method == 'POST':
-        form = RDSForm(request.POST)
-        if form.is_valid():
-            return http.HttpResponseRedirect(reverse('rds_setup'))
-    else:
-        form = RDSForm()
+@require_http_methods(['POST'])
+def rename_setup(request):
+    form = RenameForm(request.POST)
+    return setup(request, form=form, rename_form=form)
 
-    return shortcuts.render(request, 'rds_setup.html', {'form':form})
+@require_http_methods(['POST'])
+def domain_setup(request):
+    form = RenameForm(request.POST)
+    return setup(request, form=form, domain_form=form)
+
+@require_http_methods(['POST'])
+def password_setup(request):
+    form = PasswordForm(request.POST)
+    return setup(request, form=form, password_form=form)
+
+def setup(request, **kwargs):
+    rename_form = kwargs.get('rename_form') or RenameForm()
+    domain_form = kwargs.get('domain_form') or DomainForm()
+    password_form = kwargs.get('password_form') or PasswordForm()
+
+    form = kwargs.get('form')
+
+    if form and form.is_valid():
+        messages.info(request, msg)
+        return http.HttpResponseRedirect(reverse('setup'))
+
+    return shortcuts.render(request, 'setup.html', {
+        'rename_form': rename_form,
+        'domain_form': domain_form,
+        'password_form': password_form
+    })

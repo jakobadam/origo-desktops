@@ -14,6 +14,9 @@ urlpatterns = patterns('',
     url(r'^programs/delete/$', 'rdp.views.delete_program', name="delete_program"),
     url(r'^programs/deploy/$', 'rdp.views.deploy_program', name="deploy_program"),
 
-    url(r'^rds_setup/$', 'rdp.views.rds_setup', name="rds_setup"),
+    url(r'^setup/$', 'rdp.views.setup', name="setup"),
+    url(r'^setup/rename$', 'rdp.views.rename_setup', name="rename_setup"),
+    url(r'^setup/domain$', 'rdp.views.domain_setup', name="domain_setup"),
+    url(r'^setup/password$', 'rdp.views.password_setup', name="password_setup"),
 
 )
