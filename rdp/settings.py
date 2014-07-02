@@ -26,10 +26,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'gunicorn',
+    'debug_toolbar',
     'crispy_forms',
     'rdp',
     'djangobower',
-    'caboappskin'
+    'caboskin'
 )
 
 BOWER_INSTALLED_APPS = (
