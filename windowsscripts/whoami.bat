@@ -1,1 +1,1 @@
-whoami
+echo whoami
