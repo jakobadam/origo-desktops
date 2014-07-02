@@ -1,0 +1,7 @@
+-e git+https://github.com/jakobadam/django-caboskin.git#egg=caboskin
+django 
+django-bower
+django-crispy-forms
+django-debug-toolbar
+gunicorn 
+
