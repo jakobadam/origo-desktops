@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :windows do |c|
     c.vm.hostname = "windows-server"
-    c.vm.box = "windows-2012R2"
+    c.vm.box = "rds"
     # Forward rdp
     c.vm.network :forwarded_port, guest: 3389, host: 3389
     # Forward IIS
@@ -29,9 +29,9 @@ Vagrant.configure("2") do |config|
 
 
     # Use NFS as a shared folder
+    # Does not work on windows we share with samba instead
     # c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
 
-    # We share with smb instead
   end
 
 end

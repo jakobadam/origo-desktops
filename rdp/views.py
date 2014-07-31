@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 
 from .forms import *
-from .models import Package
+from .models import Package, Server
 
 PACKAGE_DIR = '/srv/samba/'
 
@@ -68,18 +68,28 @@ def password_setup(request):
     return setup(request, form=form, password_form=form)
 
 def setup(request, **kwargs):
-    rename_form = kwargs.get('rename_form') or RenameForm()
-    domain_form = kwargs.get('domain_form') or DomainForm()
-    password_form = kwargs.get('password_form') or PasswordForm()
+    server = Server.objects.first()
+    if request.method == 'POST':
+        form = ServerForm(data=request.POST, instance=server)
 
-    form = kwargs.get('form')
-
-    if form and form.is_valid():
-        messages.info(request, msg)
-        return http.HttpResponseRedirect(reverse('setup'))
+        if form.is_valid():
+            messages.info(request, msg)
+            return http.HttpResponseRedirect(reverse('setup'))
+    else:
+        form = ServerForm(instance=server)
 
     return shortcuts.render(request, 'setup.html', {
-        'rename_form': rename_form,
-        'domain_form': domain_form,
-        'password_form': password_form
-    })
+        'form': form
+        })
+
+def ip(request):
+    ip = request.GET.get('ip')
+    if not ip:
+        raise http.HttpResponseBadRequest('IP query arg required!')
+
+    # FIXME:!!!
+    for s in Server.objects.all():
+        s.delete()
+
+    server, created = Server.objects.get_or_create(ip=ip)
+    return http.HttpResponse()

@@ -28,6 +28,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'debug_toolbar',
     'crispy_forms',
+    'django_password_strength',
     'rdp',
     'djangobower',
     'caboskin'
@@ -39,7 +40,8 @@ BOWER_INSTALLED_APPS = (
     'bootstrap#3.1.0',
     'Flat-UI#2.1.3',
     'html5shiv',
-    'respond'
+    'respond',
+     'zxcvbn'
 )
 
 MIDDLEWARE_CLASSES = (

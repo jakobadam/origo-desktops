@@ -1,10 +1,14 @@
 from .path import ext
 
 from django import forms
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field
+
+from django_password_strength.widgets import PasswordStrengthInput
 
 from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Field
+from crispy_forms.helper import FormHelper
+
+from .models import Server
 
 VALID_FILE_TYPES = ['exe','msi','zip']
 
@@ -43,3 +47,39 @@ class PasswordForm(forms.Form):
         widget=forms.PasswordInput(attrs={'placeholder':'Enter password'}),
         error_messages={'required': 'Password cannot be blank'}
         )
+
+class ServerForm(forms.ModelForm):
+
+    class Meta:
+        model = Server
+        widgets = {
+            'ip': forms.TextInput(attrs={'readonly':True}),
+            'name': _get_widget('Enter computer name'),
+            'domain': _get_widget('Enter domain e.g., example.com'),
+            'user': _get_widget('Enter desired windows user name'),
+            'password': PasswordStrengthInput(attrs={'placeholder':'Enter password'})
+        }
+        error_messages = {
+            'name':{'required': 'Computer name cannot be blank'},
+            'domain':{'required': 'Domain must be set'},
+            'password':{'required': 'Password cannot be blank'}
+        }
+
+    # def is_valid(self):
+    #     print 'is_valid!!!'
+    #     super(ServerForm, self).is_valid()
+
+    # def clean_name(self):
+    #     print 'in clean name!!!'
+    #     raise forms.ValidationError('Required')
+
+    # def clean_password(self):
+    #     raise forms.ValidationError('Required')
+    #         # password = self.cleaned_data['password']
+    #         # if not password:
+    #         #     raise forms.ValidationError('Required')
+    #         # return password
+
+
+    # def __init__(self. *args, **kwargs):
+    #     super(ServerForm, self).__init__(*args, **kwargs)

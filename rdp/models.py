@@ -51,3 +51,16 @@ class Package(models.Model):
             password='vagrant',
             host=WINDOWS_IP,
             cmd=cmd)
+
+class Server(models.Model):
+    """The windows server to install software on
+
+    Currently: There is only one
+    """
+    ip = models.IPAddressField()
+    name = models.CharField(max_length=100, verbose_name='computer name')
+    domain = models.CharField(max_length=100)
+    user = models.CharField(max_length=100)
+    password = models.CharField(max_length=128)
+
+

@@ -1,31 +1,38 @@
 {% extends 'project_base.html' %}
+
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block page_title%}Setup{% endblock %}
 {% block navbar %}RDP Services{% endblock %}
 
 {% block body%}
+
 <div class="col-xs-12">
 
   {% include '_menu.html' %}
 
-  <form method="POST" action="{% url 'rename_setup' %}">
-    {{rename_form|crispy}}
+  <form action="{% url 'setup' %}" method="POST">
+
+    {{form|crispy}}
 
     <button type="submit" class="btn btn-default">Set</button>
-  </form>
 
-  <form method="POST" action="{% url 'domain_setup' %}">
-    {{domain_form|crispy}}
-
-    <input type="submit" class="btn btn-primary" value="Set Domain" />
-  </form>
-
-  <form method="POST" action="{% url 'password_setup' %}">
-    {{password_form|crispy}}
-
-    <input type="submit" class="btn btn-primary" value="Set Password" />
   </form>
 
 </div>
+
+<script>
+// Load password strength scripts async.
+$(document).ready(function(){
+  $.ajax({
+    url: "{% static 'zxcvbn/zxcvbn.js' %}",
+    dataType: "script"
+  });
+  $.ajax({
+    url: "{% static 'js/password_strength.js' %}",
+    dataType: "script"
+  });
+});
+</script>
 {% endblock%}
