@@ -32,9 +32,6 @@ ln -s /etc/nginx/sites-available/rdps /etc/nginx/sites-enabled/rdps
 mkdir -p /srv/samba
 chown www-data: /srv/samba
 
-service nmbd restart
-service smbd restart
-
 cat >> /etc/samba/smb.conf <<EOF
 [share]
     comment = Software
@@ -54,6 +51,9 @@ cat >> /etc/samba/smb.conf <<EOF
     read only = no
     create mask = 0777
 EOF
+
+service nmbd restart
+service smbd restart
 
 # winexe
 ln -s /vagrant/windowsscripts/winexe /usr/local/bin
