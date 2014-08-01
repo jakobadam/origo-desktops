@@ -3,5 +3,6 @@ django
 django-bower
 django-crispy-forms
 django-debug-toolbar
+django-password-strength
 gunicorn 
 
