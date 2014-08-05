@@ -57,7 +57,7 @@ class Server(models.Model):
 
     Currently: There is only one
     """
-    ip = models.IPAddressField()
+    ip = models.IPAddressField(primary_key=True)
     name = models.CharField(max_length=100, verbose_name='computer name')
     domain = models.CharField(max_length=100)
     user = models.CharField(max_length=100)

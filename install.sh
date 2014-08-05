@@ -6,7 +6,7 @@ rsync -avp /vagrant/conf/ /
 mkdir -p /srv/www
 ln -s /vagrant /srv/www/rdps
 
-apt-get --yes install python-pip samba nginx sqlite3 git
+apt-get --yes install python-pip samba nginx sqlite3 git ipython
 
 # NOTE: We don't need this in production just the files
 # bower

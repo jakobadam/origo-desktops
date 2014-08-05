@@ -48,6 +48,12 @@ class PasswordForm(forms.Form):
         error_messages={'required': 'Password cannot be blank'}
         )
 
+class JoinForm(forms.Form):
+
+    ip = forms.IPAddressField()
+    name = forms.CharField()
+    domain = forms.CharField()
+    
 class ServerForm(forms.ModelForm):
 
     class Meta:

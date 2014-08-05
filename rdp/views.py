@@ -1,14 +1,19 @@
-import os
-from glob import glob
-
 from django import shortcuts
 from django import http
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 
-from .forms import *
-from .models import Package, Server
+from .forms import (
+    ServerForm,
+    PackageForm,
+    JoinForm
+    )
+
+from .models import (
+    Package,
+    Server
+    )
 
 PACKAGE_DIR = '/srv/samba/'
 
@@ -35,7 +40,8 @@ def delete_program(request):
     return http.HttpResponseRedirect(reverse('programs'))
 
 def programs(request):
-    packages = Package.objects.all()
+    packages = None
+    # packages = Package.objects.all()
     return shortcuts.render(request, 'index.html', {'packages': packages})
 
 @require_http_methods(['POST'])
@@ -52,44 +58,50 @@ def deploy_program(request):
 
     return http.HttpResponseRedirect(reverse('programs'))
 
-@require_http_methods(['POST'])
-def rename_setup(request):
-    form = RenameForm(request.POST)
-    return setup(request, form=form, rename_form=form)
+# @require_http_methods(['POST'])
+# def rename_setup(request):
+#     form = RenameForm(request.POST)
+#     return setup(request, form=form, rename_form=form)
 
-@require_http_methods(['POST'])
-def domain_setup(request):
-    form = RenameForm(request.POST)
-    return setup(request, form=form, domain_form=form)
+# @require_http_methods(['POST'])
+# def domain_setup(request):
+#     form = RenameForm(request.POST)
+#     return setup(request, form=form, domain_form=form)
 
-@require_http_methods(['POST'])
-def password_setup(request):
-    form = PasswordForm(request.POST)
-    return setup(request, form=form, password_form=form)
+#@require_http_methods(['POST'])
+# def password_setup(request):
+#     form = PasswordForm(request.POST)
+#     return setup(request, form=form, password_form=form)
 
 def setup(request, **kwargs):
     server = Server.objects.first()
+
     if request.method == 'POST':
         form = ServerForm(data=request.POST, instance=server)
 
         if form.is_valid():
-            messages.info(request, msg)
             return http.HttpResponseRedirect(reverse('setup'))
+
     else:
         form = ServerForm(instance=server)
+
+    if server == None:
+        msg = "RDS windows server hasn't reported back..."
+        messages.info(request, msg)
 
     return shortcuts.render(request, 'setup.html', {
         'form': form
         })
 
-def ip(request):
-    ip = request.GET.get('ip')
-    if not ip:
-        raise http.HttpResponseBadRequest('IP query arg required!')
+def join(request):
+    form = JoinForm(data=request.REQUEST)
+
+    if not form.is_valid():
+        return http.HttpResponseBadRequest(form.errors)
 
     # FIXME:!!!
     for s in Server.objects.all():
         s.delete()
 
-    server, created = Server.objects.get_or_create(ip=ip)
+    server, created = Server.objects.get_or_create(**form.cleaned_data)
     return http.HttpResponse()

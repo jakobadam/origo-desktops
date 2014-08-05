@@ -13,5 +13,5 @@ urlpatterns = patterns('',
 
     url(r'^setup/$', 'rdp.views.setup', name="setup"),
 
-    url(r'^api/ip$', 'rdp.views.ip'),
+    url(r'^api/join/$', 'rdp.views.join', name="api_join"),
 )
