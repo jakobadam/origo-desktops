@@ -1,0 +1,1 @@
+cmd.exe /c %~dp0install-rds-step1.bat
