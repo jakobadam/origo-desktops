@@ -4,7 +4,7 @@ import os
 import winexe
 
 PACKAGE_DIR = '/srv/samba/'
-WINDOWS_IP = '192.168.123.12'
+SAMBA_SHARE = '//ubuntu/share/'
 
 def _add_package(f):
     """Saves package in package dir
@@ -24,6 +24,7 @@ class Package(models.Model):
     name = models.CharField(max_length=512)
     message = models.TextField()
     installed = models.BooleanField(default=False)
+    args = models.CharField(max_length=1000)
 
     def __init__(self, *args, **kwargs):
         self._file = kwargs.get('file')
@@ -34,6 +35,10 @@ class Package(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def samba_path(self):
+        return "%s%s" % (SAMBA_SHARE, self.name)
+    
     def save(self, *args, **kwargs):
         if self._file:
             _add_package(self._file)
@@ -43,14 +48,14 @@ class Package(models.Model):
         _delete_package(self.name)
         super(Package, self).delete(*args, **kwargs)
 
-    @staticmethod
-    def deploy(filename):
-        cmd = '"//ubuntu/share/%s" -ms' % filename
+    def deploy(self, server):
+        cmd = '"%s" -ms' % self.samba_path
         return winexe.cmd(
-            user='vagrant',
-            password='vagrant',
-            host=WINDOWS_IP,
-            cmd=cmd)
+            cmd,
+            user=server.user,
+            password=server.password,
+            host=server.ip)
+
 
 class Server(models.Model):
     """The windows server to install software on
@@ -63,4 +68,6 @@ class Server(models.Model):
     user = models.CharField(max_length=100)
     password = models.CharField(max_length=128)
 
+    def __str__(self):
+        return self.ip
 

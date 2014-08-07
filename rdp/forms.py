@@ -21,9 +21,10 @@ class PackageForm(forms.Form):
 
     def clean_file(self):
         file = self.cleaned_data['file']
-
-        if not ext(file) in VALID_FILE_TYPES:
-            raise forms.ValidationError('File type %s is not supported!' % ext)
+        file_ext = ext(file)
+        if not file_ext in VALID_FILE_TYPES:
+            msg = '%s not supported! Must be %s' % (file_ext,', '.join(VALID_FILE_TYPES))
+            raise forms.ValidationError(msg)
 
 class RenameForm(forms.Form):
 
@@ -61,7 +62,7 @@ class ServerForm(forms.ModelForm):
         widgets = {
             'ip': forms.TextInput(attrs={'readonly':True}),
             'name': _get_widget('Enter computer name'),
-            'domain': _get_widget('Enter domain e.g., example.com'),
+            'domain': _get_widget('Enter FQDN e.g., example.com'),
             'user': _get_widget('Enter desired windows user name'),
             'password': PasswordStrengthInput(attrs={'placeholder':'Enter password'})
         }

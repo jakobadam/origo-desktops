@@ -15,48 +15,55 @@ from .models import (
     Server
     )
 
+import json
+
 PACKAGE_DIR = '/srv/samba/'
 
-def add_program(request):
+def add_package(request):
     if request.method == 'POST':
         form = PackageForm(request.POST, request.FILES)
         if form.is_valid():
             file = request.FILES['file']
             p = Package(file=file, name=file.name)
             p.save()
-            return http.HttpResponseRedirect(reverse('programs'))
+            return http.HttpResponseRedirect(reverse('packages'))
     else:
         form = PackageForm()
 
-    return shortcuts.render(request, 'add_program.html', {'form':form})
+    return shortcuts.render(request, 'add_package.html', {'form':form})
 
 @require_http_methods(['POST'])
-def delete_program(request):
+def delete_package(request):
     id = request.POST['id']
     p = shortcuts.get_object_or_404(Package, pk=id)
-    msg = 'Program %s was deleted' % p.name
+    msg = 'Package %s was deleted' % p.name
     p.delete()
     messages.success(request, msg)
-    return http.HttpResponseRedirect(reverse('programs'))
+    return http.HttpResponseRedirect(reverse('packages'))
 
-def programs(request):
-    packages = None
-    # packages = Package.objects.all()
+def packages(request):
+    packages = Package.objects.all()
     return shortcuts.render(request, 'index.html', {'packages': packages})
 
 @require_http_methods(['POST'])
-def deploy_program(request):
-    filename = request.POST['filename']
-    output,success = Package.deploy(filename)
+def deploy_package(request):
+    id = request.POST['id']
+    package = shortcuts.get_object_or_404(Package, pk=id)    
+    server = Server.objects.first()
 
-    if success:
-        msg = 'Deploying %s. %s' % (filename,output)
+    if not server.user or not server.password:
+        err = 'You must set the username and password before doing this'
+        messages.error(request, err)
+        return http.HttpResponseRedirect(reverse('packages'))
+    
+    try:
+        output = package.deploy(server)
+        msg = 'Deploying %s. %s' % (package,output)
         messages.info(request, msg)
-    else:
-        msg = 'Error deploying %s. %s' % (filename,output)
-        messages.error(request, msg)
-
-    return http.HttpResponseRedirect(reverse('programs'))
+    except Exception, e:
+        err = 'Error deploying %s. %s' % (package,str(e))
+        messages.error(request, err)
+    return http.HttpResponseRedirect(reverse('packages'))
 
 # @require_http_methods(['POST'])
 # def rename_setup(request):
@@ -78,10 +85,9 @@ def setup(request, **kwargs):
 
     if request.method == 'POST':
         form = ServerForm(data=request.POST, instance=server)
-
         if form.is_valid():
+            form.save()
             return http.HttpResponseRedirect(reverse('setup'))
-
     else:
         form = ServerForm(instance=server)
 
@@ -97,7 +103,7 @@ def join(request):
     form = JoinForm(data=request.REQUEST)
 
     if not form.is_valid():
-        return http.HttpResponseBadRequest(form.errors)
+        return http.HttpResponseBadRequest(json.dumps(form.errors))
 
     # FIXME:!!!
     for s in Server.objects.all():
