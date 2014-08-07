@@ -11,20 +11,23 @@ SECRET_KEY = '*e_x1qszxuff4oq)7aq*&-*iop=i)3p0w(vpwm*3v_klm#@!q$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+GRAPPELLI_ADMIN_TITLE = 'RDS'
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'grappelli',
+    'django.contrib.admin',
     'gunicorn',
     'debug_toolbar',
     'crispy_forms',
