@@ -1,0 +1,32 @@
+{% extends 'project_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title%}Add Program{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block body%}
+<div class="col-xs-12">
+
+  {% include '_menu.html' %}
+
+  <h2>Add Program</h2>
+
+  <form role="form" enctype="multipart/form-data" method="POST">
+
+    {{form|crispy}}
+
+    <!-- <div class="form-group"> -->
+    <!--   <input type="name" class="form-control" id="name" placeholder="Enter program name"> -->
+    <!-- </div> -->
+
+    <!-- <div class="form-group"> -->
+    <!--   <label for="file">Select MSI</label> -->
+    <!--   <input type="file" id="file"> -->
+    <!-- </div> -->
+
+    <button type="submit" class="btn btn-primary">Upload</button>
+
+  </form>
+
+</div>
+{% endblock%}
