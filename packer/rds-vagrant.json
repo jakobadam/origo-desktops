@@ -18,7 +18,7 @@
                 "drivers/virtio-win-0.1-74/WIN7/AMD64/*",
                 "scripts/common/*",
                 "scripts/rds-common/*",
-                "scripts/windows-2012-standard-amd64-vagrant/*"
+                "scripts/rds-vagrant/*"
             ],
             "disk_interface":"virtio",
             "qemuargs": [
