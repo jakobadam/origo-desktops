@@ -8,3 +8,4 @@ static
 \#*\#
 db.sqlite3
 src
+packer/output-*
