@@ -28,7 +28,10 @@ $ubuntu_ip = ($output -replace '\s+', ' ').Split()[4]
 $windows_ip = (ipconfig.exe | ?{$_ -match "Ipv4"}).Split(':')[1].Trim()
 
 $hostname = HOSTNAME
-$domain = $env:USERDNSDOMAIN.ToLower()
+$domain = $env:USERDNSDOMAIN
+if($domain){
+    $domain = $domain.ToLower()
+}
 
 # UseBasicParsing, otherwise IE must have been run?!?
 try{
