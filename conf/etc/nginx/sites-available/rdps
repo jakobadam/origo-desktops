@@ -29,4 +29,9 @@ server {
         alias /srv/www/rdps/static;    
     }
 
+    location /uploads {
+        autoindex on;
+        alias /srv/samba;
+    }
+
 }
