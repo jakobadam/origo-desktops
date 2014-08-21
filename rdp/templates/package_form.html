@@ -9,7 +9,7 @@
 
   {% include '_menu.html' %}
 
-  <h2>Add Program</h2>
+  <h2>{% if object.id %}Update{% else %}Add{% endif %} Package</h2>
 
   <form role="form" enctype="multipart/form-data" method="POST">
 
@@ -24,7 +24,8 @@
     <!--   <input type="file" id="file"> -->
     <!-- </div> -->
 
-    <button type="submit" class="btn btn-primary">Upload</button>
+    <button type="submit" 
+            class="btn btn-primary">{% if object.id %}Update{% else %}Add{% endif %}</button>
 
   </form>
 

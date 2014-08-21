@@ -92,13 +92,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-MEDIA_ROOT = '/tmp'
+MEDIA_ROOT = '/srv/samba'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_ROOT = BASE_DIR + '/static'
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/uploads/'
 
 LOGGING = {
     'version': 1,
@@ -123,4 +124,5 @@ from django.conf import global_settings
 
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
+    'django.core.context_processors.media'
 )

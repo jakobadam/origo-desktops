@@ -1,8 +1,13 @@
 from django import shortcuts
 from django import http
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import (reverse, reverse_lazy)
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
+from django.views.generic.edit import (
+    CreateView,
+    DeleteView,
+    UpdateView
+    )
 
 from .forms import (
     ServerForm,
@@ -15,35 +20,62 @@ from .models import (
     Server
     )
 
+from winexe.exceptions import RequestException
+
 import json
 
 PACKAGE_DIR = '/srv/samba/'
 
-def add_package(request):
-    if request.method == 'POST':
-        form = PackageForm(request.POST, request.FILES)
-        if form.is_valid():
-            file = request.FILES['file']
-            p = Package(file=file, name=file.name)
-            p.save()
-            return http.HttpResponseRedirect(reverse('packages'))
-    else:
-        form = PackageForm()
+def packages(request):
+    packages = Package.objects.all()
+    return shortcuts.render(request, 'package_list.html', {'packages': packages})
 
-    return shortcuts.render(request, 'add_package.html', {'form':form})
+class PackageEdit(object):
+    model = Package
+    template_name = 'package_form.html'
+    form_class = PackageForm
+    success_url = reverse_lazy('packages')
+    
+class PackageUpdate(PackageEdit, UpdateView):
+    pass
+
+class PackageCreate(PackageEdit, CreateView):
+    pass
+
+class PackageDelete(PackageEdit, DeleteView):
+    pass
+    
+# def add_package(request):
+#     if request.method == 'POST':
+#         form = PackageForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             file = request.FILES['file']
+#             args = form.cleaned_data.get('args')
+#             p = Package(file=file, name=file.name, args=args)
+#             p.save()
+#             return http.HttpResponseRedirect(reverse('packages'))
+#     else:
+#         form = PackageForm()
+
+#     return shortcuts.render(request, 'package_form.html', {'form':form})
 
 @require_http_methods(['POST'])
 def delete_package(request):
     id = request.POST['id']
-    p = shortcuts.get_object_or_404(Package, pk=id)
-    msg = 'Package %s was deleted' % p.name
-    p.delete()
+    package = shortcuts.get_object_or_404(Package, pk=id)
+    server = Server.objects.first()
+
+    try:
+        package.delete(server)
+        msg = 'Package %s was deleted' % package.name
+        messages.info(request, msg)
+    except RequestException, e:
+        err = 'Error deleting %s. %s' % (package,str(e))
+        messages.error(request, err)
+        return http.HttpResponseRedirect(reverse('packages'))
+
     messages.success(request, msg)
     return http.HttpResponseRedirect(reverse('packages'))
-
-def packages(request):
-    packages = Package.objects.all()
-    return shortcuts.render(request, 'index.html', {'packages': packages})
 
 @require_http_methods(['POST'])
 def deploy_package(request):
@@ -51,18 +83,16 @@ def deploy_package(request):
     package = shortcuts.get_object_or_404(Package, pk=id)    
     server = Server.objects.first()
 
-    if not server.user or not server.password:
+    if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
         return http.HttpResponseRedirect(reverse('packages'))
-    
-    try:
-        output = package.deploy(server)
-        msg = 'Deploying %s. %s' % (package,output)
-        messages.info(request, msg)
-    except Exception, e:
-        err = 'Error deploying %s. %s' % (package,str(e))
-        messages.error(request, err)
+
+    success = package.deploy(server)
+    if success:
+        messages.info(request, package.message)
+    else:
+        messages.error(request, package.message)
     return http.HttpResponseRedirect(reverse('packages'))
 
 # @require_http_methods(['POST'])

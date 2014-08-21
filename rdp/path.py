@@ -1,7 +1,7 @@
 import os
 
-def ext(file):
+def ext(filename):
     """Returns the file extension
     """
-    name, ext = os.path.splitext(file.name)
+    name, ext = os.path.splitext(filename)
     return ext.lstrip('.').lower()

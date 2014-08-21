@@ -1,0 +1,64 @@
+{% extends 'project_base.html' %}
+
+{% block page_title%}Packages{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block body%}
+<div class="col-xs-12">
+
+  {% include '_menu.html' %}
+
+  <h2>Packages</h2>
+
+  <div class="form-group">
+    <a href="{% url 'add_package' %}" class="btn btn-lg btn-primary">Add package</a>
+  </div>
+
+  {% if packages %}
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>File</th>
+          <th>Cmd</th>
+          <th style="min-width: 200px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in packages %}        
+        <tr>
+          <td>{{p.name}}</td>
+          <td>{{p.file}}</td>
+          <td><small>{{p.cmd}}</small></td>
+          <td>
+
+            <form method="POST" action="{% url 'deploy_package' %}" style="display:inline-block">
+              <input type="hidden" name="id" value="{{p.id}}" />
+              <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-play"></span></button>
+            </form>
+
+            <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
+              <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>
+            </form>
+
+            <form method="GET" action="{{p.log_url}}" style="display:inline-block">
+              <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-file"></span></button>
+            </form>
+
+            <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
+              <button type="submit" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
+            </form>
+            
+          </td>
+        </tr>
+        {% endfor %}        
+      </tbody>
+
+    </table>
+  </div>
+  {% else %}
+  No packages yet
+  {% endif %}
+</div>
+{% endblock%}

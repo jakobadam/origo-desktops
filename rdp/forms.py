@@ -8,23 +8,31 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.helper import FormHelper
 
-from .models import Server
+from .models import Server, Package
 
 VALID_FILE_TYPES = ['exe','msi','zip']
 
 def _get_widget(placeholder):
     return forms.TextInput(attrs={'placeholder':placeholder})
 
-class PackageForm(forms.Form):
+class PackageForm(forms.ModelForm):
 
-    file  = forms.FileField(required=True)
+    class Meta:
+        model = Package
+        exclude = ['message', 'installed']
 
-    def clean_file(self):
-        file = self.cleaned_data['file']
-        file_ext = ext(file)
-        if not file_ext in VALID_FILE_TYPES:
-            msg = '%s not supported! Must be %s' % (file_ext,', '.join(VALID_FILE_TYPES))
-            raise forms.ValidationError(msg)
+    def __init__(self, *args, **kwargs):
+        super(PackageForm, self).__init__(*args, **kwargs)
+        
+        if self.instance.pk:
+            self.fields['name'].widget.attrs['readonly'] = True
+        
+    # def clean_file(self):
+    #     file = self.cleaned_data['file']
+    #     file_ext = ext(file.name)
+    #     if not file_ext in VALID_FILE_TYPES:
+    #         msg = '%s not supported! Must be %s' % (file_ext,', '.join(VALID_FILE_TYPES))
+    #         raise forms.ValidationError(msg)
 
 class RenameForm(forms.Form):
 
@@ -53,7 +61,7 @@ class JoinForm(forms.Form):
 
     ip = forms.IPAddressField()
     name = forms.CharField()
-    domain = forms.CharField()
+    domain = forms.CharField(required=False)
     
 class ServerForm(forms.ModelForm):
 
