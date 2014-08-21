@@ -12,6 +12,8 @@
 
   {% include '_menu.html' %}
 
+  RD WEB: <a href="http://{{form.ip.value}}/rdweb">{{form.ip.value}}/rdweb</a>
+
   <form action="{% url 'setup' %}" method="POST">
 
     {{form|crispy}}

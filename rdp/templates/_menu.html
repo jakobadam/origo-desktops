@@ -2,6 +2,8 @@
 
 {% url 'setup' as setup %}
 {% url 'packages' as packages %}
+{% url 'add_package' as add_package %}
+{% url 'update_package' as update_package %}
 
 <ul class="nav nav-tabs">
 
@@ -9,7 +11,7 @@
     <a href="{{setup}}">Setup <span class="glyphicon fui-gear"></span></a>
   </li>
 
-  <li class="{% active packages %}">
+  <li class="{% active packages %}{% active add_package %}{% active update_package %}">
     <a href="{{packages}}">Packages <span class="glyphicon glyphicon-th"></span></a>
   </li>
 
