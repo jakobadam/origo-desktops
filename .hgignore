@@ -9,3 +9,5 @@ static
 db.sqlite3
 src
 packer/output-*
+rds/lib
+rds/bin
