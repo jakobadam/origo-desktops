@@ -1,3 +1,5 @@
 ﻿:: Create scheduled task for reporting IP
 :: Reports back every min, stops on first success
-schtasks /create /tn "rds-report-ip" /tr "powershell.exe %~dp0join.ps1" /sc minute 
+:: Copies the join.ps1 sshtask to C:
+copy %~dp0join.ps1 %SystemDrive%\join.ps1
+schtasks /create /tn "rds-report-ip" /tr "powershell.exe %SystemDrive%\join.ps1" /sc minute 
