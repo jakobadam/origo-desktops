@@ -1,4 +1,5 @@
 {% extends 'project_base.html' %}
+{% load static %}
 
 {% block page_title%}Packages{% endblock %}
 {% block navbar %}RDP Services{% endblock %}
@@ -35,19 +36,27 @@
 
             <form method="POST" action="{% url 'deploy_package' %}" style="display:inline-block">
               <input type="hidden" name="id" value="{{p.id}}" />
-              <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-play"></span></button>
+              <button type="submit" title="Deploy {{p.name}}"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-play"></span></button>
             </form>
 
             <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
-              <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>
+              <button type="submit" title="Edit"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-pencil"></span></button>
             </form>
 
             <form method="GET" action="{{p.log_url}}" style="display:inline-block">
-              <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-file"></span></button>
+              <button type="submit" title="Show Log"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-file"></span></button>
             </form>
 
             <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
-              <button type="submit" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
+              <button type="submit" title="Delete"
+                      class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-trash"></span></button>
             </form>
             
           </td>
@@ -62,3 +71,4 @@
   {% endif %}
 </div>
 {% endblock%}
+
