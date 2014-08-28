@@ -20,6 +20,7 @@
     <table class="table table-striped">
       <thead>
         <tr>
+          <th>Installed</th>
           <th>Name</th>
           <th>File</th>
           <th>Cmd</th>
@@ -29,6 +30,7 @@
       <tbody>
         {% for p in packages %}        
         <tr>
+          <td>{{p.installed}}</td>
           <td>{{p.name}}</td>
           <td>{{p.file}}</td>
           <td><small>{{p.cmd}}</small></td>
@@ -36,9 +38,9 @@
 
             <form method="POST" action="{% url 'deploy_package' %}" style="display:inline-block">
               <input type="hidden" name="id" value="{{p.id}}" />
-              <button type="submit" title="Deploy {{p.name}}"
+              <button type="submit" title="Install {{p.name}}"
                       class="btn btn-primary btn-xs">
-                <span class="glyphicon glyphicon-play"></span></button>
+                <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
             </form>
 
             <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">

@@ -35,6 +35,16 @@ class PackageEdit(object):
     template_name = 'package_form.html'
     form_class = PackageForm
     success_url = reverse_lazy('packages')
+
+    def form_valid(self, form):
+        file_updated = self.request.FILES.get('file')
+        self.object = form.save(commit=False)
+
+        if bool(file_updated):
+            self.object.file_updated()
+
+        self.object.save()
+        return http.HttpResponseRedirect(self.success_url)
     
 class PackageUpdate(PackageEdit, UpdateView):
     pass
