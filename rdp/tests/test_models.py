@@ -41,3 +41,5 @@ class TestPackage(TestCase):
         expected = 'cmd /c "%s" %s' % ("\\\\ubuntu\\share\\Firefox 31\\software\\Firefox Setup 31.0.exe", self.args)
         actual = self.p.cmd
         self.assertEqual(actual, expected)
+
+        

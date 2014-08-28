@@ -3,7 +3,9 @@ from django.conf import settings
 from django.dispatch import receiver
 
 import os
+import glob
 
+import zipfile
 import winexe
 
 from winexe.exceptions import RequestException
@@ -22,6 +24,7 @@ class Package(models.Model):
     name = models.CharField(db_index=True, max_length=512)
     file = models.FileField(
         upload_to=generate_filename,
+        verbose_name='File',
         help_text='File type must one of (%s)' % ', '.join(VALID_FILE_TYPES))
     message = models.TextField()
     installed = models.BooleanField(default=False)
@@ -68,8 +71,7 @@ class Package(models.Model):
 
     @property
     def log_samba_path(self):
-        name = os.path.basename(self.file.path)
-        return "%s\\%s.log" % (LOG_DIR, name)
+        return "\\".join((SAMBA_SHARE, self.name, 'log', '%s.log' % self.basename))
 
     @property
     def log_path(self):
@@ -77,14 +79,14 @@ class Package(models.Model):
 
     @property
     def log_url(self):
-        return os.path.join(settings.MEDIA_URL, 'logs', self.name + '.log')
-                        
+        return os.path.join(settings.MEDIA_URL, self.name, 'log', self.basename + '.log')
+
     @property
     def cmd(self):
         root,ext = os.path.splitext(self.file.path)
         if ext == '.msi':
-            return 'msiexec /L*+ %s /passive /i "%s" %s' % (self.log_samba_path, self.samba_path, self.args)
-        return 'cmd /c "%s" %s' % (self.samba_path, self.args)
+            return 'msiexec /L*+ "%s" /passive /i "%s" %s' % (self.log_samba_path, self.samba_path, self.args)
+        return '"%s" %s' % (self.samba_path, self.args)
 
     def file_updated(self):
         """Called from the view, which sucks...
@@ -102,15 +104,14 @@ class Package(models.Model):
             raise IOError('Trying to delete package files, but there are none')
     
     def deploy(self, server):
-        cmd = '"%s" %s' % (self.samba_path, self.args)
         success = False
-
         try:
-            output = winexe.cmd(
-                cmd,
-                user=server.user,
-                password=server.password,
-                host=server.ip)
+            winexe_kwargs = {
+                'user':server.user,
+                'password':server.password,
+                'host':server.ip
+                }
+            output = winexe.cmd(self.cmd, **winexe_kwargs)
             self.message = 'Deployed %s. %s' % (self,output)
             self.installed = True
             success = True
@@ -123,7 +124,27 @@ class Package(models.Model):
     def _add_package_dirs(self):
         for d in ('log', 'script'):
             os.makedirs(os.path.join(self.basepath,d))
-        
+        os.chmod(os.path.join(self.basepath,'log'), 0777)
+
+    @property
+    def zipped(self):
+        base, ext = os.path.splitext(self.file.path)
+        return ext == '.zip'
+
+    def unzip(self):
+        assert self.zipped, "Can't unzip none zip file"
+        with zipfile.ZipFile(self.file.path) as z:
+            directory = os.path.join(self.basepath, 'software')
+            z.extractall(directory)
+
+    def find_executable(self):
+        for ext in ('exe', 'EXE', 'msi', 'MSI'):
+            path = os.path.join(self.basepath, 'software', '*.%s' % ext)
+            files = glob.glob(path)
+            if files:
+                return files[0]
+        return None
+            
 @receiver(models.signals.post_delete, sender=Package)
 def auto_delete_files_on_delete(sender, instance, **kwargs):
     """Delete relevant package files on `Package` delete
@@ -144,10 +165,23 @@ def auto_delete_old_files_on_change(sender, instance, **kwargs):
 
 @receiver(models.signals.post_save, sender=Package)
 def auto_add_files_on_change(sender, instance, **kwargs):
-    print 'post_save'
     if hasattr(instance, '_file_updated'):
-        instance._add_package_dirs()
-        instance._add_test_script()
+
+        if instance.zipped:
+            instance.unzip()
+
+            # We do some additional processing and don't want to
+            # run the post_save again            
+            delattr(instance, '_file_updated')
+
+            executable = instance.find_executable()
+            if executable:
+                instance.file = executable
+                instance.save()
+
+            instance._add_package_dirs()
+            instance._add_test_script()
+
      
 class Server(models.Model):
     """The windows server to install software on
