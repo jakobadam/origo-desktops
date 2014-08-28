@@ -1,5 +1,4 @@
-from .path import ext
-
+import os
 from django import forms
 
 from django_password_strength.widgets import PasswordStrengthInput
@@ -10,7 +9,6 @@ from crispy_forms.helper import FormHelper
 
 from .models import Server, Package
 
-VALID_FILE_TYPES = ['exe','msi','zip']
 
 def _get_widget(placeholder):
     return forms.TextInput(attrs={'placeholder':placeholder})
@@ -27,12 +25,15 @@ class PackageForm(forms.ModelForm):
         if self.instance.pk:
             self.fields['name'].widget.attrs['readonly'] = True
         
-    # def clean_file(self):
-    #     file = self.cleaned_data['file']
-    #     file_ext = ext(file.name)
-    #     if not file_ext in VALID_FILE_TYPES:
-    #         msg = '%s not supported! Must be %s' % (file_ext,', '.join(VALID_FILE_TYPES))
-    #         raise forms.ValidationError(msg)
+    def clean_file(self):
+        file = self.cleaned_data['file']
+        file_root, file_ext = os.path.splitext(file.name)
+        # drop the . in .exe
+        file_ext = file_ext[1:]
+        if not file_ext in Package.VALID_FILE_TYPES:
+            msg = '%s not supported! Must be %s' % (file_ext,', '.join(Package.VALID_FILE_TYPES))
+            raise forms.ValidationError(msg)
+        return file
 
 class RenameForm(forms.Form):
 
