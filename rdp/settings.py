@@ -19,6 +19,8 @@ ALLOWED_HOSTS = []
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 GRAPPELLI_ADMIN_TITLE = 'RDS'
+    
+FILE_UPLOAD_PERMISSIONS = 0755
 
 INSTALLED_APPS = (
     'django.contrib.auth',
