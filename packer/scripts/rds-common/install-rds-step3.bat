@@ -2,7 +2,7 @@
 schtasks /delete /tn "Install RDS Step 3" -f
 
 :: Schedule callback to admin server
-cmd /c %~dp0ip-task.bat
+cmd /c %~dp0join-task.bat
 
 :: Installing Cygwin
 cmd /c %~dp0install-cygwin-sshd.bat
