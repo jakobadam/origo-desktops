@@ -1,0 +1,78 @@
+{% extends 'project_base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block page_title%}Setup{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block body%}
+
+<style>
+#spinner-wrapper {
+height: 200px;
+}
+</style>
+<div class="col-xs-12">
+
+  {% include '_menu.html' %}
+  <div id="spinner-wrapper">
+    <div id="spinner"></div>
+  </div>
+  
+  <h2 class="text-center"><small>Starting up your Windows server ...</small></h2>
+
+  <!-- <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"> -->
+  <!--   <div class="modal-dialog"> -->
+  <!--     <div class="modal-content"> -->
+  <!--       <div class="modal-body"> -->
+  
+  <!--         <div id="spinner-wrapper"> -->
+  <!--           <div id="spinner"></div> -->
+  <!--         </div> -->
+  
+  <!--         <h2 class="text-center"><small>Starting up your Windows server ...</small></h2> -->
+  
+  <!--       </div> -->
+  <!--     </div> -->
+  <!--   </div> -->
+  <!-- </div> -->
+
+</div>
+
+<script>
+// Load password strength scripts async.
+$(document).ready(function(){
+  var opts = {
+    lines: 11, // The number of lines to draw
+    length: 21, // The length of each line
+    width: 10, // The line thickness
+    radius: 30, // The radius of the inner circle
+    corners: 1, // Corner roundness (0..1)
+    rotate: 0, // The rotation offset
+    direction: 1, // 1: clockwise, -1: counterclockwise
+    color: '#000', // #rgb or #rrggbb or array of colors
+    speed: 0.7, // Rounds per second
+    trail: 60, // Afterglow percentage
+    shadow: false, // Whether to render a shadow
+    hwaccel: false, // Whether to use hardware acceleration
+    className: 'spinner', // The CSS class to assign to the spinner
+    zIndex: 2e9, // The z-index (defaults to 2000000000)
+    top: '50%', // Top position relative to parent
+    left: '50%' // Left position relative to parent
+  };
+
+  $.ajax({
+    url: "{% static 'spin.js/spin.js' %}",
+    dataType: "script",
+    success: function(){
+      var target = document.getElementById('spinner');
+      var spinner = new Spinner(opts).spin(target);
+      //$('#modal').modal();
+    }
+  });
+});
+</script>
+{% endblock%}
+
+
