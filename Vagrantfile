@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
     # nginx
     c.vm.network :forwarded_port, guest: 80, host: 8080
 
-    # django dev server (when started)
+    # django dev server directly (when started)
     c.vm.network :forwarded_port, guest: 8000, host: 8000
 
     c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
@@ -21,28 +21,20 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
-    c.vm.box = "rds"
+    c.vm.box = "windows-2012R2"
+    c.vm.guest = :windows
+    # c.vm.box = "rds"
+
     # Forward rdp
     c.vm.network :forwarded_port, guest: 3389, host: 3389
     # Forward IIS
     c.vm.network :forwarded_port, guest: 80, host: 8001
-
-
-    # Use NFS as a shared folder
-    # Does not work on windows we share with samba instead
-    # c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
-
   end
 
   config.vm.define :windows do |c|
     c.vm.hostname = "windows-server"
     c.vm.box = "windows-2012R2"
-  end
-
-  config.vm.define :ad do |c|
-    c.vm.hostname = "windows-server"
-    c.vm.box = "windows-2012R2"
-    c.vm.network :private_network, ip: "192.168.123.8"
+    c.vm.guest = :windows
   end
 
 end
