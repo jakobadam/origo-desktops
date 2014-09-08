@@ -68,6 +68,8 @@ class ServerForm(forms.ModelForm):
 
     class Meta:
         model = Server
+        exclude = ('user',)
+        
         widgets = {
             'ip': forms.TextInput(attrs={'readonly':True}),
             'name': _get_widget('Enter computer name'),

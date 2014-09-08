@@ -172,15 +172,15 @@ def auto_add_files_on_change(sender, instance, **kwargs):
 
             # We do some additional processing and don't want to
             # run the post_save again            
-            delattr(instance, '_file_updated')
-
-            executable = instance.find_executable()
-            if executable:
-                instance.file = executable
-                instance.save()
-
-            instance._add_package_dirs()
-            instance._add_test_script()
+        delattr(instance, '_file_updated')
+        
+        executable = instance.find_executable()
+        if executable:
+            instance.file = executable
+            instance.save()
+        
+        instance._add_package_dirs()
+        instance._add_test_script()
 
      
 class Server(models.Model):
@@ -188,11 +188,11 @@ class Server(models.Model):
 
     Currently: There is only one
     """
-    ip = models.IPAddressField(primary_key=True)
+    ip = models.IPAddressField(db_index=True)
     name = models.CharField(max_length=100, verbose_name='computer name')
     domain = models.CharField(max_length=100)
     user = models.CharField(max_length=100)
-    password = models.CharField(max_length=128)
+    password = models.CharField(max_length=128, verbose_name='Password for Administrator account')
 
     def __str__(self):
         return self.ip

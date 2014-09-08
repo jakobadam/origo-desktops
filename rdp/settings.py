@@ -43,10 +43,11 @@ BOWER_INSTALLED_APPS = (
     'jquery#1.9',
     'jquery-ui#1.10',
     'bootstrap#3.1.0',
-    'Flat-UI#2.1.3',
+    'flat-ui',
     'html5shiv',
     'respond',
-     'zxcvbn'
+    'zxcvbn',
+    'spin.js'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -126,5 +127,6 @@ from django.conf import global_settings
 
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
-    'django.core.context_processors.media'
+    'django.core.context_processors.media',
+    'rdp.context_processors.servers'
 )

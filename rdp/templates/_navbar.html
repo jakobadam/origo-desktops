@@ -1,3 +1,4 @@
+{% load static %}
 <style>
 .btn-noborder{
 background-color: transparent;
@@ -30,11 +31,16 @@ border: 1px solid transparent;
             <span class="dropdown-arrow dropdown-arrow-inverse"></span>
 
             <ul class="dropdown-menu dropdown-inverse">
+              {% for s in servers%}
               <li>
-                <a target="_blank" href="" id="">To somewhere</a>
+                <a target="_blank" href="https://{{s.ip}}/rdweb">{{s.ip}}/rdweb</a>
               </li>
+              <li>
+                <a target="_blank" href="{% url 'rdp_settings' pk=s.pk %}">
+                  <img width="24px" src="{% static 'rdp_icon.png' %}" /> {{s.ip}}.rdp</a>                
+              </li>
+              {% endfor %}
             </ul>
-
           </div>
         </li>
       </ul>
@@ -48,9 +54,6 @@ border: 1px solid transparent;
             <span class="dropdown-arrow dropdown-arrow-inverse"></span>
 
             <ul class="dropdown-menu dropdown-inverse">
-              <li>
-                <a target="_blank" href="" id="mailLogin">Something</a>
-              </li>
             </ul>
 
           </div>

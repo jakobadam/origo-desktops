@@ -122,7 +122,9 @@ def deploy_package(request):
 
 def setup(request, **kwargs):
     server = Server.objects.first()
-
+    if server == None:
+        return shortcuts.render(request, 'setup_waiting.html')
+    
     if request.method == 'POST':
         form = ServerForm(data=request.POST, instance=server)
         if form.is_valid():
@@ -131,14 +133,19 @@ def setup(request, **kwargs):
     else:
         form = ServerForm(instance=server)
 
-    if server == None:
-        msg = "RDS windows server hasn't reported back..."
-        messages.info(request, msg)
-
     return shortcuts.render(request, 'setup.html', {
         'form': form
         })
 
+def rdp_settings(request, pk):
+    server = shortcuts.get_object_or_404(Server, pk=pk)
+    content_type = 'application/rdp; charset=utf-8'
+    response = shortcuts.render(request, 'settings.rdp', {
+        'server': server
+        }, content_type=content_type)
+    response['Content-Disposition'] = 'attachment; filename=settings.rdp'
+    return response
+    
 def join(request):
     form = JoinForm(data=request.REQUEST)
 
@@ -149,5 +156,5 @@ def join(request):
     for s in Server.objects.all():
         s.delete()
 
-    server, created = Server.objects.get_or_create(**form.cleaned_data)
+    server, created = Server.objects.get_or_create(user='Administrator', **form.cleaned_data)
     return http.HttpResponse()

@@ -25,4 +25,5 @@ urlpatterns = patterns('',
     url(r'^packages/deploy/$', 'rdp.views.deploy_package', name="deploy_package"),
     
     url(r'^api/join/$', 'rdp.views.join', name="api_join"),
-)
+    url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rdp.views.rdp_settings', name='rdp_settings')
+ )
