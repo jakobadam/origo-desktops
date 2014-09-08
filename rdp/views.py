@@ -140,7 +140,7 @@ def setup(request, **kwargs):
 def rdp_settings(request, pk):
     server = shortcuts.get_object_or_404(Server, pk=pk)
     content_type = 'application/rdp; charset=utf-8'
-    response = shortcuts.render(request, 'settings.rdp', {
+    response = shortcuts.render(request, 'connect.rdp', {
         'server': server
         }, content_type=content_type)
     response['Content-Disposition'] = 'attachment; filename=settings.rdp'
