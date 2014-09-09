@@ -53,3 +53,21 @@ To avoid libvirt permission error:
 $ sudo apt-get install apparmor-profiles apparmor-utils
 $ sudo aa-complain /usr/lib/libvirt/virt-aa-helper
 ```
+
+## RDS
+
+### AD
+
+RDS requires an AD to be installed. It possible to have this installed
+on the same server.
+
+### RD Session Deployment
+
+Components of a RD deployment are:
+* RD Connection Broker
+* RD Web Access
+* RD Session Host(s)
+
+### RD Session Collection
+
+Pool of servers (session hosts) that handles connections.

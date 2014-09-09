@@ -33,11 +33,11 @@ border: 1px solid transparent;
             <ul class="dropdown-menu dropdown-inverse">
               {% for s in servers%}
               <li>
-                <a target="_blank" href="https://{{s.ip}}/rdweb">{{s.ip}}/rdweb</a>
+                <a target="_blank" href="https://{{s.ip}}/rdweb"><span class="glyphicon glyphicon-globe"></span> RD Web Access</a>
               </li>
               <li>
                 <a target="_blank" href="{% url 'rdp_settings' pk=s.pk %}">
-                  <img width="24px" src="{% static 'rdp_icon.png' %}" /> {{s.ip}}.rdp</a>                
+                  <img width="18px" src="{% static 'rdp_icon.png' %}" /> RDP Access</a>
               </li>
               {% endfor %}
             </ul>

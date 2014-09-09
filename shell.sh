@@ -1,1 +1,2 @@
-sudo su www-data -c './manage.py shell'
+echo 'vagrant' | sudo -S -u www-data `readlink -f manage.py` shell
+
