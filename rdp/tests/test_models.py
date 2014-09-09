@@ -1,3 +1,5 @@
+import os
+
 from django.test import TestCase
 from django.test import Client
 from django.conf import settings
@@ -14,7 +16,7 @@ class TestPackage(TestCase):
 
     def setUp(self):
         self.name = 'Firefox 31'
-        self.file = File(open('software/Firefox 31/software/Firefox Setup 31.0.exe'))
+        self.file = File(open('software/Firefox Setup 31.0.exe'))
         self.args = '-ms'
         
         self.p = Package(name=self.name, file=self.file, args=self.args)
@@ -23,8 +25,16 @@ class TestPackage(TestCase):
         path = self.p._test_script_path
         expected = settings.MEDIA_ROOT + '/Firefox 31/script/Firefox Setup 31.0.exe.bat'
         self.assertEqual(path, expected)
-        
+
+    def test_add_package_dirs(self):
+        self.p.delete_files()
+        self.p._add_package_dirs()
+        path = 'software/Firefox 31/script'
+        self.assertTrue(os.path.exists(path))
+                
     def test_add_test_script(self):
+        self.p.delete_files()
+        self.p._add_package_dirs()
         self.p._add_test_script()
         path = 'software/Firefox 31/script/Firefox Setup 31.0.exe.bat'
         try:
@@ -38,7 +48,7 @@ class TestPackage(TestCase):
         self.assertEqual(samba_path, expected)
         
     def test_cmd(self):
-        expected = 'cmd /c "%s" %s' % ("\\\\ubuntu\\share\\Firefox 31\\software\\Firefox Setup 31.0.exe", self.args)
+        expected = '"%s" %s' % ("\\\\ubuntu\\share\\Firefox 31\\software\\Firefox Setup 31.0.exe", self.args)
         actual = self.p.cmd
         self.assertEqual(actual, expected)
 

@@ -35,6 +35,10 @@ class PackageForm(forms.ModelForm):
             raise forms.ValidationError(msg)
         return file
 
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        return name.strip()
+
 class RenameForm(forms.Form):
 
     windows_computer_name = forms.CharField(
