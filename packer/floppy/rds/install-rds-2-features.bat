@@ -1,5 +1,5 @@
 set current_task="Install RDS - RDS Features"
-set current_task_script="%~dp0install-rds-2-features.ps1"
+set current_task_script="%~dp0rds-add-features.ps1"
 
 set next_task="Install RDS - Deployment"
 set next_task_script="%~dp0install-rds-3-deployment.bat"
