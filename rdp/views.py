@@ -152,9 +152,12 @@ def join(request):
     if not form.is_valid():
         return http.HttpResponseBadRequest(json.dumps(form.errors))
 
-    # FIXME:!!!
+    # FIXME: TODO !!!
     for s in Server.objects.all():
         s.delete()
-
-    server, created = Server.objects.get_or_create(user='Administrator', **form.cleaned_data)
+    # FIXME: TODO !!!
+    server, created = Server.objects.get_or_create(
+        password='V@grant',
+        user='Administrator',
+        **form.cleaned_data)
     return http.HttpResponse()
