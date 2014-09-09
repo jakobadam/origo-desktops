@@ -1,13 +1,13 @@
 {
     "variables": {
-        "disk_size": 61440,
-        "password": "V@grant"
+        "password": "Administr@tor",
+        "disk_size": "61440"
     },
-
+    
     "builders": [
         {
             "type": "qemu",
-            "name": "windows-2012R2-vagrant",
+            "name": "windows-2012R2",
             "format":"qcow2",
             "accelerator": "kvm",
             "disk_size": "{{ user `disk_size`}}",
@@ -17,14 +17,14 @@
             "iso_checksum": "5b5e08c490ad16b59b1d9fab0def883a",
 
             "boot_wait": "2m",
-            "ssh_username": "vagrant",
-            "ssh_password": "vagrant",
+            "ssh_username": "Administrator",
+            "ssh_password": "Administrator",
             "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
 
             "floppy_files": [
                 "floppy/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
                 "floppy/common/*",
-                "floppy/windows-2012-standard-amd64-vagrant/*"
+                "floppy/windows-2012-standard-amd64/*"
             ],
             "disk_interface":"virtio",
             "qemuargs": [
@@ -37,7 +37,7 @@
     "provisioners": [
         {
             "type": "shell",
-            "inline": ["net user vagrant {{ user `password`}}"]
+            "inline": ["net user Administrator {{ user `password`}}"]
         },
 
         {
@@ -46,11 +46,9 @@
             "execute_command": "cmd /c C:/Windows/Temp/script.bat",
             "scripts": [
                 "scripts/enable-rdp.bat",
-                "scripts/disable-hibernate.bat",
                 "scripts/execution-policy-unrestricted.bat",
-                "scripts/unlimited-password-expiration.bat",
-                "scripts/vagrant-ssh.bat"
+                "scripts/unlimited-password-expiration.bat"
             ]
-        }        
+        }
     ]
 }

@@ -51,6 +51,6 @@
                 "scripts/unlimited-password-expiration.bat",
                 "scripts/vagrant-ssh.bat"
             ]
-        }        
+        }
     ]
 }
