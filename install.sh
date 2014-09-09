@@ -29,6 +29,7 @@ rm /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
 ln -s /etc/nginx/sites-available/rdps /etc/nginx/sites-enabled/rdps
 
 # setup samba
+mkdir /srv/samba
 chown -R www-data: /srv/samba
 
 # FIXME: duing developement I want to be able to quick switch to the django dev server
