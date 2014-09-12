@@ -23,7 +23,12 @@ urlpatterns = patterns('',
     url(r'^packages/update/(?P<pk>\d+)/$', PackageUpdate.as_view(), name='update_package'),
 
     url(r'^packages/deploy/$', 'rds.views.deploy_package', name="deploy_package"),
-    
+
+    url(r'^setup/ad/$', 'rds.views.ad_setup', name="ad_setup"),
+    url(r'^setup/ad_type/$', 'rds.views.ad_type', name='ad_type'),
+    url(r'^setup/cancel/$', 'rds.views.cancel', name="cancel"),    
+        
     url(r'^api/join/$', 'rds.views.join', name="api_join"),
-    url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings')
- )
+    url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings'),
+
+     )

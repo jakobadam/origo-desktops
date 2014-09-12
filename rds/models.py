@@ -182,6 +182,41 @@ def auto_add_files_on_change(sender, instance, **kwargs):
         instance._add_package_dirs()
         instance._add_test_script()
 
+
+class Helper(object):
+
+    @classmethod
+    def first_or_create(cls):
+        s = cls.objects.first()
+        if not s:
+            s = cls.objects.create()
+        return s
+        
+class State(models.Model, Helper):
+
+    LOCATION_AD_TYPE = 'ad_type'
+    LOCATION_AD_SETUP = 'ad_setup'
+    LOCATION_SERVER_WAIT = 'server_wait'
+
+    EXTERNAL = 'external'
+    INTERNAL = 'internal'
+
+    location = models.CharField(max_length=100, default=LOCATION_AD_TYPE)
+    active_directory = models.CharField(max_length=100, default=INTERNAL)
+    
+    @classmethod
+    def first_or_create(cls):
+        s = cls.objects.first()
+        if not s:
+            s = cls.objects.create()
+        return s
+
+class ActiveDirectory(models.Model, Helper):
+        
+    domain = models.CharField(max_length=1000)
+    user = models.CharField(max_length=200)
+    # TODO: hash it? Just one anyways
+    password = models.CharField(max_length=200)
      
 class Server(models.Model):
     """The windows server to install software on

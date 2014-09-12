@@ -7,12 +7,20 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.helper import FormHelper
 
-from .models import Server, Package
-
+from .models import (
+    Server,
+    Package,
+    ActiveDirectory,
+    )
 
 def _get_widget(placeholder):
     return forms.TextInput(attrs={'placeholder':placeholder})
 
+class ActiveDirectoryForm(forms.ModelForm):
+
+    class Meta:
+        model = ActiveDirectory
+        
 class PackageForm(forms.ModelForm):
 
     class Meta:

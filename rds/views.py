@@ -12,12 +12,15 @@ from django.views.generic.edit import (
 from .forms import (
     ServerForm,
     PackageForm,
-    JoinForm
+    JoinForm,
+    ActiveDirectoryForm,
     )
 
 from .models import (
     Package,
-    Server
+    Server,
+    State,
+    ActiveDirectory,
     )
 
 from winexe.exceptions import RequestException
@@ -121,21 +124,87 @@ def deploy_package(request):
 #     return setup(request, form=form, password_form=form)
 
 def setup(request, **kwargs):
-    server = Server.objects.first()
-    if server == None:
-        return shortcuts.render(request, 'setup_waiting.html')
-    
-    if request.method == 'POST':
-        form = ServerForm(data=request.POST, instance=server)
-        if form.is_valid():
-            form.save()
-            return http.HttpResponseRedirect(reverse('setup'))
-    else:
-        form = ServerForm(instance=server)
+    state = State.first_or_create()
+    print 'state', state.location
+
+    if state.location == State.LOCATION_SERVER_WAIT:
+        return shortcuts.render(request, 'server_wait.html')            
+
+    if state.location == State.LOCATION_AD_TYPE:
+        return http.HttpResponseRedirect(reverse('ad_type'))
+
+    if state.location == State.LOCATION_AD_SETUP:
+        return http.HttpResponseRedirect(reverse('ad_setup'))
+        
+    # else:
+    #     if settings.existing_active_directory:
+    #         return shortcuts.render(request, 'ad_settings.html')
+    #     else:
+    #         return shortcuts.render(request, 'setup_waiting.html')            
+
+    # if request.method == 'POST':
+    #     form = ServerForm(data=request.POST, instance=server)
+    #     if form.is_valid():
+    #         form.save()
+    #         return http.HttpResponseRedirect(reverse('setup'))
+    # else:
+    #     form = ServerForm(instance=server)
 
     return shortcuts.render(request, 'setup.html', {
-        'form': form
+
         })
+
+@require_http_methods(['POST'])
+def cancel(request):
+    state = State.first_or_create()
+
+    # TODO: do something here
+    
+    state.location = State.LOCATION_AD_TYPE
+    state.save()
+    return http.HttpResponseRedirect(reverse('setup'))
+    
+def ad_type(request):
+    state = State.first_or_create()
+    if request.method == 'POST':
+        if request.POST.get('existing_active_directory'):
+            state.existing_active_directory = True
+            state.location = State.LOCATION_AD_SETUP
+        else:
+            state.existing_active_directory = False
+            state.location = State.LOCATION_SERVER_WAIT
+        state.save()
+        return http.HttpResponseRedirect(reverse('setup'))
+    return shortcuts.render(request, 'ad_type.html')        
+    
+def ad_setup(request):
+    if request.method == 'POST':
+        ad = ActiveDirectory.first_or_create()
+        state = State.first_or_create()
+
+        form = ActiveDirectoryForm(request.POST, instance=ad)
+        if form.is_valid():
+            form.save()
+
+            state.location = State.LOCATION_SERVER_WAIT
+            state.save()
+
+            msg = 'Updated Active Directory Information'
+            messages.info(request, msg)
+            return http.HttpResponseRedirect(reverse('setup'))
+    else:
+        form = ActiveDirectoryForm()
+    return shortcuts.render(request, 'ad_setup.html', {'form':form})
+
+    state = State.first_or_create()
+
+    
+def settings(request):
+    s = Settings.first_or_create()
+    if request.POST.get('existing_active_directory'):
+        s.existing_active_directory = True
+       
+
 
 def rdp_settings(request, pk):
     server = shortcuts.get_object_or_404(Server, pk=pk)
