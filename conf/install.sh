@@ -15,7 +15,7 @@ apt-get --yes install nodejs nodejs-legacy npm
 npm install -g bower
 
 # setup django
-pip install -r /vagrant/requirements.txt
+pip install -r /vagrant/conf/requirements.txt
 pip install django gunicorn django-crispy-forms django-bower
 
 /vagrant/manage.py syncdb --noinput
