@@ -1,7 +1,7 @@
 $log = "Application"
 $source = "RDS"
 $hostname = "UBUNTU"
-$schtask = "RDS join"
+$schtask = "RDS Join Task"
 
 Function CreateLog(){
   if(!(Get-EventLog -LogName $log -Source $source)){

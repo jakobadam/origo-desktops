@@ -22,6 +22,7 @@ Vagrant.configure("2") do |config|
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
     c.vm.box = "windows-2012R2"
+    c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
     c.vm.guest = :windows
     # c.vm.box = "rds"
 
@@ -33,6 +34,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :windows do |c|
     c.vm.hostname = "windows-server"
+    c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
     c.vm.box = "windows-2012R2"
     c.vm.guest = :windows
   end
