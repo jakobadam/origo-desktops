@@ -1,4 +1,4 @@
-@setlocal EnableDelayedExpansion EnableExtensions
+@setlocal EnableDelayedExpansion
 
 set TASK="RDS Install Task"
 set STEP=1
@@ -28,18 +28,21 @@ powershell -File %~dp0ad-add-forest.ps1
 goto :reboot 
 
 :step3
+
+echo "RDS deployment doesn't work:-(. Go install RDS in server manager:-("
 powershell -File %~dp0rds-add-deployment.ps1
-goto :reboot 
+pause
+call :join
+goto :finish
 
 :step4
 powershell -File %~dp0rds-add-collection.ps1
 
+:join
 :: Create scheduled task for reporting IP
 :: Reports back every min, stops on first success
 copy %~dp0join.ps1 %SystemDrive%\join.ps1
 schtasks /create /tn "RDS Join Task" /tr "powershell %SystemDrive%\join.ps1" /sc minute 
-
-goto :finish
 
 :reboot
 pause
