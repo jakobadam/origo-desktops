@@ -6,8 +6,8 @@ from django.conf import settings
 
 from django.core.files import File
 
-from rdp.models import Package
-from rdp import models
+from rds.models import Package
+from rds import models
 
 settings.MEDIA_ROOT = 'software'
 models.PACKAGE_DIR = settings.MEDIA_ROOT

@@ -15,15 +15,15 @@ urlpatterns = patterns('',
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', 'rdp.views.setup', name="setup"),
+    url(r'^$', 'rds.views.setup', name="setup"),
         
-    url(r'^packages/$', 'rdp.views.packages', name="packages"),
+    url(r'^packages/$', 'rds.views.packages', name="packages"),
     url(r'^packages/create/$', PackageCreate.as_view(), name="add_package"),    
     url(r'^packages/delete/(?P<pk>\d+)/$', PackageDelete.as_view(), name="delete_package"),
     url(r'^packages/update/(?P<pk>\d+)/$', PackageUpdate.as_view(), name='update_package'),
 
-    url(r'^packages/deploy/$', 'rdp.views.deploy_package', name="deploy_package"),
+    url(r'^packages/deploy/$', 'rds.views.deploy_package', name="deploy_package"),
     
-    url(r'^api/join/$', 'rdp.views.join', name="api_join"),
-    url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rdp.views.rdp_settings', name='rdp_settings')
+    url(r'^api/join/$', 'rds.views.join', name="api_join"),
+    url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings')
  )

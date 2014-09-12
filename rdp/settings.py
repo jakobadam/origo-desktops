@@ -34,7 +34,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'crispy_forms',
     'django_password_strength',
-    'rdp',
+    'rds',
     'djangobower',
     'caboskin'
 )
@@ -67,9 +67,9 @@ STATICFILES_FINDERS = (
 
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 
-ROOT_URLCONF = 'rdp.urls'
+ROOT_URLCONF = 'rds.urls'
 
-WSGI_APPLICATION = 'rdp.wsgi.application'
+WSGI_APPLICATION = 'rds.wsgi.application'
 
 
 # Database
@@ -128,5 +128,5 @@ from django.conf import global_settings
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'django.core.context_processors.media',
-    'rdp.context_processors.servers'
+    'rds.context_processors.servers'
 )

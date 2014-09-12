@@ -4,8 +4,8 @@ from django.conf import settings
 from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from rdp.forms import PackageForm
-from rdp import models
+from rds.forms import PackageForm
+from rds import models
 
 settings.MEDIA_ROOT = 'software'
 models.PACKAGE_DIR = settings.MEDIA_ROOT
