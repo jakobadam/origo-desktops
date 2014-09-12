@@ -197,7 +197,8 @@ class State(models.Model, Helper):
     LOCATION_AD_TYPE = 'ad_type'
     LOCATION_AD_SETUP = 'ad_setup'
     LOCATION_SERVER_WAIT = 'server_wait'
-
+    LOCATION_SERVER_SETUP = 'server_setup'
+    
     EXTERNAL = 'external'
     INTERNAL = 'internal'
 

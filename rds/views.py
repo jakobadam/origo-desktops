@@ -125,7 +125,6 @@ def deploy_package(request):
 
 def setup(request, **kwargs):
     state = State.first_or_create()
-    print 'state', state.location
 
     if state.location == State.LOCATION_SERVER_WAIT:
         return shortcuts.render(request, 'server_wait.html')            
@@ -135,25 +134,32 @@ def setup(request, **kwargs):
 
     if state.location == State.LOCATION_AD_SETUP:
         return http.HttpResponseRedirect(reverse('ad_setup'))
-        
-    # else:
-    #     if settings.existing_active_directory:
-    #         return shortcuts.render(request, 'ad_settings.html')
-    #     else:
-    #         return shortcuts.render(request, 'setup_waiting.html')            
 
-    # if request.method == 'POST':
-    #     form = ServerForm(data=request.POST, instance=server)
-    #     if form.is_valid():
-    #         form.save()
-    #         return http.HttpResponseRedirect(reverse('setup'))
-    # else:
-    #     form = ServerForm(instance=server)
+    if state.location == State.LOCATION_SERVER_SETUP:
+        return http.HttpResponseRedirect(reverse('server_setup'))
+            
+    raise Exception('TODO: Should not happen')
+
+def server_setup(request):
+    server = Server.objects.first()
+
+    if not server:
+        msg = 'There is no server in the database! Wait for it to join.'
+        return http.HttpResponseBadRequest(msg)
+    
+    if request.method == 'POST':
+        form = ServerForm(data=request.POST, instance=server)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect(reverse('setup'))
+    else:
+        form = ServerForm(instance=server)
 
     return shortcuts.render(request, 'setup.html', {
+        'form':form
+    })
 
-        })
-
+    
 @require_http_methods(['POST'])
 def cancel(request):
     state = State.first_or_create()
@@ -198,14 +204,6 @@ def ad_setup(request):
 
     state = State.first_or_create()
 
-    
-def settings(request):
-    s = Settings.first_or_create()
-    if request.POST.get('existing_active_directory'):
-        s.existing_active_directory = True
-       
-
-
 def rdp_settings(request, pk):
     server = shortcuts.get_object_or_404(Server, pk=pk)
     content_type = 'application/rdp; charset=utf-8'
@@ -221,6 +219,11 @@ def join(request):
     if not form.is_valid():
         return http.HttpResponseBadRequest(json.dumps(form.errors))
 
+    state = State.first_or_create()
+    if state.location == State.LOCATION_SERVER_WAIT:
+        state.location = State.LOCATION_SERVER_SETUP
+        state.save()
+    
     # FIXME: TODO !!!
     for s in Server.objects.all():
         s.delete()

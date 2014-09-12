@@ -26,7 +26,8 @@ urlpatterns = patterns('',
 
     url(r'^setup/ad/$', 'rds.views.ad_setup', name="ad_setup"),
     url(r'^setup/ad_type/$', 'rds.views.ad_type', name='ad_type'),
-    url(r'^setup/cancel/$', 'rds.views.cancel', name="cancel"),    
+    url(r'^setup/cancel/$', 'rds.views.cancel', name="cancel"),
+    url(r'^setup/server/$', 'rds.views.server_setup', name="server_setup"),    
         
     url(r'^api/join/$', 'rds.views.join', name="api_join"),
     url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings'),
