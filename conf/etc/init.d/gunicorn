@@ -15,19 +15,21 @@ DAEMON=/usr/local/bin/gunicorn
 NAME=gunicorn
 USER=www-data
 GROUP=www-data
-ROOT=/srv/www/rdps
+ROOT=/srv/www/rds
 PIDFILE=/var/run/gunicorn/gunicorn.pid
+LOGFILE=/var/log/gunicorn/gunicorn.log
 PORT=8000
 WORKERS=1
 SCRIPTNAME=/etc/init.d/$NAME
-APP_MODULE='rdp.wsgi:application'
+APP_MODULE='rds.wsgi:application'
 
 [ -x "$DAEMON" ] || exit 0
 [ ! -d /var/run/gunicorn ] && mkdir /var/run/gunicorn && chown www-data: /var/run/gunicorn
+[ ! -d /var/log/gunicorn ] && mkdir /var/log/gunicorn && chown www-data: /var/log/gunicorn
 
 start () {
     ARGS="--start --chuid $USER:$GROUP --chdir $ROOT --pidfile $PIDFILE --background --exec $DAEMON"
-    DAEMON_ARGS="$APP_MODULE -b 127.0.0.1:$PORT -p $PIDFILE"
+    DAEMON_ARGS="$APP_MODULE -b 127.0.0.1:$PORT -p $PIDFILE --log-file $LOGFILE"
     start-stop-daemon $ARGS --test > /dev/null || return 1
     start-stop-daemon $ARGS -- $DAEMON_ARGS || return 2
 }

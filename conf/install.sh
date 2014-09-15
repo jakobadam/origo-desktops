@@ -1,11 +1,12 @@
 #!/usr/bin/env sh
 
 # NOTE: When run with vagrant this script is present in /tmp
-rsync -avp /vagrant/conf/ /
+rsync -avp /vagrant/conf/etc/ /etc/
 
 mkdir -p /srv/www
-ln -s /vagrant /srv/www/rdps
+ln -s /vagrant /srv/www/rds
 
+apt-get update
 apt-get --yes install python-pip samba nginx sqlite3 git ipython
 
 # NOTE: We don't need this in production just the files

@@ -1,4 +1,4 @@
-upstream rdp_upstream {
+upstream rds_upstream {
     server 127.0.0.1:8000;
 }
 
@@ -23,12 +23,12 @@ server {
         
         proxy_read_timeout 3600s;
 
-        proxy_pass         http://rdp_upstream;
+        proxy_pass         http://rds_upstream;
     }
 
     location /static {    
         autoindex on;    
-        alias /srv/www/rdps/static;    
+        alias /srv/www/rds/static;    
     }
 
     location /uploads {

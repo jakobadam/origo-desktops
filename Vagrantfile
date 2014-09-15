@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
     c.vm.network :forwarded_port, guest: 8000, host: 8000
 
     c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
-    c.vm.provision "shell", path: "install.sh"
+    c.vm.provision "shell", path: "conf/install.sh"
   end
 
   config.vm.define :rds do |c|
