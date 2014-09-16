@@ -1,4 +1,6 @@
 import os
+import subprocess
+
 from django import forms
 
 from django_password_strength.widgets import PasswordStrengthInput
@@ -19,13 +21,28 @@ def _get_widget(placeholder):
 class ActiveDirectoryForm(forms.ModelForm):
 
     class Meta:
-        model = ActiveDirectory
+        model = Server
+        exclude = ('domain',)
+
+    def clean_ip(self):
+        ip = self.cleaned_data['ip']
+        status = subprocess.call(["/bin/ping", "-c 1", "-w 2", ip])
+        if status != 0:
+            raise forms.ValidationError('Could not ping %s' % ip)
+        return ip
 
 class ActiveDirectoryInternalForm(forms.ModelForm):
 
     class Meta:
-        model = ActiveDirectory
+        model = Server
         fields = ('domain', )
+        widgets = {
+            'domain': _get_widget('Enter FQDN e.g., example.com'),
+        }
+        error_messages = {
+            'domain':{'required': 'Domain must be set'},
+        }
+
                 
 class PackageForm(forms.ModelForm):
 
