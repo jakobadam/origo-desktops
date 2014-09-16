@@ -20,12 +20,16 @@ height: 200px;
 
   <div class="row">
 
-    <div class="col-xs-12">
+    <div class="col-md-2">
+      
+    </div>
 
-      <h3>Connect to Existing AD</h3>
+    <div class="col-md-8">
+
+      <h3>{{headline}}</h3>
 
       <div class="share mrl">
-        <form method="POST" action="{% url 'ad_setup' %}">
+        <form method="POST" action="{{action}}">
           <ul>
             <li>
               {{form|crispy}}              
@@ -41,10 +45,12 @@ height: 200px;
       
     </div>
 
+  </div>
+
+  <div class="row">
     <form method="POST" action="{% url 'cancel' %}">
       <button class="btn btn-link"><span class="fui-arrow-left"></span>Cancel</button>
     </form>
-
   </div>
 
 </div>

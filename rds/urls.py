@@ -24,7 +24,8 @@ urlpatterns = patterns('',
 
     url(r'^packages/deploy/$', 'rds.views.deploy_package', name="deploy_package"),
 
-    url(r'^setup/ad/$', 'rds.views.ad_setup', name="ad_setup"),
+    url(r'^setup/ad_external/$', 'rds.views.ad_external_setup', name="ad_external_setup"),
+    url(r'^setup/ad_internal/$', 'rds.views.ad_internal_setup', name="ad_internal_setup"),    
     url(r'^setup/ad_type/$', 'rds.views.ad_type', name='ad_type'),
     url(r'^setup/cancel/$', 'rds.views.cancel', name="cancel"),
     url(r'^setup/server/$', 'rds.views.server_setup', name="server_setup"),    

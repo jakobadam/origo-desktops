@@ -46,18 +46,29 @@ border: 1px solid transparent;
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li>
-          <div class="navbar-form dropdown">
-            <button class="btn-noborder dropdown-toggle dropdown" data-toggle="dropdown">
-              <span class="fui-gear"></span>
-            </button>
-            <span class="dropdown-arrow dropdown-arrow-inverse"></span>
+              {% for s in servers%}
+              <li>
+                <a target="_blank" title="RD Web"
+                   href="https://{{s.ip}}/rdweb"><span class="glyphicon glyphicon-globe"></span></a>
+              </li>
+              <li>
+                <a target="_blank" title="RDP Connection" href="{% url 'rdp_settings' pk=s.pk %}">
+                  <img width="20px" src="{% static 'rdp_icon.png' %}" /></a>
+              </li>
+              {% endfor %}
 
-            <ul class="dropdown-menu dropdown-inverse">
-            </ul>
+        <!-- <li> -->
+        <!--   <div class="navbar-form dropdown"> -->
+        <!--     <button class="btn-noborder dropdown-toggle dropdown" data-toggle="dropdown"> -->
+        <!--       <span class="fui-gear"></span> -->
+        <!--     </button> -->
+        <!--     <span class="dropdown-arrow dropdown-arrow-inverse"></span> -->
 
-          </div>
-        </li>
+        <!--     <ul class="dropdown-menu dropdown-inverse"> -->
+        <!--     </ul> -->
+
+        <!--   </div> -->
+        <!-- </li> -->
       </ul>
 
     </div>

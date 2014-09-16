@@ -14,6 +14,7 @@ from .forms import (
     PackageForm,
     JoinForm,
     ActiveDirectoryForm,
+    ActiveDirectoryInternalForm
     )
 
 from .models import (
@@ -132,9 +133,12 @@ def setup(request, **kwargs):
     if state.location == State.LOCATION_AD_TYPE:
         return http.HttpResponseRedirect(reverse('ad_type'))
 
-    if state.location == State.LOCATION_AD_SETUP:
-        return http.HttpResponseRedirect(reverse('ad_setup'))
+    if state.location == State.LOCATION_AD_EXTERNAL_SETUP:
+        return http.HttpResponseRedirect(reverse('ad_external_setup'))
 
+    if state.location == State.LOCATION_AD_INTERNAL_SETUP:
+        return http.HttpResponseRedirect(reverse('ad_internal_setup'))
+    
     if state.location == State.LOCATION_SERVER_SETUP:
         return http.HttpResponseRedirect(reverse('server_setup'))
             
@@ -155,7 +159,7 @@ def server_setup(request):
     else:
         form = ServerForm(instance=server)
 
-    return shortcuts.render(request, 'setup.html', {
+    return shortcuts.render(request, 'server_setup.html', {
         'form':form
     })
 
@@ -164,7 +168,10 @@ def server_setup(request):
 def cancel(request):
     state = State.first_or_create()
 
-    # TODO: do something here
+    for s in Server.objects.all():
+        s.delete()
+
+    # TODO: destroy virtual machines
     
     state.location = State.LOCATION_AD_TYPE
     state.save()
@@ -175,20 +182,22 @@ def ad_type(request):
     if request.method == 'POST':
         if request.POST.get('existing_active_directory'):
             state.existing_active_directory = True
-            state.location = State.LOCATION_AD_SETUP
+            state.location = State.LOCATION_AD_EXTERNAL_SETUP
         else:
             state.existing_active_directory = False
-            state.location = State.LOCATION_SERVER_WAIT
+            state.location = State.LOCATION_AD_INTERNAL_SETUP
         state.save()
         return http.HttpResponseRedirect(reverse('setup'))
     return shortcuts.render(request, 'ad_type.html')        
-    
-def ad_setup(request):
+
+def ad_setup(request, Form, action, headline):
+    """Handle external / internal AD
+    """
     if request.method == 'POST':
         ad = ActiveDirectory.first_or_create()
         state = State.first_or_create()
 
-        form = ActiveDirectoryForm(request.POST, instance=ad)
+        form = Form(request.POST, instance=ad)
         if form.is_valid():
             form.save()
 
@@ -199,10 +208,24 @@ def ad_setup(request):
             messages.info(request, msg)
             return http.HttpResponseRedirect(reverse('setup'))
     else:
-        form = ActiveDirectoryForm()
-    return shortcuts.render(request, 'ad_setup.html', {'form':form})
+        form = Form()
+    return shortcuts.render(request, 'ad_setup.html', {
+        'form':form,
+        'action':action,
+        'headline':headline
+        })
+    
+def ad_internal_setup(request):
+    Form = ActiveDirectoryInternalForm
+    headline = 'New AD Setup'
+    action = reverse('ad_internal_setup')
+    return ad_setup(request, Form, action, headline)
 
-    state = State.first_or_create()
+def ad_external_setup(request):
+    Form = ActiveDirectoryForm
+    headline = 'Connect with existing AD'
+    action = reverse('ad_external_setup')
+    return ad_setup(request, Form, action, headline)
 
 def rdp_settings(request, pk):
     server = shortcuts.get_object_or_404(Server, pk=pk)

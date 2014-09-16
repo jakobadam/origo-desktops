@@ -20,7 +20,13 @@ class ActiveDirectoryForm(forms.ModelForm):
 
     class Meta:
         model = ActiveDirectory
-        
+
+class ActiveDirectoryInternalForm(forms.ModelForm):
+
+    class Meta:
+        model = ActiveDirectory
+        fields = ('domain', )
+                
 class PackageForm(forms.ModelForm):
 
     class Meta:
