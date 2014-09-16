@@ -41,8 +41,7 @@ powershell -File %~dp0rds-add-collection.ps1
 :join
 :: Create scheduled task for reporting IP
 :: Reports back every min, stops on first success
-copy %~dp0join.ps1 %SystemDrive%\join.ps1
-schtasks /create /tn "RDS Join Task" /tr "powershell %SystemDrive%\join.ps1" /sc minute 
+join-task.bat
 
 :reboot
 pause

@@ -27,7 +27,7 @@ su vagrant -c 'yes n | /vagrant/manage.py bower install'
 mkdir /var/run/gunicorn
 chown www-data: /var/run/gunicorn
 rm /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
-ln -s /etc/nginx/sites-available/rdps /etc/nginx/sites-enabled/rdps
+ln -s /etc/nginx/sites-available/rds /etc/nginx/sites-enabled/rds
 
 # setup samba
 mkdir /srv/samba

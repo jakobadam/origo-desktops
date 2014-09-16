@@ -21,10 +21,9 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
-    c.vm.box = "windows-2012R2"
-    c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
+    c.vm.box_url = "file:///srv/boxes/rds.box"
+    c.vm.box = "rds"
     c.vm.guest = :windows
-    # c.vm.box = "rds"
 
     # Forward rdp
     c.vm.network :forwarded_port, guest: 3389, host: 3389
