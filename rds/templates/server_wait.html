@@ -4,6 +4,11 @@
 {% load crispy_forms_tags %}
 
 {% block page_title%}Starting up server{% endblock %}
+
+{% block head %}
+<meta http-equiv="refresh" content="5">
+{% endblock %}
+
 {% block navbar %}RDP Services{% endblock %}
 
 {% block body%}
@@ -21,7 +26,10 @@ height: 200px;
     <div id="spinner"></div>
   </div>
   
-  <h2 class="text-center"><small>Starting up your Windows server ...</small></h2>
+  <div class="text-center">
+    <h2><small>Starting up your Windows server ...</small></h2>
+    <p>Refreshing in <span id="seconds">5</span> seconds</p>
+  </div>
 
   <form method="POST" action="{% url 'cancel' %}">
     <button class="btn btn-link"><span class="fui-arrow-left"></span>Cancel</button>
@@ -59,6 +67,15 @@ $(document).ready(function(){
       //$('#modal').modal();
     }
   });
+
+  function counter(){
+    var elm = $('#seconds');
+    var seconds = parseInt(elm.html(),10);
+    var left = seconds - 1;
+    elm.html(left);
+    setTimeout(counter, 1000);
+  }
+  setTimeout(counter, 1000);
 });
 </script>
 {% endblock%}
