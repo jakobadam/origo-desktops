@@ -7,11 +7,17 @@ import glob
 
 import zipfile
 import winexe
+import subprocess
+import logging
+
+log = logging.getLogger('rds')
 
 from winexe.exceptions import RequestException
 
 PACKAGE_DIR = '%s' % (settings.MEDIA_ROOT)
 SAMBA_SHARE = '\\\\ubuntu\\share'
+
+print subprocess.check_output(['whereis','vagrant'])
 
 def generate_filename(instance, filename):
     """Create a filename like firefox31/software/firefox31.exe"""
@@ -230,8 +236,8 @@ class Server(models.Model):
     name = models.CharField(max_length=100, verbose_name='computer name')
     domain = models.CharField(max_length=100)
     user = models.CharField(max_length=100)
-    password = models.CharField(max_length=128, verbose_name='Password for Administrator account')
-
+    password = models.CharField(max_length=128, verbose_name='Password')
+    
     def __str__(self):
         return self.ip
-
+        

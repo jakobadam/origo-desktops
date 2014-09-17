@@ -119,7 +119,11 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
-        }
+        },
+        'rds': {
+            'handlers': ['console'],
+            'level': 'DEBUG',            
+            }
     }
 }
 
