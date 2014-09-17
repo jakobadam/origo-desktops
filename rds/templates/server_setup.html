@@ -12,30 +12,39 @@
 
   {% include '_menu.html' %}
 
-  <h3>RDS Server Setup</h3>
+  <div class="row">
 
-  <div class="share mrl">
+    <div class="col-md-2"></div>
 
-    <form action="{% url 'setup' %}" method="POST">
-      <ul>
-        <li>
-      {{form|crispy}}
-        </li>
-      </ul>
+    <div class="col-md-8">
+      <h3>RDS Server Setup</h3>
 
-      <button href="#" class="btn btn-primary btn-block btn-large">Next
-        <span class="fui-arrow-right"></span>
-      </button>
+      <div class="share mrl">
 
-    </form>
+        <form action="{% url 'setup' %}" method="POST">
+          <ul>
+            <li>
+              {{form|crispy}}
+            </li>
+          </ul>
+
+          <button href="#" class="btn btn-primary btn-block btn-large">Next
+            <span class="fui-arrow-right"></span>
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-2"></div>
+
   </div>
-
-
 </div>
 
   <form method="POST" action="{% url 'cancel' %}">
     <button class="btn btn-link"><span class="fui-arrow-left"></span>Cancel</button>
   </form>
+
 
 
 <script>
