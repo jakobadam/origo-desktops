@@ -26,10 +26,10 @@ height: 200px;
 
     <div class="col-md-8">
 
-      <h3>{{headline}}</h3>
+      <h3>Connect to existing AD</h3>
 
       <div class="share mrl">
-        <form method="POST" action="{{action}}">
+        <form method="POST" action="{% url 'ad_external_setup' %}">
           <ul>
             <li>
               {{form|crispy}}              
