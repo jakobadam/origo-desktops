@@ -3,7 +3,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block page_title%}Existing AD?{% endblock %}
+{% block page_title%}Select AD{% endblock %}
 {% block navbar %}RDP Services{% endblock %}
 
 {% block body%}
@@ -25,7 +25,7 @@ height: 200px;
 
     <div class="col-md-8">
 
-      <p>&nbsp;</p>
+      <h3>Select AD type</h3>
 
       <div class="share mrl">
         <form method="POST" id="" action="{% url 'ad_type' %}">
@@ -38,7 +38,7 @@ height: 200px;
                 <span class="icon-unchecked"></span>
                 <span class="icon-checked"></span>
               </span>
-              Connect to your existing Active Directory (AD)
+              Connect to existing Active Directory
             </label>
           </li>
           <li>
@@ -48,7 +48,7 @@ height: 200px;
                 <span class="icon-unchecked"></span>
                 <span class="icon-checked"></span>
               </span>
-              Include Active Directory
+              Create New Active Directory
             </label>
           </li>
         </ul>
@@ -68,7 +68,7 @@ height: 200px;
 
       <p><span class="fui-question-circle"></span> Remote Desktop Services (RDS) must connect to an Active
       Directory (AD). Therefore you have the option to <i>connect to
-      your existing AD</i> or include a new one.
+      your existing AD</i> or install a new one.
       </p>
 
     </div>
