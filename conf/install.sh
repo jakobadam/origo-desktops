@@ -58,7 +58,7 @@ service nmbd restart
 service smbd restart
 
 # winexe
-ln -s /vagrant/windowsscripts/winexe /usr/local/bin
+ln -s /home/vagrant/src/winexe/bin/winexe /usr/local/bin
 
 # start gunicorn on startup
 update-rc.d gunicorn defaults
