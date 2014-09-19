@@ -41,7 +41,6 @@ Vagrant.configure("2") do |config|
     # c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
     c.vm.box = "windows-2012R2"
     c.vm.guest = :windows
-    c.vm.core_number = 2
     c.vm.synced_folder ".", "/cygdrive/c/vagrant", type: "rsync", rsync__exclude: [".hg/", "software"]
   end
 
