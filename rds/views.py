@@ -152,7 +152,7 @@ def server_setup(request):
         form = ServerForm(data=request.POST, instance=server)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect(reverse('setup'))
+            return http.HttpResponseRedirect(reverse('packages'))
     else:
         form = ServerForm(instance=server)
 

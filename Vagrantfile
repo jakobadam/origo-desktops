@@ -21,9 +21,13 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
-    c.vm.box_url = "file:///srv/boxes/rds.box"
+    # c.vm.box_url = "file:///srv/boxes/rds.box"
+    c.vm.box_url = "http://192.168.50.137/rds.box"
     c.vm.box = "rds"
     c.vm.guest = :windows
+
+    c.vm.synced_folder ".", "/cygdrive/c/vagrant", type: "rsync", rsync__exclude: [".hg/", "software"]
+    # c.vm.synced_folder ".", "/vagrant", :type => "smb"
 
     # Forward rdp
     c.vm.network :forwarded_port, guest: 3389, host: 3389
@@ -33,9 +37,12 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :windows do |c|
     c.vm.hostname = "windows-server"
-    c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
+    c.vm.box_url = "http://192.168.50.137/windows-2012R2.box"
+    # c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
     c.vm.box = "windows-2012R2"
     c.vm.guest = :windows
+    c.vm.core_number = 2
+    c.vm.synced_folder ".", "/cygdrive/c/vagrant", type: "rsync", rsync__exclude: [".hg/", "software"]
   end
 
 end
