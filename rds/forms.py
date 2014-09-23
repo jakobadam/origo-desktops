@@ -48,7 +48,10 @@ class PackageForm(forms.ModelForm):
 
     class Meta:
         model = Package
-        exclude = ['message', 'installed']
+        exclude = ['message', 'installed', 'installed_path']
+        widgets = {
+            'args': _get_widget('Args to installer, e.g., -ms')
+            }
 
     def __init__(self, *args, **kwargs):
         super(PackageForm, self).__init__(*args, **kwargs)

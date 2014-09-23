@@ -9,25 +9,33 @@
 
   {% include '_menu.html' %}
 
-  <h2>{% if object.id %}Update{% else %}Add{% endif %} Package</h2>
+  <div class="row">
 
-  <form role="form" enctype="multipart/form-data" method="POST">
+    <div class="col-md-8 col-md-offset-2">
 
-    {{form|crispy}}
+      <h3>{% if object.id %}Update{% else %}Add{% endif %} Package</h3>      
 
-    <!-- <div class="form-group"> -->
-    <!--   <input type="name" class="form-control" id="name" placeholder="Enter program name"> -->
-    <!-- </div> -->
+      <div class="share mrl">
 
-    <!-- <div class="form-group"> -->
-    <!--   <label for="file">Select MSI</label> -->
-    <!--   <input type="file" id="file"> -->
-    <!-- </div> -->
+        <form role="form" enctype="multipart/form-data" method="POST">
+        
+          <ul>
+            <li>
+          {{form|crispy}}
+            </li>
+          </ul>
+        
+          <button type="submit" 
+                  class="btn btn-primary btn-block">{% if object.id %}Update{% else %}Add{% endif %}</button>
+        
+        </form>
+      </div>
 
-    <button type="submit" 
-            class="btn btn-primary">{% if object.id %}Update{% else %}Add{% endif %}</button>
+      <small><a href="{% url 'packages' %}"><span class="fui-arrow-left"></span>Cancel</a></small>
 
-  </form>
+    </div>
+  </div>
 
 </div>
+
 {% endblock%}
