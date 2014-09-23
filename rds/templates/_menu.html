@@ -2,19 +2,21 @@
 
 {% url 'setup' as setup %}
 {% url 'packages' as packages %}
-<ul class="nav nav-tabs">
+<div style="margin-bottom:30px">
+  <ul class="nav nav-tabs">
 
-  <li class="{% active setup %}">
-    <a href="{{setup}}">Setup <span class="glyphicon fui-gear"></span></a>
-  </li>
+    <li class="{% active setup %}">
+      <a href="{{setup}}">Setup <span class="glyphicon fui-gear"></span></a>
+    </li>
 
-  <li class="{% active packages %}">
-    <a href="{{packages}}">Packages <span class="glyphicon glyphicon-th"></span></a>
-  </li>
+    <li class="{% active packages %}">
+      <a href="{{packages}}">Software <span class="glyphicon glyphicon-th"></span></a>
+    </li>
 
-  <li>
-    <a href="#">Deployment</a>
-  </li>
+    <li>
+      <a href="#">Deployment</a>
+    </li>
 
-</ul>
+  </ul>
 
+</div>

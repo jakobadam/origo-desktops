@@ -240,3 +240,7 @@ def join(request):
         **form.cleaned_data)
     
     return http.HttpResponse()
+
+def software_cloud(request):
+    return shortcuts.render(request, 'software_cloud.html', {
+    })

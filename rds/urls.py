@@ -32,7 +32,8 @@ urlpatterns = patterns('',
     url(r'^packages/delete/(?P<pk>\d+)/$', PackageDelete.as_view(), name='delete_package'),
     url(r'^packages/update/(?P<pk>\d+)/$', PackageUpdate.as_view(), name='update_package'),
     url(r'^packages/deploy/$', 'rds.views.deploy_package', name='deploy_package'),
-        
+
+    url(r'^software/cloud/$', 'rds.views.software_cloud', name='software_cloud'),
     url(r'^api/join/$', 'rds.views.join', name='api_join'),
     url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings'),
 

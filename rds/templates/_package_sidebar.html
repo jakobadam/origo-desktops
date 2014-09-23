@@ -1,0 +1,51 @@
+<style>
+.bs-docs-sidebar .nav>.active>a, .bs-docs-sidebar .nav>.active:focus>a {
+padding-left: 18px;
+font-weight: 700;
+color: #16a085;
+background-color: transparent;
+border-right: 2px solid #16a085;
+}
+
+.nav .nav>li:hover>a {
+border-right: 2px solid #16a085;
+}
+
+.bs-docs-sidebar .nav .nav>li>a {
+padding-top: 1px;
+padding-bottom: 1px;
+padding-left: 30px;
+font-size: 12px;
+font-weight: 400;
+}
+h5{
+color:#rgb(186, 193, 200);
+}
+</style>
+
+
+
+<div class="bs-docs-sidebar hidden-print affix-top" role="complementary">
+  <ul class="nav bs-docs-sidenav">
+    <h5 style="margin-top:0"><small>RDS Deployment</small></h5>
+    <li>
+      <ul class="nav">
+        <li><a href="#glyphicons-how-to-use">Production</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <h5><small>Software Store</small></h5>
+      <ul class="nav">
+        <li><a href="{% url 'software_cloud' %}">Cloud</a></li>
+        <li class="active"><a href="#glyphicons-glyphs">Local</a></li>
+        <li><a href="{% url 'add_package' %}">Add local package</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="form-group">
+
+  </div>
+
+</div>

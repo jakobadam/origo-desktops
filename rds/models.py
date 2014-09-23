@@ -128,6 +128,10 @@ class Package(models.Model):
         self.save()
         return success
 
+    def _add_installed_path(self, server):
+        import winadm
+        path = winadm.whereis(self.name, **server.winexe_args)
+        
     def _add_package_dirs(self):
         for d in ('log', 'script'):
             os.makedirs(os.path.join(self.basepath,d))
@@ -186,7 +190,8 @@ def auto_add_files_on_change(sender, instance, **kwargs):
         executable = instance.find_executable()
         if executable:
             instance.file = executable
-            instance.save()
+        instance.installed = False
+        instance.save()
         
         instance._add_package_dirs()
         instance._add_test_script()
@@ -241,13 +246,15 @@ class Server(models.Model):
     user = models.CharField(max_length=100)
     password = models.CharField(max_length=128, verbose_name='Password')
 
-    def cmd(self, cmd):
-        kwargs = {
+    def winexe_args(self):
+        return {
             'user':self.user,
             'password':self.password,
             'host':self.ip
         }
-        return winexe.cmd(cmd, **kwargs)
+        
+    def cmd(self, cmd):
+        return winexe.cmd(cmd, **self.winexe_args)
     
     def __str__(self):
         return self.ip

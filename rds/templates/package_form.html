@@ -4,16 +4,18 @@
 {% block page_title%}Add Program{% endblock %}
 {% block navbar %}RDP Services{% endblock %}
 
-{% block body%}
-<div class="col-xs-12">
-
+{% block pre_body %}
   {% include '_menu.html' %}
+{% endblock %}
 
-  <div class="row">
+{% block body%}
+<div class="col-xs-3">
+  {% include '_package_sidebar.html' %}
+</div>
 
-    <div class="col-md-8 col-md-offset-2">
+<div class="col-xs-9">
 
-      <h3>{% if object.id %}Update{% else %}Add{% endif %} Package</h3>      
+      <h3 style="margin-top:0">{% if object.id %}Update{% else %}Upload{% endif %} Local Package</h3>      
 
       <div class="share mrl">
 
@@ -26,15 +28,13 @@
           </ul>
         
           <button type="submit" 
-                  class="btn btn-primary btn-block">{% if object.id %}Update{% else %}Add{% endif %}</button>
+                  class="btn btn-primary btn-block">{% if object.id %}Update{% else %}Upload{% endif %}</button>
         
         </form>
       </div>
 
       <small><a href="{% url 'packages' %}"><span class="fui-arrow-left"></span>Cancel</a></small>
 
-    </div>
-  </div>
 
 </div>
 
