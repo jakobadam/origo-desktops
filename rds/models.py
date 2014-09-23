@@ -114,14 +114,11 @@ class Package(models.Model):
             raise IOError('Trying to delete package files, but there are none')
     
     def deploy(self, server):
+        """Install software on server
+        """
         success = False
         try:
-            winexe_kwargs = {
-                'user':server.user,
-                'password':server.password,
-                'host':server.ip
-                }
-            output = winexe.cmd(self.cmd, **winexe_kwargs)
+            output = server.cmd(self.cmd)
             self.message = 'Deployed %s. %s' % (self,output)
             self.installed = True
             success = True
@@ -175,6 +172,8 @@ def auto_delete_old_files_on_change(sender, instance, **kwargs):
 
 @receiver(models.signals.post_save, sender=Package)
 def auto_add_files_on_change(sender, instance, **kwargs):
+    """On Package change unzip (if zipped) and update test script
+    """
     if hasattr(instance, '_file_updated'):
 
         if instance.zipped:
@@ -241,6 +240,14 @@ class Server(models.Model):
     domain = models.CharField(max_length=100)
     user = models.CharField(max_length=100)
     password = models.CharField(max_length=128, verbose_name='Password')
+
+    def cmd(self, cmd):
+        kwargs = {
+            'user':self.user,
+            'password':self.password,
+            'host':self.ip
+        }
+        return winexe.cmd(cmd, **kwargs)
     
     def __str__(self):
         return self.ip
