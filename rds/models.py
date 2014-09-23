@@ -28,12 +28,16 @@ class Package(models.Model):
     VALID_FILE_TYPES = ['exe','msi','zip']
 
     name = models.CharField(db_index=True, max_length=512)
+    version = models.CharField(max_length=20)
     file = models.FileField(
         upload_to=generate_filename,
         verbose_name='File',
         help_text='File type must one of (%s)' % ', '.join(VALID_FILE_TYPES))
     message = models.TextField()
+
     installed = models.BooleanField(default=False)
+    installed_path = models.CharField(max_length=1000, blank=True)
+    
     args = models.CharField(max_length=1000, blank=True)
 
     # def __init__(self, *args, **kwargs):
