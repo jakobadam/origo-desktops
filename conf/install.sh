@@ -52,6 +52,15 @@ cat >> /etc/samba/smb.conf <<EOF
     guest ok = yes
     read only = no
     create mask = 0777
+
+[scripts]
+    comment = Scripts
+    writable = yes
+    path = /srv/www/rds/windowsscripts
+    browsable = yes
+    guest ok = yes
+    read only = no
+    create mask = 0777
 EOF
 
 service nmbd restart
