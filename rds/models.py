@@ -6,13 +6,11 @@ import os
 import glob
 
 import zipfile
-import winexe
+import winrm
 import subprocess
 import logging
 
 log = logging.getLogger('rds')
-
-from winexe.exceptions import RequestException
 
 PACKAGE_DIR = '%s' % (settings.MEDIA_ROOT)
 SAMBA_SHARE = '\\\\ubuntu\\share'
@@ -25,7 +23,7 @@ def generate_filename(instance, filename):
 
 class Package(models.Model):
 
-    VALID_FILE_TYPES = ['exe','msi','zip']
+    VALID_FILE_TYPES = ['exe','msi','zip', 'EXE', 'MSI', 'ZIP']
 
     name = models.CharField(db_index=True, max_length=512)
     version = models.CharField(max_length=20)
@@ -116,21 +114,20 @@ class Package(models.Model):
     def deploy(self, server):
         """Install software on server
         """
-        success = False
-        try:
-            output = server.cmd(self.cmd)
-            self.message = 'Deployed %s. %s' % (self,output)
+        res = server.cmd(self.cmd, self.args.split())
+        success = res.status_code == 0
+        if success:
+            self.message = 'Deployed %s. %s' % (self,res.std_out)
             self.installed = True
-            success = True
-        except RequestException, e:
-            self.message = 'Error deploying %s: %s' % (self,str(e))
+        else:
+            self.message = 'Error deploying %s: %s' % (self,res.std_err)
             self.installed = False
         self.save()
         return success
 
     def _add_installed_path(self, server):
         import winadm
-        path = winadm.whereis(self.name, **server.winexe_args)
+        path = winadm.whereis(self.name, **server.winrm_args)
         
     def _add_package_dirs(self):
         for d in ('log', 'script'):
@@ -148,14 +145,16 @@ class Package(models.Model):
             directory = os.path.join(self.basepath, 'software')
             z.extractall(directory)
 
-    def find_executable(self):
+    def find_installer(self):
+        """Take a guess on which should be run to install
+        """
         for ext in ('exe', 'EXE', 'msi', 'MSI'):
             path = os.path.join(self.basepath, 'software', '*.%s' % ext)
             files = glob.glob(path)
             if files:
                 return files[0]
         return None
-            
+
 @receiver(models.signals.post_delete, sender=Package)
 def auto_delete_files_on_delete(sender, instance, **kwargs):
     """Delete relevant package files on `Package` delete
@@ -187,7 +186,7 @@ def auto_add_files_on_change(sender, instance, **kwargs):
             # run the post_save again            
         delattr(instance, '_file_updated')
         
-        executable = instance.find_executable()
+        executable = instance.find_installer()
         if executable:
             instance.file = executable
         instance.installed = False
@@ -246,15 +245,13 @@ class Server(models.Model):
     user = models.CharField(max_length=100)
     password = models.CharField(max_length=128, verbose_name='Password')
 
-    def winexe_args(self):
-        return {
-            'user':self.user,
-            'password':self.password,
-            'host':self.ip
-        }
+    def winrm_session(self):
+        return winrm.Session(self.ip, auth=(self.user, self.password))
         
-    def cmd(self, cmd):
-        return winexe.cmd(cmd, **self.winexe_args)
+    def cmd(self, cmd, args=()):
+        log.info('Running cmd: {}'.format(cmd))
+        s = self.winrm_session()
+        return s.run_cmd(cmd, args)
     
     def __str__(self):
         return self.ip
