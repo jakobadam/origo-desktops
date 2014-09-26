@@ -7,3 +7,4 @@ django-debug-toolbar
 django-grappelli
 django-password-strength
 gunicorn 
+ipdb
