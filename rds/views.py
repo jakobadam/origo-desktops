@@ -21,24 +21,22 @@ from .models import (
     Package,
     Server,
     State,
+    Application,
     ActiveDirectory,
     )
 
 from winexe.exceptions import RequestException
 
+
 import json
 
 PACKAGE_DIR = '/srv/samba/'
-
-def packages(request):
-    packages = Package.objects.all()
-    return shortcuts.render(request, 'package_list.html', {'packages': packages})
 
 class PackageEdit(object):
     model = Package
     template_name = 'package_form.html'
     form_class = PackageForm
-    success_url = reverse_lazy('packages')
+    success_url = reverse_lazy('software_local')
 
     def form_valid(self, form):
         file_updated = self.request.FILES.get('file')
@@ -67,7 +65,7 @@ class PackageDelete(PackageEdit, DeleteView):
 #             args = form.cleaned_data.get('args')
 #             p = Package(file=file, name=file.name, args=args)
 #             p.save()
-#             return http.HttpResponseRedirect(reverse('packages'))
+#             return http.HttpResponseRedirect(reverse('software_local'))
 #     else:
 #         form = PackageForm()
 
@@ -86,10 +84,10 @@ def delete_package(request):
     except RequestException, e:
         err = 'Error deleting %s. %s' % (package,str(e))
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('packages'))
+        return http.HttpResponseRedirect(reverse('software_local'))
 
     messages.success(request, msg)
-    return http.HttpResponseRedirect(reverse('packages'))
+    return http.HttpResponseRedirect(reverse('software_local'))
 
 @require_http_methods(['POST'])
 def deploy_package(request):
@@ -100,14 +98,14 @@ def deploy_package(request):
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('packages'))
+        return http.HttpResponseRedirect(reverse('software_local'))
 
     success = package.deploy(server)
     if success:
         messages.info(request, package.message)
     else:
         messages.error(request, package.message)
-    return http.HttpResponseRedirect(reverse('packages'))
+    return http.HttpResponseRedirect(reverse('software_local'))
 
 # @require_http_methods(['POST'])
 # def rename_setup(request):
@@ -152,7 +150,7 @@ def server_setup(request):
         form = ServerForm(data=request.POST, instance=server)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect(reverse('packages'))
+            return http.HttpResponseRedirect(reverse('software_local'))
     else:
         form = ServerForm(instance=server)
 
@@ -241,6 +239,47 @@ def join(request):
     
     return http.HttpResponse()
 
+def software_local(request):
+    packages = Package.objects.all()
+    return shortcuts.render(request, 'package_list.html', {'packages': packages})
+
 def software_cloud(request):
     return shortcuts.render(request, 'software_cloud.html', {
     })
+
+def _handle_winrm_exception(e, request):
+    from winrm.exceptions import (WinRMTransportError)
+    if e.__class__ == WinRMTransportError:
+        messages.error(request, 'RDS Server is not responding: {}'.format(e))
+    else:
+        messages.error(request, str(e))
+
+def deployment_applications(request):
+    server = Server.objects.first()
+    if server.updated:
+        try:
+            server.fetch_applications()
+            server.updated = False
+            server.save()
+        except Exception, e:
+            _handle_winrm_exception(e, request)
+
+    return shortcuts.render(request, 'deployment_applications.html', {
+        'applications':Application.objects.all()
+    })
+        
+@require_http_methods(['POST'])        
+def deployment_publish(request, pk):
+    app = shortcuts.get_object_or_404(Application, pk=pk)
+    # publish
+    app.publish()
+    messages.success(request, "Published '{}' to RDS".format(app))
+    return http.HttpResponseRedirect(reverse('deployment_applications'))
+
+@require_http_methods(['POST'])        
+def deployment_unpublish(request, pk):
+    app = shortcuts.get_object_or_404(Application, pk=pk)
+    # un-publish
+    app.unpublish()
+    messages.success(request, "Un-published '{}' to RDS".format(app))
+    return http.HttpResponseRedirect(reverse('deployment_applications'))

@@ -1,14 +1,14 @@
-from django.db import models
-from django.conf import settings
-from django.dispatch import receiver
-
 import os
 import glob
-
 import zipfile
 import winrm
 import subprocess
 import logging
+import winadm
+
+from django.db import models
+from django.conf import settings
+from django.dispatch import receiver
 
 log = logging.getLogger('rds')
 
@@ -233,7 +233,7 @@ class ActiveDirectory(models.Model, Helper):
     user = models.CharField(max_length=200)
     # TODO: hash it? Just one anyways
     password = models.CharField(max_length=200)
-     
+
 class Server(models.Model):
     """The windows server to install software on
 
@@ -244,6 +244,10 @@ class Server(models.Model):
     domain = models.CharField(max_length=100)
     user = models.CharField(max_length=100)
     password = models.CharField(max_length=128, verbose_name='Password')
+    updated = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.ip
 
     def winrm_session(self):
         return winrm.Session(self.ip, auth=(self.user, self.password))
@@ -252,7 +256,54 @@ class Server(models.Model):
         log.info('Running cmd: {}'.format(cmd))
         s = self.winrm_session()
         return s.run_cmd(cmd, args)
+
+    def software(self):
+        software = []
+        winadm.set_session(self.winrm_session())
+        res = winadm.whereis('')
+
+        if res.status_code == 0:
+            # Mozilla Firefox | C:\Program Files (x86)\Mozilla Firefox\firefox.exe
+            lines = res.std_out
     
+            lines = lines.split('\r\n')
+            for l in lines:
+                elms = l.split('|')
+                if len(elms) == 2:
+                    software.append({'name':elms[0],'path':elms[1]})
+        return software
+
+    def fetch_applications(self):
+
+        winadm.set_session(self.winrm_session())
+        res = winadm.whereis('')
+
+        if res.status_code == 0:
+            # Mozilla Firefox | C:\Program Files (x86)\Mozilla Firefox\firefox.exe
+            lines = res.std_out.split('\r\n')
+            for l in lines:
+                elms = l.split('|')
+                if len(elms) == 2:
+                    name = elms[0]
+                    path = elms[1]
+                    Application.objects.get_or_create(name=name, path=path, server=self)
+
+        # TODO: remove apps?
+
+class Application(models.Model):
+
+    name = models.CharField(max_length=100)
+    path = models.CharField(max_length=1000)
+    server = models.ForeignKey(Server)
+    published = models.BooleanField(default=False)
+
     def __str__(self):
-        return self.ip
-        
+        return self.name
+
+    def publish(self):
+        self.published = True
+        self.save()
+
+    def unpublish(self):
+        self.published = False
+        self.save()

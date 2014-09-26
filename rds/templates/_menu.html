@@ -1,22 +1,38 @@
 {% load active %}
 
 {% url 'setup' as setup %}
-{% url 'packages' as packages %}
+{% url 'software_local' as packages %}
+
 <div style="margin-bottom:30px">
-  <ul class="nav nav-tabs">
+  <ul class="nav nav-tabs menu">
 
-    <li class="{% active setup %}">
-      <a href="{{setup}}">Setup <span class="glyphicon fui-gear"></span></a>
-    </li>
-
-    <li class="{% active packages %}">
-      <a href="{{packages}}">Software <span class="glyphicon glyphicon-th"></span></a>
+    <li>
+      <a href="{% url 'setup' %}">Setup <span class="glyphicon fui-gear"></span></a>
     </li>
 
     <li>
-      <a href="#">Deployment</a>
+      <a href="{% url 'software' %}">Software <span class="glyphicon glyphicon-th"></span></a>
+    </li>
+
+    <li>
+      <a href="/deployment/">Deployment</a>
     </li>
 
   </ul>
 
 </div>
+
+<script>
+$(document).ready(function(){
+  var path = window.location.pathname;
+  // make current page active in sidebar
+  $('a[href="' + path + '"]').parent().attr('class', 'active');
+
+  // make tab active
+  $('.menu>li>a').each(function(i,elm){
+     if(path.indexOf(elm.pathname) === 0){
+        $(elm).parent().attr('class', 'active');
+     }
+  });
+})
+</script>

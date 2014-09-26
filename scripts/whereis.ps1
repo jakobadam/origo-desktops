@@ -9,7 +9,7 @@
 #     PS whereis.ps1 *
 $probe = $args[0]
 $path = "$env:ProgramData\Microsoft\Windows\Start Menu\Programs"
-$start_menu = ls $path -Recurse -Include *.lnk
+$start_menu = ls $path -Recurse -Include *.lnk | sort -property Name
 
 ForEach($lnk in $start_menu){
    $shell = New-Object -ComObject WScript.Shell
@@ -17,8 +17,8 @@ ForEach($lnk in $start_menu){
    $name = $lnk.BaseName
    $program_path = $shell.CreateShortcut($lnk).targetpath   
  
-   if($probe -eq "*"){
-        echo "$name | $program_path" 
+   if($probe -eq "" -or $probe -eq "*"){
+       echo "$name|$program_path" 
    }
 
    elseif($name -match $probe){
