@@ -17,13 +17,13 @@ ForEach($lnk in $start_menu){
    $name = $lnk.BaseName
    $program_path = $shell.CreateShortcut($lnk).targetpath   
  
-   # if($probe -eq "*"){
-   #     echo "$name | $program_path" 
-   # }
+   if($probe -eq "*"){
+        echo "$name | $program_path" 
+   }
 
-   # if($name -match $probe){
+   elseif($name -match $probe){
        echo "$name|$program_path"   
-#   }
+   }
    
 }
 
