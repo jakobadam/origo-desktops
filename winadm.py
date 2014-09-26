@@ -2,15 +2,9 @@
 import winrm
 import os
 
-import parser
-
 HERE = os.path.dirname(__file__)
 
-ip = '192.168.123.151'
-user = 'vagrant'
-password = 'V@grant'
-
-session = winrm.Session(ip, auth=(user, password))
+session = None
 
 def insert_ps_args(script, args=()):
     for i,arg in enumerate(args):
@@ -51,15 +45,14 @@ def whereis(name):
     script = open('{}/scripts/whereis.ps1'.format(HERE))
     return run_script(script, args=[name])
 
-# def _enable_log():
-#     import logging
-#     log = logging.getLogger('winexe')
-#     log.setLevel(logging.DEBUG)
-#     handler = logging.StreamHandler()
-#     log.addHandler(handler)
-
+def set_session(s):
+    global session
+    session = s
+    
 if __name__ == '__main__':    
-    #print whereis('word', **kwargs)
-    res = whereis('firefox')
-    print res.std_err
+    ip = '192.168.123.151'
+    user = 'vagrant'
+    password = 'V@grant'
+    set_session(winrm.Session(ip, auth=(user, password)))
+    res = whereis('')
     print res.std_out
