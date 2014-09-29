@@ -50,7 +50,7 @@ class Package(models.Model):
     def _add_test_script(self):
         script_path = self._test_script_path
         with open(script_path, 'w') as f:
-            f.write(self.cmd)
+            f.write(self.install_cmd)
 
         # Make it executable
         os.chmod(self._test_script_path, 0755)            
@@ -90,7 +90,7 @@ class Package(models.Model):
         return os.path.join(settings.MEDIA_URL, self.name, 'log', self.basename + '.log')
 
     @property
-    def cmd(self):
+    def install_cmd(self):
         root,ext = os.path.splitext(self.file.path)
         if ext == '.msi':
             return 'msiexec /L*+ "%s" /passive /i "%s" %s' % (self.log_samba_path, self.samba_path, self.args)
@@ -114,7 +114,7 @@ class Package(models.Model):
     def deploy(self, server):
         """Install software on server
         """
-        res = server.cmd(self.cmd, self.args.split())
+        res = server.cmd(self.install_cmd, self.args.split())
         success = res.status_code == 0
         if success:
             self.message = 'Deployed %s. %s' % (self,res.std_out)
@@ -193,7 +193,8 @@ def auto_add_files_on_change(sender, instance, **kwargs):
         instance.save()
         
         instance._add_package_dirs()
-        instance._add_test_script()
+    # always update test script
+    instance._add_test_script()
 
 
 class Helper(object):
