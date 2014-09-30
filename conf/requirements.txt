@@ -1,5 +1,5 @@
 -e git+https://github.com/jakobadam/django-caboskin.git#egg=caboskin
--e git+https://github.com/jakobadam/python-winexe#egg=winexe
+-e git+https://github.com/diyan/pywinrm#egg=pywinrm
 django 
 django-bower
 django-crispy-forms

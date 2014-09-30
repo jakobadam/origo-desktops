@@ -25,9 +25,6 @@ from .models import (
     ActiveDirectory,
     )
 
-from winexe.exceptions import RequestException
-
-
 import json
 
 PACKAGE_DIR = '/srv/samba/'
