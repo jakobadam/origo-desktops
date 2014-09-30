@@ -21,6 +21,7 @@
       <thead>
         <tr>
           <th>Name</th>
+          <th>Path</th>          
           <th style="min-width: 200px">Publish or Un-publish to Remote Apps
             <span class="tooltip-wrapper" 
                   data-toggle="tooltip" 
@@ -35,6 +36,7 @@
         {% for o in applications %}
         <tr>
           <td>{{o.name}}</td>
+          <td>{{o.path}}</td>
           <td>
             {% if o.published %}
             <form method="POST" action="{% url 'deployment_unpublish' pk=o.id %}" style="display:inline-block">

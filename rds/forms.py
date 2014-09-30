@@ -106,7 +106,7 @@ class ServerForm(forms.ModelForm):
 
     class Meta:
         model = Server
-        exclude = ('user',)
+        exclude = ('user','updated')
         
         widgets = {
             'ip': forms.TextInput(attrs={'readonly':True}),

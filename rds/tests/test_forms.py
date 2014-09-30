@@ -22,6 +22,7 @@ class TestPackageForm(TestCase):
         POST = {
             'args': '-ms',
             'name': 'Firefox',
+            'version': '31.0'
             }
         self.form = PackageForm(POST, self.FILES)
         self.assertTrue(self.form.is_valid())

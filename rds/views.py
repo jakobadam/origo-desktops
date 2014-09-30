@@ -97,11 +97,11 @@ def deploy_package(request):
         messages.error(request, err)
         return http.HttpResponseRedirect(reverse('software_local'))
 
-    success = package.deploy(server)
-    if success:
-        messages.info(request, package.message)
-    else:
-        messages.error(request, package.message)
+    from tasks import install_package
+
+    install_package(package, server)
+
+    messages.info(request, 'Installing {} on {}'.format(package, server))
     return http.HttpResponseRedirect(reverse('software_local'))
 
 # @require_http_methods(['POST'])

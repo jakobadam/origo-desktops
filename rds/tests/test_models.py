@@ -49,7 +49,7 @@ class TestPackage(TestCase):
         
     def test_cmd(self):
         expected = '"%s" %s' % ("\\\\ubuntu\\share\\Firefox 31\\software\\Firefox Setup 31.0.exe", self.args)
-        actual = self.p.cmd
+        actual = self.p.install_cmd
         self.assertEqual(actual, expected)
 
         

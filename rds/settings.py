@@ -22,6 +22,9 @@ GRAPPELLI_ADMIN_TITLE = 'RDS'
     
 FILE_UPLOAD_PERMISSIONS = 0755
 
+# Celery
+BROKER_URL = 'django://'
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -32,6 +35,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'gunicorn',
     'debug_toolbar',
+    'kombu.transport.django', # for celery
     'crispy_forms',
     'django_password_strength',
     'rds',
@@ -70,7 +74,6 @@ BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 ROOT_URLCONF = 'rds.urls'
 
 WSGI_APPLICATION = 'rds.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
