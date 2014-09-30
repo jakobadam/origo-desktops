@@ -50,7 +50,7 @@ def set_session(s):
     session = s
     
 if __name__ == '__main__':    
-    ip = '192.168.123.151'
+    ip = '192.168.123.136'
     user = 'vagrant'
     password = 'V@grant'
     set_session(winrm.Session(ip, auth=(user, password)))

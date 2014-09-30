@@ -245,7 +245,7 @@ class Server(models.Model):
     domain = models.CharField(max_length=100)
     user = models.CharField(max_length=100)
     password = models.CharField(max_length=128, verbose_name='Password')
-    updated = models.BooleanField(default=False)
+    updated = models.BooleanField(default=True)
     
     def __str__(self):
         return self.ip
