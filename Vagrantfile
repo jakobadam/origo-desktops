@@ -7,7 +7,9 @@ Vagrant.configure("2") do |config|
     c.vm.box = "ubuntu14"
     c.vm.box_url = "https://dl.dropboxusercontent.com/u/835753/ubuntu-14.04-server-vagrant-kvm.box"
     c.vm.hostname = "ubuntu"
-    # c.vm.network :private_network, ip: "192.168.123.10"
+
+    # Private networks doesn't work at the moment
+    # c.vm.network :private_network, ip: "192.168.50.10"
 
     # nginx
     c.vm.network :forwarded_port, guest: 80, host: 8080
@@ -36,12 +38,14 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :windows do |c|
-    c.vm.hostname = "windows-server"
+    c.vm.hostname = "test"
     c.vm.box_url = "http://192.168.50.137/windows-2012R2.box"
     # c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
     c.vm.box = "windows-2012R2"
     c.vm.guest = :windows
-    c.vm.synced_folder ".", "/cygdrive/c/vagrant", type: "rsync", rsync__exclude: [".hg/", "software"]
+    c.vm.synced_folder ".", "S:", :nfs => true, id: "vagrant-root"
+
+    # c.vm.synced_folder ".", "/cygdrive/c/vagrant", type: "rsync", rsync__exclude: [".hg/", "software"]
   end
 
 end

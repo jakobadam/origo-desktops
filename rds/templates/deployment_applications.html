@@ -15,7 +15,15 @@
 <div class="col-xs-9">
   {% if applications %}
 
+  <div class="pull-right">
+  <a title="Refresh applications" href="{% url 'refresh_applications' %}">
+    <span class="glyphicon glyphicon-refresh"></span>
+  </a>
+</div>
+
   <h1>Available Applications</h1>
+
+
   <div class="table-responsive">
     <table class="table table-striped">
       <thead>

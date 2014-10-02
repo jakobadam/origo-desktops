@@ -39,6 +39,8 @@ urlpatterns = patterns('',
     url(r'^software/local/deploy/$', 'rds.views.deploy_package', name='deploy_package'),
     
     url(r'^deployment/applications/$', 'rds.views.deployment_applications', name='deployment_applications'),
+    url(r'^deployment/applications/refresh/$', 'rds.views.refresh_applications', name='refresh_applications'),
+
     url(r'^deployment/publish/(?P<pk>\d+)/$', 'rds.views.deployment_publish', name='deployment_publish'),
     url(r'^deployment/unpublish/(?P<pk>\d+)/$', 'rds.views.deployment_unpublish', name='deployment_unpublish'),        
 

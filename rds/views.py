@@ -245,9 +245,17 @@ def software_cloud(request):
     })
 
 def _handle_winrm_exception(e, request):
-    from winrm.exceptions import (WinRMTransportError)
-    if e.__class__ == WinRMTransportError:
+    from winrm.exceptions import (
+        WinRMTransportError,
+        UnauthorizedError
+        )
+    error = e.__class__
+    if error == WinRMTransportError:
         messages.error(request, 'RDS Server is not responding: {}'.format(e))
+    elif error == UnauthorizedError:
+        url = reverse('setup')
+        messages.error(request, 'Unauthorized to access RDS Server: {} \
+Please update the credentials in <a href="{}">Setup</a> '.format(e, url))        
     else:
         messages.error(request, str(e))
 
@@ -256,6 +264,7 @@ def deployment_applications(request):
     if server.updated:
         try:
             server.fetch_applications()
+            messages.success(request, 'Fetched all applications from the start menu on the RDS server')
             server.updated = False
             server.save()
         except Exception, e:
@@ -273,10 +282,18 @@ def deployment_publish(request, pk):
     messages.success(request, "Published '{}' to RDS".format(app))
     return http.HttpResponseRedirect(reverse('deployment_applications'))
 
-@require_http_methods(['POST'])        
+@require_http_methods(['POST'])
 def deployment_unpublish(request, pk):
     app = shortcuts.get_object_or_404(Application, pk=pk)
     # un-publish
     app.unpublish()
     messages.success(request, "Un-published '{}' to RDS".format(app))
     return http.HttpResponseRedirect(reverse('deployment_applications'))
+
+def refresh_applications(request):
+    server = Server.objects.first()
+    server.updated = True
+    server.save()
+    return http.HttpResponseRedirect(reverse('deployment_applications'))
+    
+    
