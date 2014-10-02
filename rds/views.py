@@ -31,9 +31,9 @@ PACKAGE_DIR = '/srv/samba/'
 
 class PackageEdit(object):
     model = Package
-    template_name = 'package_form.html'
+    template_name = 'package_local_form.html'
     form_class = PackageForm
-    success_url = reverse_lazy('software_local')
+    success_url = reverse_lazy('packages_local')
 
     def form_valid(self, form):
         file_updated = self.request.FILES.get('file')
@@ -62,7 +62,7 @@ class PackageDelete(PackageEdit, DeleteView):
 #             args = form.cleaned_data.get('args')
 #             p = Package(file=file, name=file.name, args=args)
 #             p.save()
-#             return http.HttpResponseRedirect(reverse('software_local'))
+#             return http.HttpResponseRedirect(reverse('packages_local'))
 #     else:
 #         form = PackageForm()
 
@@ -81,10 +81,10 @@ def delete_package(request):
     except RequestException, e:
         err = 'Error deleting %s. %s' % (package,str(e))
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('software_local'))
+        return http.HttpResponseRedirect(reverse('packages_local'))
 
     messages.success(request, msg)
-    return http.HttpResponseRedirect(reverse('software_local'))
+    return http.HttpResponseRedirect(reverse('packages_local'))
 
 @require_http_methods(['POST'])
 def deploy_package(request):
@@ -95,14 +95,14 @@ def deploy_package(request):
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('software_local'))
+        return http.HttpResponseRedirect(reverse('packages_local'))
 
     from tasks import install_package
 
     install_package(package, server)
 
     messages.info(request, 'Installing {} on {}'.format(package, server))
-    return http.HttpResponseRedirect(reverse('software_local'))
+    return http.HttpResponseRedirect(reverse('packages_local'))
 
 # @require_http_methods(['POST'])
 # def rename_setup(request):
@@ -147,7 +147,7 @@ def server_setup(request):
         form = ServerForm(data=request.POST, instance=server)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect(reverse('software_local'))
+            return http.HttpResponseRedirect(reverse('packages_local'))
     else:
         form = ServerForm(instance=server)
 
@@ -236,12 +236,12 @@ def join(request):
     
     return http.HttpResponse()
 
-def software_local(request):
+def packages_local(request):
     packages = Package.objects.all()
-    return shortcuts.render(request, 'package_list.html', {'packages': packages})
+    return shortcuts.render(request, 'package_local_list.html', {'packages': packages})
 
-def software_cloud(request):
-    return shortcuts.render(request, 'software_cloud.html', {
+def packages_cloud(request):
+    return shortcuts.render(request, 'package_cloud_list.html', {
     })
 
 def _handle_winrm_exception(e, request):
@@ -259,7 +259,30 @@ Please update the credentials in <a href="{}">Setup</a> '.format(e, url))
     else:
         messages.error(request, str(e))
 
-def deployment_applications(request):
+        
+@require_http_methods(['POST'])        
+def deployment_publish(request, pk):
+    app = shortcuts.get_object_or_404(Application, pk=pk)
+    # publish
+    app.publish()
+    messages.success(request, "Published '{}' to RDS".format(app))
+    return http.HttpResponseRedirect(reverse('applications'))
+
+@require_http_methods(['POST'])
+def deployment_unpublish(request, pk):
+    app = shortcuts.get_object_or_404(Application, pk=pk)
+    # un-publish
+    app.unpublish()
+    messages.success(request, "Un-published '{}' to RDS".format(app))
+    return http.HttpResponseRedirect(reverse('applications'))
+
+def refresh_applications(request):
+    server = Server.objects.first()
+    server.updated = True
+    server.save()
+    return http.HttpResponseRedirect(reverse('applications'))
+
+def applications(request):
     server = Server.objects.first()
     if server.updated:
         try:
@@ -270,30 +293,12 @@ def deployment_applications(request):
         except Exception, e:
             _handle_winrm_exception(e, request)
 
-    return shortcuts.render(request, 'deployment_applications.html', {
+    return shortcuts.render(request, 'application_list.html', {
         'applications':Application.objects.all()
     })
-        
-@require_http_methods(['POST'])        
-def deployment_publish(request, pk):
-    app = shortcuts.get_object_or_404(Application, pk=pk)
-    # publish
-    app.publish()
-    messages.success(request, "Published '{}' to RDS".format(app))
-    return http.HttpResponseRedirect(reverse('deployment_applications'))
-
-@require_http_methods(['POST'])
-def deployment_unpublish(request, pk):
-    app = shortcuts.get_object_or_404(Application, pk=pk)
-    # un-publish
-    app.unpublish()
-    messages.success(request, "Un-published '{}' to RDS".format(app))
-    return http.HttpResponseRedirect(reverse('deployment_applications'))
-
-def refresh_applications(request):
-    server = Server.objects.first()
-    server.updated = True
-    server.save()
-    return http.HttpResponseRedirect(reverse('deployment_applications'))
     
+def packages(request):
+    packages = Package.objects.all()
+    return shortcuts.render(request, 'package_local_list.html', {'packages': packages})
     
+

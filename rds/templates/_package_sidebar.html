@@ -29,16 +29,17 @@ color:#rgb(186, 193, 200);
     <h5 style="margin-top:0"><small>RDS Deployment</small></h5>
     <li>
       <ul class="nav">
-        <li><a href="{% url 'deployment_applications'%}">Applications</a></li>
+        <li><a href="{% url 'applications'%}">Applications</a></li>
+        <li><a href="{% url 'packages' %}">Packages</a></li>
       </ul>
     </li>
 
     <li>
       <h5><small>Software Store</small></h5>
       <ul class="nav">
-        <li><a href="{% url 'software_cloud' %}">Cloud</a></li>
-        <li><a href="{% url 'software_local' %}">Local</a></li>
-        <li><a href="{% url 'add_package' %}">Add local package</a></li>
+        <li><a href="{% url 'packages_cloud' %}">Cloud <span class="glyphicon glyphicon-cloud"></span></a></li>
+        <li><a href="{% url 'packages_local' %}">Local <span class="glyphicon glyphicon-folder-open"></span></a></li>
+        <li><a href="{% url 'add_package' %}">Add local package <span class="glyphicon glyphicon-upload"></span></a></li>
       </ul>
     </li>
   </ul>

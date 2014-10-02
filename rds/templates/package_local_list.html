@@ -14,7 +14,7 @@
 </div>
 
 <div class="col-xs-9">
-  <h1>Local Packages</h1>
+  <h1>Packages</h1>
   {% if packages %}
   <div class="table-responsive">
     <table class="table table-striped">
@@ -71,9 +71,17 @@
       </tbody>
 
     </table>
+
+    <p>TODO: Removal of packages</p>
   </div>
   {% else %}
-  No packages yet
+  <div class="well">
+    There are no packages selected for installation yet. You can
+    select some from the <a href="{% url 'packages_cloud'%}">package
+    cloud</a> or upload you own at <a href="{% url 'add_package'%}">add
+    local package</a>
+  </div>
+
   {% endif %}
 </div>
 {% endblock%}
