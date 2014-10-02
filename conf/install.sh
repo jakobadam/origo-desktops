@@ -56,7 +56,7 @@ cat >> /etc/samba/smb.conf <<EOF
 [scripts]
     comment = Scripts
     writable = yes
-    path = /srv/www/rds/windowsscripts
+    path = /srv/www/rds/scripts
     browsable = yes
     guest ok = yes
     read only = no
