@@ -11,7 +11,6 @@ SECRET_KEY = '*e_x1qszxuff4oq)7aq*&-*iop=i)3p0w(vpwm*3v_klm#@!q$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 TEMPLATE_DEBUG = True
 
@@ -34,7 +33,6 @@ INSTALLED_APPS = (
     'grappelli',
     'django.contrib.admin',
     'gunicorn',
-    'debug_toolbar',
     'kombu.transport.django', # for celery
     'crispy_forms',
     'django_password_strength',
@@ -131,9 +129,23 @@ LOGGING = {
 }
 
 from django.conf import global_settings
-
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'django.core.context_processors.media',
     'rds.context_processors.servers'
 )
+
+if DEBUG:
+    # DBar is skipped if INTERNAL_IP doesn't match the requests
+    # bypass that
+    def always_true(request):
+        return True
+
+    INSTALLED_APPS += (
+        'debug_toolbar',
+    )
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+        'SHOW_TOOLBAR_CALLBACK': "%s.always_true" % __name__,
+    }
+
