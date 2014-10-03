@@ -237,20 +237,22 @@ def join(request):
     return http.HttpResponse()
 
 def packages_local(request):
-    packages = Package.objects.all()
-    return shortcuts.render(request, 'package_local_list.html', {'packages': packages})
+    packages = Package.objects.all()    
+    return shortcuts.render(request, 'package_local_list.html', {
+        'packages': packages
+    })
 
 def packages_cloud(request):
     return shortcuts.render(request, 'package_cloud_list.html', {
     })
 
 def packages_server(request):
-    packages = Package.objects.all()
+    packages = Package.objects.filter(installed=True)    
     server = Server.objects.first()
     return shortcuts.render(request, 'package_server_list.html', {
         'packages': packages,
         'server': server
-        })
+    })
 
 def _handle_winrm_exception(e, request):
     from winrm.exceptions import (

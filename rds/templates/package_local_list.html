@@ -14,7 +14,8 @@
 </div>
 
 <div class="col-xs-9">
-  <h1>Packages</h1>
+
+  <h1>Local Packages</h1>
   {% if packages %}
   <div class="table-responsive">
     <table class="table table-striped">
@@ -53,12 +54,6 @@
                 <span class="glyphicon glyphicon-pencil"></span></button>
             </form>
 
-            <form method="GET" action="{{p.log_url}}" style="display:inline-block">
-              <button type="submit" title="Show Log"
-                      class="btn btn-primary btn-xs">
-                <span class="glyphicon glyphicon-file"></span></button>
-            </form>
-
             <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
               <button type="submit" title="Delete"
                       class="btn btn-danger btn-xs">
@@ -72,14 +67,11 @@
 
     </table>
 
-    <p>TODO: Removal of packages</p>
   </div>
   {% else %}
   <div class="well">
-    There are no packages selected for installation yet. You can
-    select some from the <a href="{% url 'packages_cloud'%}">package
-    cloud</a> or upload you own at <a href="{% url 'add_package'%}">add
-    local package</a>
+    There are no packages, upload can upload them at 
+    <a href="{% url 'add_package'%}">add local package</a>
   </div>
 
   {% endif %}
