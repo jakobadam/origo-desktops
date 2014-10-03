@@ -2,8 +2,9 @@ from django.conf.urls import (
     patterns, url, include
     )
 from django.core.urlresolvers import (reverse_lazy)
-
 from django.views.generic.base import RedirectView
+
+from django.conf import settings
 
 from django.contrib import admin
 admin.autodiscover()
@@ -38,7 +39,7 @@ urlpatterns = patterns('',
     url(r'^software/local/update/(?P<pk>\d+)/$', PackageUpdate.as_view(), name='update_package'),
     url(r'^software/local/deploy/$', 'rds.views.deploy_package', name='deploy_package'),
 
-    url(r'^software/server/packages$', 'rds.views.packages', name='packages'),
+    url(r'^software/server/packages$', 'rds.views.packages_server', name='packages_server'),
     url(r'^software/server/applications/$', 'rds.views.applications', name='applications'),
     url(r'^software/server/applications/refresh/$', 'rds.views.refresh_applications', name='refresh_applications'),
 
@@ -49,3 +50,4 @@ urlpatterns = patterns('',
     url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings'),
 
      )
+

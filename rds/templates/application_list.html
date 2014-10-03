@@ -21,8 +21,22 @@
   </a>
 </div>
 
-  <h1>Available Applications</h1>
+  <h1>Applications <small>{{server.name}}.{{server.domain}}</small></h1>
 
+  <div class="alert alert-info alert-dismissible fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>Heads Up!</strong> This is a list of applications in the start menu on the server '{{server.name}}'. Apps are published by clicking the green publish icon
+    <button title="Publish Remote Apps" class="btn btn-primary btn-xs">
+      <span class="glyphicon glyphicon-share"></span>
+    </button>
+    
+    ; and removed again by clicking on
+    <button title="Remove from Remote Apps" class="btn btn-primary btn-danger btn-xs">
+      <span class="glyphicon glyphicon-remove"></span>
+    </button>.
+
+    New applications are added to this list by selecting them for install in the <a class="alert-link" href="{% url 'packages_cloud'%}">packages cloud</a> or in the local store with your own uploaded packages.
+  </div>
 
   <div class="table-responsive">
     <table class="table table-striped">
