@@ -21,9 +21,6 @@ GRAPPELLI_ADMIN_TITLE = 'RDS'
     
 FILE_UPLOAD_PERMISSIONS = 0755
 
-# Celery
-BROKER_URL = 'django://'
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,7 +30,6 @@ INSTALLED_APPS = (
     'grappelli',
     'django.contrib.admin',
     'gunicorn',
-    'kombu.transport.django', # for celery
     'crispy_forms',
     'django_password_strength',
     'rds',
@@ -108,23 +104,39 @@ MEDIA_URL = '/uploads/'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
-
+    'formatters': {
+        'verbose': {
+            'format': '[%(asctime)s] [%(process)d] [%(levelname)s] %(module)s %(message)s'
+        }
+    },
     'handlers': {
         'console': {
             'level': 'DEBUG',
-            'class': 'logging.StreamHandler'
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+            },
+        'file': {
+            'level':'DEBUG',
+            'class':'logging.FileHandler',
+            'filename': '/var/log/gunicorn/django.log',
+            'formatter':'verbose'            
             }
     },    
     'loggers': {
-        'winexe': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
+        '':{
+            'handlers': ['console', 'file'],
+            'level': 'INFO'
+        },
+        'django': {
+            'handlers': ['console', 'file'],
+            'propagate': False,
+            'level': 'INFO',
         },
         'rds': {
-            'handlers': ['console'],
-            'level': 'DEBUG',            
-            }
+            'handlers': ['console', 'file'],
+            'propagate': False,            
+            'level': 'DEBUG'
+        }
     }
 }
 

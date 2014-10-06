@@ -2,20 +2,17 @@ import os
 import glob
 import zipfile
 import winrm
-import subprocess
 import logging
 import winadm
+import shutil
 
 from django.db import models
 from django.conf import settings
-from django.dispatch import receiver
 
-log = logging.getLogger('rds')
+log = logging.getLogger(__name__)
 
 PACKAGE_DIR = '%s' % (settings.MEDIA_ROOT)
 SAMBA_SHARE = '\\\\ubuntu\\share'
-
-print subprocess.check_output(['whereis','vagrant'])
 
 def generate_filename(instance, filename):
     """Create a filename like firefox31/software/firefox31.exe"""
@@ -38,22 +35,40 @@ class Package(models.Model):
     
     args = models.CharField(max_length=1000, blank=True)
 
-    # def __init__(self, *args, **kwargs):
-    #     self._file = kwargs.get('file')
-    #     if self._file:
-    #         del kwargs['file']
-    #     super(Package, self).__init__(*args, **kwargs)
-
     def __str__(self):
         return self.name
+                
+    def save(self, *args, **kwargs):
+        log.info('Saving Package {}'.format(self))
+        # file updated is an attribute that is explicitly set from the view
+        file_updated = kwargs.get('file_updated')
+        if file_updated:
+            del kwargs['file_updated']
         
-    def _add_test_script(self):
+        if self.pk:
+            old_instance = Package.objects.get(pk=self.pk)
+            if file_updated:
+                old_instance.delete_files()            
+
+        r = super(Package, self).save(*args, **kwargs)
+
+        if file_updated:
+            from rds import tasks
+            tasks.process_upload.delay(self.pk)
+        return r
+
+    def delete(self, *args, **kwargs):
+        self.delete_files()
+        return super(Package, self).delete()
+        
+    def add_script(self):
         script_path = self._test_script_path
         with open(script_path, 'w') as f:
             f.write(self.install_cmd)
 
         # Make it executable
-        os.chmod(self._test_script_path, 0755)            
+        os.chmod(self._test_script_path, 0755)
+        log.info('Added install test script "{}"'.format(script_path))
 
     @property
     def _test_script_path(self):
@@ -95,43 +110,30 @@ class Package(models.Model):
         if ext == '.msi':
             return 'msiexec /L*+ "%s" /passive /i "%s" %s' % (self.log_samba_path, self.samba_path, self.args)
         return '"%s" %s' % (self.samba_path, self.args)
-
-    def file_updated(self):
-        """Called from the view, which sucks...
-        TODO: Register that the file is updated
-        """
-        self._file_updated = True
                 
     def delete_files(self):
         """Delete software folder with install files and test files
         """
-        import shutil
-        if self.file.path:
-            shutil.rmtree(self.basepath)
-        else:
-            raise IOError('Trying to delete package files, but there are none')
+        log.info('Deleting package "{}" from filesystem'.format(self.path))
+        if self.file:
+            file_path = self.file.path
+            if os.path.isfile(file_path):
+                shutil.rmtree(self.basepath)
+                return
+        log.info('Trying to delete package files, but there are none "{}"'.format(self))
     
-    def deploy(self, server):
+    def install(self, server):
         """Install software on server
         """
-        res = server.cmd(self.install_cmd, self.args.split())
-        success = res.status_code == 0
-        if success:
-            self.message = 'Deployed %s. %s' % (self,res.std_out)
-            self.installed = True
-        else:
-            self.message = 'Error deploying %s: %s' % (self,res.std_err)
-            self.installed = False
-        self.save()
-        return success
-
-    def _add_installed_path(self, server):
-        import winadm
-        path = winadm.whereis(self.name, **server.winrm_args)
+        log.info('Adding install tasks for package "{}"'.format(self))
+        from rds import tasks
+        tasks.install_package.delay(self.pk, server.pk)
         
-    def _add_package_dirs(self):
-        for d in ('log', 'script'):
-            os.makedirs(os.path.join(self.basepath,d))
+    def add_dirs(self):
+        dirs = [os.path.join(self.basepath, d) for d in ('log', 'script')]
+        log.info('Creating package dirs: {}'.format(dirs))        
+        for d in dirs:
+            os.makedirs(d)
         os.chmod(os.path.join(self.basepath,'log'), 0777)
 
     @property
@@ -140,7 +142,7 @@ class Package(models.Model):
         return ext == '.zip'
 
     def unzip(self):
-        assert self.zipped, "Can't unzip none zip file"
+        log.info('Unzipping "{}"'.format(self.file.path))
         with zipfile.ZipFile(self.file.path) as z:
             directory = os.path.join(self.basepath, 'software')
             z.extractall(directory)
@@ -154,47 +156,6 @@ class Package(models.Model):
             if files:
                 return files[0]
         return None
-
-@receiver(models.signals.post_delete, sender=Package)
-def auto_delete_files_on_delete(sender, instance, **kwargs):
-    """Delete relevant package files on `Package` delete
-    """
-    if instance.file:
-        file_path = instance.file.path
-        if os.path.isfile(file_path):
-            instance.delete_files()
-            
-@receiver(models.signals.pre_save, sender=Package)
-def auto_delete_old_files_on_change(sender, instance, **kwargs):
-    """Delete files on `Package` update
-    """
-    if hasattr(instance, '_file_updated'):
-        if instance.pk:
-            old_instance = Package.objects.get(pk=instance.pk)
-            old_instance.delete_files()
-
-@receiver(models.signals.post_save, sender=Package)
-def auto_add_files_on_change(sender, instance, **kwargs):
-    """On Package change unzip (if zipped) and update test script
-    """
-    if hasattr(instance, '_file_updated'):
-
-        if instance.zipped:
-            instance.unzip()
-
-            # We do some additional processing and don't want to
-            # run the post_save again            
-        delattr(instance, '_file_updated')
-        
-        executable = instance.find_installer()
-        if executable:
-            instance.file = executable
-        instance.installed = False
-        instance.save()
-        
-        instance._add_package_dirs()
-    # always update test script
-    instance._add_test_script()
 
 
 class Helper(object):
@@ -248,7 +209,7 @@ class Server(models.Model):
     updated = models.BooleanField(default=True)
     
     def __str__(self):
-        return self.ip
+        return "{} ({})".format(self.name, self.ip)
 
     def winrm_session(self):
         return winrm.Session(self.ip, auth=(self.user, self.password))
@@ -257,22 +218,6 @@ class Server(models.Model):
         log.info('Running cmd: {}'.format(cmd))
         s = self.winrm_session()
         return s.run_cmd(cmd, args)
-
-    def software(self):
-        software = []
-        winadm.set_session(self.winrm_session())
-        res = winadm.whereis('')
-
-        if res.status_code == 0:
-            # Mozilla Firefox | C:\Program Files (x86)\Mozilla Firefox\firefox.exe
-            lines = res.std_out
-    
-            lines = lines.split('\r\n')
-            for l in lines:
-                elms = l.split('|')
-                if len(elms) == 2:
-                    software.append({'name':elms[0],'path':elms[1]})
-        return software
 
     def fetch_applications(self):
 
@@ -308,3 +253,6 @@ class Application(models.Model):
     def unpublish(self):
         self.published = False
         self.save()
+                
+import rds.signals
+rds.signals

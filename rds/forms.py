@@ -9,7 +9,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.helper import FormHelper
 
-from .models import (
+from rds.models import (
     Server,
     Package,
     ActiveDirectory,

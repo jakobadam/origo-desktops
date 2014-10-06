@@ -1,3 +1,6 @@
+import logging
+import json
+
 from django import shortcuts
 from django import http
 from django.core.urlresolvers import (reverse, reverse_lazy)
@@ -9,7 +12,7 @@ from django.views.generic.edit import (
     UpdateView
     )
 
-from .forms import (
+from rds.forms import (
     ServerForm,
     PackageForm,
     JoinForm,
@@ -17,7 +20,7 @@ from .forms import (
     ActiveDirectoryInternalForm
     )
 
-from .models import (
+from rds.models import (
     Package,
     Server,
     State,
@@ -25,7 +28,7 @@ from .models import (
     ActiveDirectory,
     )
 
-import json
+log = logging.getLogger(__name__)
 
 PACKAGE_DIR = '/srv/samba/'
 
@@ -38,11 +41,7 @@ class PackageEdit(object):
     def form_valid(self, form):
         file_updated = self.request.FILES.get('file')
         self.object = form.save(commit=False)
-
-        if bool(file_updated):
-            self.object.file_updated()
-
-        self.object.save()
+        self.object.save(file_updated=file_updated)
         return http.HttpResponseRedirect(self.success_url)
     
 class PackageUpdate(PackageEdit, UpdateView):
@@ -87,7 +86,7 @@ def delete_package(request):
     return http.HttpResponseRedirect(reverse('packages_local'))
 
 @require_http_methods(['POST'])
-def deploy_package(request):
+def install_package(request):
     id = request.POST['id']
     package = shortcuts.get_object_or_404(Package, pk=id)    
     server = Server.objects.first()
@@ -97,9 +96,7 @@ def deploy_package(request):
         messages.error(request, err)
         return http.HttpResponseRedirect(reverse('packages_local'))
 
-    from tasks import install_package
-
-    install_package(package, server)
+    package.install(server)
 
     messages.info(request, 'Installing {} on {}'.format(package, server))
     return http.HttpResponseRedirect(reverse('packages_local'))
