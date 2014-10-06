@@ -7,7 +7,7 @@ mkdir -p /srv/www
 ln -s /vagrant /srv/www/rds
 
 apt-get update
-apt-get --yes install python-pip samba nginx sqlite3 git ipython
+apt-get --yes install python-pip samba nginx sqlite3 git ipython rabbitmq-server
 
 # NOTE: We don't need this in production just the files
 # bower
