@@ -11,19 +11,27 @@ $probe = $args[0]
 $path = "$env:ProgramData\Microsoft\Windows\Start Menu\Programs"
 $start_menu = ls $path -Recurse -Include *.lnk | sort -property Name
 
-ForEach($lnk in $start_menu){
-   $shell = New-Object -ComObject WScript.Shell
+$path = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs"
+$user_start_menu = ls $path -Recurse -Include *.lnk | sort -property Name
 
-   $name = $lnk.BaseName
-   $program_path = $shell.CreateShortcut($lnk).targetpath   
+Function find($links){
+    ForEach($lnk in $links){
+       $shell = New-Object -ComObject WScript.Shell
+
+       $name = $lnk.BaseName
+       $program_path = $shell.CreateShortcut($lnk).targetpath   
  
-   if($probe -eq "" -or $probe -eq "*"){
-       echo "$name|$program_path" 
-   }
+       if($probe -eq "" -or $probe -eq "*"){
+           echo "$name|$program_path" 
+       }
 
-   elseif($name -match $probe){
-       echo "$name|$program_path"   
-   }
+       elseif($name -match $probe){
+           echo "$name|$program_path"   
+       }
    
+    }
+
 }
 
+find($start_menu)
+find($user_start_menu)
