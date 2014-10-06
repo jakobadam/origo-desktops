@@ -66,8 +66,14 @@ EOF
 service nmbd restart
 service smbd restart
 
+# celery
+useradd celery
+update-rc.d celeryd defaults 
+update-rc.d celeryd enable
+service celeryd start
+ 
 # winexe
-ln -s /home/vagrant/src/winexe/bin/winexe /usr/local/bin
+#ln -s /home/vagrant/src/winexe/bin/winexe /usr/local/bin
 
 # start gunicorn on startup
 update-rc.d gunicorn defaults
