@@ -73,3 +73,9 @@ Components of a RD deployment are:
 ### RD Session Collection
 
 Pool of servers (session hosts) that handles connections.
+
+## Celery
+
+```
+celery -A rds worker -l info
+```
