@@ -53,42 +53,9 @@ class PackageCreate(PackageEdit, CreateView):
 class PackageDelete(PackageEdit, DeleteView):
     pass
     
-# def add_package(request):
-#     if request.method == 'POST':
-#         form = PackageForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             file = request.FILES['file']
-#             args = form.cleaned_data.get('args')
-#             p = Package(file=file, name=file.name, args=args)
-#             p.save()
-#             return http.HttpResponseRedirect(reverse('packages_local'))
-#     else:
-#         form = PackageForm()
-
-#     return shortcuts.render(request, 'package_form.html', {'form':form})
-
 @require_http_methods(['POST'])
-def delete_package(request):
-    id = request.POST['id']
-    package = shortcuts.get_object_or_404(Package, pk=id)
-    server = Server.objects.first()
-
-    try:
-        package.delete(server)
-        msg = 'Package %s was deleted' % package.name
-        messages.info(request, msg)
-    except RequestException, e:
-        err = 'Error deleting %s. %s' % (package,str(e))
-        messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('packages_local'))
-
-    messages.success(request, msg)
-    return http.HttpResponseRedirect(reverse('packages_local'))
-
-@require_http_methods(['POST'])
-def install_package(request):
-    id = request.POST['id']
-    package = shortcuts.get_object_or_404(Package, pk=id)    
+def install_package(request, pk=None):
+    package = shortcuts.get_object_or_404(Package, pk=pk)    
     server = Server.objects.first()
 
     if not server or not server.user or not server.password:
@@ -99,6 +66,21 @@ def install_package(request):
     package.install(server)
 
     messages.info(request, 'Installing {} on {}'.format(package, server))
+    return http.HttpResponseRedirect(reverse('packages_local'))
+
+@require_http_methods(['POST'])
+def uninstall_package(request, pk=None):
+    package = shortcuts.get_object_or_404(Package, pk=pk)    
+    server = Server.objects.first()
+
+    if not server or not server.user or not server.password:
+        err = 'You must set the username and password before doing this'
+        messages.error(request, err)
+        return http.HttpResponseRedirect(reverse('packages_local'))
+
+    package.uninstall(server)
+
+    messages.info(request, 'Un-installing {} from {}'.format(package, server))
     return http.HttpResponseRedirect(reverse('packages_local'))
 
 # @require_http_methods(['POST'])

@@ -2,7 +2,11 @@ from __future__ import absolute_import
 
 from celery import shared_task
 
+import logging
+
 from rds.models import (Package, Server)
+
+log = logging.getLogger(__name__)
 
 @shared_task
 def process_upload(package_id):
@@ -22,9 +26,27 @@ def install_package(package_id, server_id):
     res = server.cmd(package.install_cmd, package.args.split())
     success = res.status_code == 0
     if success:
-        package.message = 'Deployed %s. %s' % (package,res.std_out)
+        message = 'Deployed %s. %s' % (package,res.std_out)
+        log.info(package.message)
+        package.message = message
         package.installed = True
     else:
-        package.message = 'Error deploying %s: %s' % (package,res.std_err)
+        message = 'Error deploying %s: %s' % (package,res.std_err)
+        log.info(message)
+        package.message = message
         package.installed = False
+        
+    server.updated = True
+    server.save()
+    
     package.save()
+
+@shared_task
+def uninstall_package(package_id, server_id):
+    log.info("TODO uninstall from server?")
+    
+    package = Package.objects.get(pk=package_id)
+    
+    package.installed = False        
+    package.save()
+    

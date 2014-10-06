@@ -21,15 +21,15 @@
     <strong>Heads Up!</strong>  This page contains a list of installed
     packages on your RDS deployement. You install packages from the 
     <a class="alert-link" href="{% url 'packages_cloud'%}">package cloud store
-      <span class="glyphicon glyphicon-cloud"></span>
+      <!-- <span class="glyphicon glyphicon-cloud"></span> -->
     </a> 
     or upload you own to your 
     <a class="alert-link" href="{% url 'packages_local' %}">local package store
-      <span class="glyphicon glyphicon-folder-open"></span>
-    </a>&nbsp;
+      <!-- <span class="glyphicon glyphicon-folder-open"></span> -->
+    </a>
     at 
     <a class="alert-link" href="{% url 'add_package'%}">add local package 
-      <span class="glyphicon glyphicon-upload"></span>
+      <!-- <span class="glyphicon glyphicon-upload"></span> -->
     </a>
 
   </div>
@@ -59,27 +59,16 @@
           </td>
           <td>
 
-            <form method="POST" action="{% url 'deploy_package' %}" style="display:inline-block">
-              <input type="hidden" name="id" value="{{p.id}}" />
-              <button type="submit" title="Install {{p.name}}"
-                      class="btn btn-primary btn-xs">
-                <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
-            </form>
-
-            <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
-              <button type="submit" title="Edit"
-                      class="btn btn-primary btn-xs">
-                <span class="glyphicon glyphicon-pencil"></span></button>
-            </form>
-
+            {% if p.log_exists %}
             <form method="GET" action="{{p.log_url}}" style="display:inline-block">
               <button type="submit" title="Show Log"
                       class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon-file"></span></button>
             </form>
+            {% endif %}
 
-            <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
-              <button type="submit" title="Delete"
+            <form method="POST" action="{% url 'uninstall_package' pk=p.id %}" style="display:inline-block">
+              <button type="submit" title="Un-install"
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>
             </form>

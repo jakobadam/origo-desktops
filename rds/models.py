@@ -42,7 +42,7 @@ class Package(models.Model):
         log.info('Saving Package {}'.format(self))
         # file updated is an attribute that is explicitly set from the view
         file_updated = kwargs.get('file_updated')
-        if file_updated:
+        if kwargs.has_key('file_updated'):
             del kwargs['file_updated']
         
         if self.pk:
@@ -98,7 +98,12 @@ class Package(models.Model):
 
     @property
     def log_path(self):
-        return os.path.join(self.basepath, 'log', self.name + '.log')
+        return os.path.join(self.basepath, 'log', self.basename + '.log')
+
+    @property
+    def log_exists(self):
+        log.info(self.log_path)
+        return os.path.isfile(self.log_path)
 
     @property
     def log_url(self):
@@ -128,6 +133,13 @@ class Package(models.Model):
         log.info('Adding install tasks for package "{}"'.format(self))
         from rds import tasks
         tasks.install_package.delay(self.pk, server.pk)
+
+    def uninstall(self, server):
+        """Install software on server
+        """
+        log.info('Adding un-install tasks for package "{}"'.format(self))
+        from rds import tasks
+        tasks.uninstall_package.delay(self.pk, server.pk)        
         
     def add_dirs(self):
         dirs = [os.path.join(self.basepath, d) for d in ('log', 'script')]

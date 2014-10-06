@@ -41,18 +41,28 @@
           </td>
           <td>
 
+            {% if not p.installed %}
             <form method="POST" action="{% url 'deploy_package' %}" style="display:inline-block">
               <input type="hidden" name="id" value="{{p.id}}" />
               <button type="submit" title="Install {{p.name}}"
                       class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
             </form>
+            {% endif %}
 
             <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
               <button type="submit" title="Edit"
                       class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon-pencil"></span></button>
             </form>
+
+            {% if p.log_exists %}
+            <form method="GET" action="{{p.log_url}}" style="display:inline-block">
+              <button type="submit" title="Show Log"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-file"></span></button>
+            </form>
+            {% endif %}
 
             <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
               <button type="submit" title="Delete"
