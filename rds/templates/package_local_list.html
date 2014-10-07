@@ -42,8 +42,7 @@
           <td>
 
             {% if not p.installed %}
-            <form method="POST" action="{% url 'deploy_package' %}" style="display:inline-block">
-              <input type="hidden" name="id" value="{{p.id}}" />
+            <form method="POST" action="{% url 'install_package' pk=p.id%}" style="display:inline-block">
               <button type="submit" title="Install {{p.name}}"
                       class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
