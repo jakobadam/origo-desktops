@@ -39,8 +39,9 @@ apt-get --yes install $DEV_PACKAGES
 npm install -g bower
 
 echo '==> Installing Webserver'
-mkdir /var/run/gunicorn
-chown www-data: /var/run/gunicorn
+mkdir /var/run/gunicorn /var/log/gunicorn
+chown www-data: /var/run/gunicorn /var/log/gunicorn
+
 rm /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
 ln -s /etc/nginx/sites-available/rds /etc/nginx/sites-enabled/rds
 
