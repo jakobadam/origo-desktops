@@ -29,10 +29,9 @@ class Package(models.Model):
         verbose_name='File',
         help_text='File type must one of (%s)' % ', '.join(VALID_FILE_TYPES))
     message = models.TextField()
-
-    installed = models.BooleanField(default=False)
-    installed_path = models.CharField(max_length=1000, blank=True)
+    installer = models.CharField(max_length=1000, blank=True)
     
+    installed = models.BooleanField(default=False)
     args = models.CharField(max_length=1000, blank=True)
 
     def __str__(self):
@@ -48,7 +47,7 @@ class Package(models.Model):
         if self.pk:
             old_instance = Package.objects.get(pk=self.pk)
             if file_updated:
-                old_instance.delete_files()            
+                old_instance.delete_files()       
 
         r = super(Package, self).save(*args, **kwargs)
 
@@ -72,7 +71,7 @@ class Package(models.Model):
 
     @property
     def _test_script_path(self):
-        return '%s.bat' % os.path.join(self.basepath, 'script', self.basename)
+        return '%s.bat' % os.path.join(self.basepath, 'script', self.installer)
 
     @property
     def basepath(self):
@@ -120,12 +119,17 @@ class Package(models.Model):
         """Delete software folder with install files and test files
         """
         log.info('Deleting package "{}" from filesystem'.format(self.path))
-        if self.file:
-            file_path = self.file.path
-            if os.path.isfile(file_path):
-                shutil.rmtree(self.basepath)
-                return
-        log.info('Trying to delete package files, but there are none "{}"'.format(self))
+        try:
+            if self.file:
+                file_path = self.file.path
+                if os.path.isfile(file_path):
+                    log.info('Deleting package directory {}'.format(self.basepath))                
+                    shutil.rmtree(self.basepath)
+                    return
+        except OSError:
+            pass
+        finally:
+            log.info('Trying to delete package files, but there are none "{}"'.format(self))
     
     def install(self, server):
         """Install software on server
@@ -163,12 +167,14 @@ class Package(models.Model):
         """Take a guess on which should be run to install
         """
         for ext in ('exe', 'EXE', 'msi', 'MSI'):
-            path = os.path.join(self.basepath, 'software', '*.%s' % ext)
+            path = os.path.join(self.basepath, 'software', '*.{}'.format(ext))
             files = glob.glob(path)
             if files:
-                return files[0]
+                installer_path = files[0]
+                log.info('Found package installer "{}"'.format(installer_path))
+                return installer_path
+        log.error('No installer found for "{}"'.format(self))
         return None
-
 
 class Helper(object):
 

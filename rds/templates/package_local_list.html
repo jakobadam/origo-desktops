@@ -24,6 +24,7 @@
           <th>Name</th>
           <th>Version</th>
           <th>Installed</th>
+          <th>Installer Path</th>
           <th style="min-width: 200px">Actions</th>
         </tr>
       </thead>
@@ -38,6 +39,9 @@
             {% else %}
             <span class="glyphicon glyphicon-remove"></span>            
             {% endif %}
+          </td>
+          <td>
+            {{p.installer}}
           </td>
           <td>
 

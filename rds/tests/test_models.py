@@ -9,14 +9,14 @@ from django.core.files import File
 from rds.models import Package
 from rds import models
 
-settings.MEDIA_ROOT = 'software'
-models.PACKAGE_DIR = settings.MEDIA_ROOT
+MEDIA_ROOT = settings.MEDIA_ROOT = os.path.join(settings.BASE_DIR, 'software')
+models.PACKAGE_DIR = MEDIA_ROOT
 
 class TestPackage(TestCase):
 
     def setUp(self):
         self.name = 'Firefox 31'
-        self.file = File(open('software/Firefox Setup 31.0.exe'))
+        self.file = File(open(os.path.join(MEDIA_ROOT, 'Firefox Setup 31.0.exe')))
         self.args = '-ms'
         
         self.p = Package(name=self.name, file=self.file, args=self.args)
@@ -26,16 +26,19 @@ class TestPackage(TestCase):
         expected = settings.MEDIA_ROOT + '/Firefox 31/script/Firefox Setup 31.0.exe.bat'
         self.assertEqual(path, expected)
 
-    def test_add_package_dirs(self):
-        self.p.delete_files()
-        self.p._add_package_dirs()
+    def test_add_dirs(self):
+        try:
+            self.p.delete_files()
+        except OSError:
+            pass
+        self.p.add_dirs()
         path = 'software/Firefox 31/script'
         self.assertTrue(os.path.exists(path))
                 
-    def test_add_test_script(self):
+    def test_add_script(self):
         self.p.delete_files()
-        self.p._add_package_dirs()
-        self.p._add_test_script()
+        self.p.add_dirs()
+        self.p.add_script()
         path = 'software/Firefox 31/script/Firefox Setup 31.0.exe.bat'
         try:
             script_file = open(path)
@@ -52,4 +55,6 @@ class TestPackage(TestCase):
         actual = self.p.install_cmd
         self.assertEqual(actual, expected)
 
+    # def test_find_installer(self):
+    #     path = self.p.find_installer()
         
