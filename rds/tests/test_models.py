@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from django.test import TestCase
 from django.test import Client
@@ -9,52 +10,82 @@ from django.core.files import File
 from rds.models import Package
 from rds import models
 
-MEDIA_ROOT = settings.MEDIA_ROOT = os.path.join(settings.BASE_DIR, 'software')
-models.PACKAGE_DIR = MEDIA_ROOT
+SOFTWARE_ROOT = settings.BASE_DIR + '/software'
+TEST_MEDIA_ROOT = settings.MEDIA_ROOT = settings.BASE_DIR + '/software_test'
+
+models.PACKAGE_DIR = TEST_MEDIA_ROOT
 
 class TestPackage(TestCase):
 
     def setUp(self):
-        self.name = 'Firefox 31'
-        self.file = File(open(os.path.join(MEDIA_ROOT, 'Firefox Setup 31.0.exe')))
-        self.args = '-ms'
-        
-        self.p = Package(name=self.name, file=self.file, args=self.args)
+        self.filename = 'Firefox Setup 31.0.exe'
+        self.name = 'Firefox'
+        self.version = '31.0'
+        self.args = '-ms'        
 
-    def test_script_path(self):
-        path = self.p._test_script_path
-        expected = settings.MEDIA_ROOT + '/Firefox 31/script/Firefox Setup 31.0.exe.bat'
+        self.p = Package(name=self.name, args=self.args, version=self.version)
+
+    def _add_file(self):
+        path = os.path.join(SOFTWARE_ROOT, self.filename)
+        test_path = models.generate_filename(self.p, self.filename)
+        print 'test_path', test_path
+        
+        dirname = os.path.dirname(test_path)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        shutil.copy(path, test_path)
+
+        self.p.file = File(test_path)
+
+    def test_path(self):
+        path = self.p.path
+        expected = TEST_MEDIA_ROOT + '/firefox_31.0'
+        self.assertEqual(path, expected)
+    
+    def test_find_installer(self):
+        self._add_file()
+        self.p.save()
+        path = self.p.find_installer()
+        expected = TEST_MEDIA_ROOT + '/firefox_31.0/software/Firefox Setup 31.0.exe'
         self.assertEqual(path, expected)
 
+    def test_script_path(self):        
+        self.p.save()
+        self.p.installer = self.p.find_installer()
+        path = self.p._test_script_path
+        expected = settings.MEDIA_ROOT + '/firefox_31.0/script/firefox_install.bat'
+        self.assertEqual(path, expected)
+                
     def test_add_dirs(self):
         try:
             self.p.delete_files()
         except OSError:
             pass
         self.p.add_dirs()
-        path = 'software/Firefox 31/script'
+        path = settings.MEDIA_ROOT + '/firefox_31.0/script'
         self.assertTrue(os.path.exists(path))
                 
-    def test_add_script(self):
-        self.p.delete_files()
-        self.p.add_dirs()
-        self.p.add_script()
-        path = 'software/Firefox 31/script/Firefox Setup 31.0.exe.bat'
-        try:
-            script_file = open(path)
-        except IOError:
-            self.fail('Expected test script at: %s' % script_file)
-
     def test_samba_path(self):
         samba_path = self.p.samba_path
-        expected = '\\\\ubuntu\\share\\Firefox 31\\software\\Firefox Setup 31.0.exe'
+        expected = r'\\ubuntu\share\firefox_31.0'
+        self.assertEqual(samba_path, expected)
+
+    def test_samba_path_installer(self):
+        self._add_file()
+        self.p.save()
+        self.p.installer = self.p.find_installer()
+        
+        samba_path = self.p.samba_path_installer
+        expected = r'\\ubuntu\share\firefox_31.0\software\Firefox Setup 31.0.exe'
         self.assertEqual(samba_path, expected)
         
-    def test_cmd(self):
-        expected = '"%s" %s' % ("\\\\ubuntu\\share\\Firefox 31\\software\\Firefox Setup 31.0.exe", self.args)
+    def test_install_cmd(self):
+        self._add_file()
+        self.p.save()
+        self.p.installer = self.p.find_installer()
+
+        expected = '"%s" %s' % (r"\\ubuntu\share\firefox_31.0\software\Firefox Setup 31.0.exe", self.args)
         actual = self.p.install_cmd
         self.assertEqual(actual, expected)
 
-    # def test_find_installer(self):
-    #     path = self.p.find_installer()
         

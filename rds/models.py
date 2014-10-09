@@ -12,11 +12,11 @@ from django.conf import settings
 log = logging.getLogger(__name__)
 
 PACKAGE_DIR = '%s' % (settings.MEDIA_ROOT)
-SAMBA_SHARE = '\\\\ubuntu\\share'
+SAMBA_SHARE = r'\\ubuntu\share'
 
 def generate_filename(instance, filename):
     """Create a filename like firefox31/software/firefox31.exe"""
-    return os.path.join(PACKAGE_DIR, instance.name, 'software', filename)
+    return os.path.join(instance.path, 'software', filename)
 
 class Package(models.Model):
 
@@ -71,33 +71,44 @@ class Package(models.Model):
 
     @property
     def _test_script_path(self):
-        return '%s.bat' % os.path.join(self.basepath, 'script', self.installer)
+        path = os.path.join(self.path, 'script', self.name.lower())
+        return '{}_install.bat'.format(path)
 
-    @property
-    def basepath(self):
-        """Return the path to the package
-        """
-        return os.path.join(PACKAGE_DIR, self.name)
-
-    @property
-    def basename(self):
-        return os.path.basename(self.file.path)
-    
     @property
     def path(self):
-        return os.path.join(PACKAGE_DIR, self.name)
-                
+        """Return the path to the package
+        """
+        return os.path.join(PACKAGE_DIR, self.dirname)
+
+    @property
+    def path_samba(self):
+        return "\\".join((SAMBA_SHARE, self.dirname))
+
+    @property
+    def dirname(self):
+        print 'dirname','{}_{}'.format(self.name, self.version).lower()
+        return '{}_{}'.format(self.name, self.version).lower()
+
+    def samba_path_join(self, *args):
+        return "\\".join(args)
+                                
     @property
     def samba_path(self):
-        return "\\".join((SAMBA_SHARE, self.name, 'software', self.basename))
+        return self.samba_path_join(SAMBA_SHARE, self.dirname)
+
+    @property
+    def samba_path_installer(self):
+        # slice away /foo/bar/
+        relative = self.installer[len(settings.MEDIA_ROOT)+1:]
+        return self.samba_path_join(SAMBA_SHARE, *relative.split('/'))
 
     @property
     def log_samba_path(self):
-        return "\\".join((SAMBA_SHARE, self.name, 'log', '%s.log' % self.basename))
+        return self.samba_path_join(self.samba_path, 'log', '{}.log'.format(self.dirname))
 
     @property
     def log_path(self):
-        return os.path.join(self.basepath, 'log', self.basename + '.log')
+        return os.path.join(self.path, 'log', '{}.log'.format(self.dirname))
 
     @property
     def log_exists(self):
@@ -110,26 +121,26 @@ class Package(models.Model):
 
     @property
     def install_cmd(self):
-        root,ext = os.path.splitext(self.file.path)
+        if not self.installer:
+            raise Exception('Installer not found!')
+        root,ext = os.path.splitext(self.installer)
         if ext == '.msi':
             return 'msiexec /L*+ "%s" /passive /i "%s" %s' % (self.log_samba_path, self.samba_path, self.args)
-        return '"%s" %s' % (self.samba_path, self.args)
+        return '"%s" %s' % (self.samba_path_installer, self.args)
                 
     def delete_files(self):
         """Delete software folder with install files and test files
         """
         log.info('Deleting package "{}" from filesystem'.format(self.path))
         try:
-            if self.file:
-                file_path = self.file.path
-                if os.path.isfile(file_path):
-                    log.info('Deleting package directory {}'.format(self.basepath))                
-                    shutil.rmtree(self.basepath)
-                    return
+            if os.path.isdir(self.path):
+                log.info('Deleting package directory "{}"'.format(self.path))
+                shutil.rmtree(self.path)
+                return
         except OSError:
             pass
         finally:
-            log.info('Trying to delete package files, but there are none "{}"'.format(self))
+            log.info('Trying to delete package files, but there are none "{}"'.format(self.path))
     
     def install(self, server):
         """Install software on server
@@ -146,11 +157,11 @@ class Package(models.Model):
         tasks.uninstall_package.delay(self.pk, server.pk)        
         
     def add_dirs(self):
-        dirs = [os.path.join(self.basepath, d) for d in ('log', 'script')]
+        dirs = [os.path.join(self.path, d) for d in ('log', 'script')]
         log.info('Creating package dirs: {}'.format(dirs))        
         for d in dirs:
             os.makedirs(d)
-        os.chmod(os.path.join(self.basepath,'log'), 0777)
+        os.chmod(os.path.join(self.path,'log'), 0777)
 
     @property
     def zipped(self):
@@ -160,14 +171,15 @@ class Package(models.Model):
     def unzip(self):
         log.info('Unzipping "{}"'.format(self.file.path))
         with zipfile.ZipFile(self.file.path) as z:
-            directory = os.path.join(self.basepath, 'software')
+            directory = os.path.join(self.path, 'software')
             z.extractall(directory)
 
     def find_installer(self):
         """Take a guess on which should be run to install
         """
         for ext in ('exe', 'EXE', 'msi', 'MSI'):
-            path = os.path.join(self.basepath, 'software', '*.{}'.format(ext))
+            path = os.path.join(self.path, 'software', '*.{}'.format(ext))
+            log.info('Looking for package with glob "{}"'.format(path))            
             files = glob.glob(path)
             if files:
                 installer_path = files[0]
