@@ -8,11 +8,9 @@ import shutil
 
 from django.db import models
 from django.conf import settings
+from django.utils import text
 
 log = logging.getLogger(__name__)
-
-PACKAGE_DIR = '%s' % (settings.MEDIA_ROOT)
-SAMBA_SHARE = r'\\ubuntu\share'
 
 def generate_filename(instance, filename):
     """Create a filename like firefox31/software/firefox31.exe"""
@@ -61,16 +59,17 @@ class Package(models.Model):
         return super(Package, self).delete()
         
     def add_script(self):
-        script_path = self._test_script_path
+        script_path = self.test_script_path        
+        log.info('Adding install test script "{}"'.format(script_path))
+
         with open(script_path, 'w') as f:
             f.write(self.install_cmd)
 
         # Make it executable
-        os.chmod(self._test_script_path, 0755)
-        log.info('Added install test script "{}"'.format(script_path))
+        os.chmod(self.test_script_path, 0755)
 
     @property
-    def _test_script_path(self):
+    def test_script_path(self):
         path = os.path.join(self.path, 'script', self.name.lower())
         return '{}_install.bat'.format(path)
 
@@ -78,29 +77,29 @@ class Package(models.Model):
     def path(self):
         """Return the path to the package
         """
-        return os.path.join(PACKAGE_DIR, self.dirname)
+        return os.path.join(settings.PACKAGE_DIR, self.dirname)
 
     @property
     def path_samba(self):
-        return "\\".join((SAMBA_SHARE, self.dirname))
+        return "\\".join((settings.SAMBA_SHARE, self.dirname))
 
     @property
     def dirname(self):
-        print 'dirname','{}_{}'.format(self.name, self.version).lower()
-        return '{}_{}'.format(self.name, self.version).lower()
+        filename = '{}_{}'.format(self.name, self.version).lower()
+        return text.get_valid_filename(filename)
 
     def samba_path_join(self, *args):
         return "\\".join(args)
                                 
     @property
     def samba_path(self):
-        return self.samba_path_join(SAMBA_SHARE, self.dirname)
+        return self.samba_path_join(settings.SAMBA_SHARE, self.dirname)
 
     @property
     def samba_path_installer(self):
         # slice away /foo/bar/
-        relative = self.installer[len(settings.MEDIA_ROOT)+1:]
-        return self.samba_path_join(SAMBA_SHARE, *relative.split('/'))
+        relative = self.installer[len(settings.PACKAGE_DIR)+1:]
+        return self.samba_path_join(settings.SAMBA_SHARE, *relative.split('/'))
 
     @property
     def log_samba_path(self):
@@ -112,7 +111,6 @@ class Package(models.Model):
 
     @property
     def log_exists(self):
-        log.info(self.log_path)
         return os.path.isfile(self.log_path)
 
     @property

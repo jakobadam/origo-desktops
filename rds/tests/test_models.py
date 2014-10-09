@@ -2,67 +2,83 @@ import os
 import shutil
 
 from django.test import TestCase
-from django.test import Client
 from django.conf import settings
+from django.test.utils import override_settings
 
 from django.core.files import File
 
 from rds.models import Package
 from rds import models
 
-SOFTWARE_ROOT = settings.BASE_DIR + '/software'
-TEST_MEDIA_ROOT = settings.MEDIA_ROOT = settings.BASE_DIR + '/software_test'
+test_settings = {
+    'PACKAGE_DIR': settings.TEST_PACKAGE_DIR,
+    'MEDIA_ROOT': settings.TEST_PACKAGE_DIR 
+    }
 
-models.PACKAGE_DIR = TEST_MEDIA_ROOT
+def _add_file(package):    
+    settings.SOFTWARE_ROOT = settings.BASE_DIR + '/software' 
+    
+    filename = 'Firefox Setup 31.0.exe'
 
+    path = os.path.join(settings.SOFTWARE_ROOT, filename)
+    test_path = models.generate_filename(package, filename)    
+
+    assert os.path.isfile(path), "There is no file there"
+    
+    dirname = os.path.dirname(test_path)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+
+    shutil.copy(path, test_path)
+    assert os.path.isfile(test_path), "There is no file there"
+    package.file = File(open(test_path))
+
+@override_settings(**test_settings)
 class TestPackage(TestCase):
 
     def setUp(self):
-        self.filename = 'Firefox Setup 31.0.exe'
         self.name = 'Firefox'
         self.version = '31.0'
         self.args = '-ms'        
 
         self.p = Package(name=self.name, args=self.args, version=self.version)
 
-    def _add_file(self):
-        path = os.path.join(SOFTWARE_ROOT, self.filename)
-        test_path = models.generate_filename(self.p, self.filename)
-        print 'test_path', test_path
-        
-        dirname = os.path.dirname(test_path)
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-        shutil.copy(path, test_path)
-
-        self.p.file = File(test_path)
+    def tearDown(self):
+        try:
+            self.p.delete_files()
+        except OSError:
+            pass
 
     def test_path(self):
         path = self.p.path
-        expected = TEST_MEDIA_ROOT + '/firefox_31.0'
+        expected = settings.PACKAGE_DIR + '/firefox_31.0'
         self.assertEqual(path, expected)
+
+        p = Package(name='MS Access', version='2007')
+        expected = settings.PACKAGE_DIR + '/ms_access_2007'
+        self.assertEqual(p.path, expected)
     
     def test_find_installer(self):
-        self._add_file()
+        _add_file(self.p)
         self.p.save()
         path = self.p.find_installer()
-        expected = TEST_MEDIA_ROOT + '/firefox_31.0/software/Firefox Setup 31.0.exe'
+        expected = settings.PACKAGE_DIR + '/firefox_31.0/software/Firefox Setup 31.0.exe'
         self.assertEqual(path, expected)
 
     def test_script_path(self):        
         self.p.save()
         self.p.installer = self.p.find_installer()
-        path = self.p._test_script_path
-        expected = settings.MEDIA_ROOT + '/firefox_31.0/script/firefox_install.bat'
+        path = self.p.test_script_path
+        expected = settings.PACKAGE_DIR + '/firefox_31.0/script/firefox_install.bat'
         self.assertEqual(path, expected)
+
+    def test_log_path(self):
+        expected = settings.PACKAGE_DIR + '/firefox_31.0/log/firefox_31.0.log'
+        self.assertEqual(self.p.log_path, expected)
                 
     def test_add_dirs(self):
-        try:
-            self.p.delete_files()
-        except OSError:
-            pass
         self.p.add_dirs()
-        path = settings.MEDIA_ROOT + '/firefox_31.0/script'
+        path = settings.PACKAGE_DIR + '/firefox_31.0/script'
         self.assertTrue(os.path.exists(path))
                 
     def test_samba_path(self):
@@ -71,7 +87,7 @@ class TestPackage(TestCase):
         self.assertEqual(samba_path, expected)
 
     def test_samba_path_installer(self):
-        self._add_file()
+        _add_file(self.p)
         self.p.save()
         self.p.installer = self.p.find_installer()
         
@@ -80,7 +96,7 @@ class TestPackage(TestCase):
         self.assertEqual(samba_path, expected)
         
     def test_install_cmd(self):
-        self._add_file()
+        _add_file(self.p)
         self.p.save()
         self.p.installer = self.p.find_installer()
 

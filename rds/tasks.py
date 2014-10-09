@@ -5,19 +5,25 @@ from celery import shared_task
 import logging
 
 from rds.models import (Package, Server)
+from async_messages.models import Message
 
 log = logging.getLogger(__name__)
 
 @shared_task
 def process_upload(package_id):
-    package = Package.objects.get(pk=package_id)
-    if package.zipped:
-        package.unzip()
-    package.installer = package.find_installer()
-    package.add_dirs()
-    package.add_script()
-    package.save()    
-
+    try:
+        package = Package.objects.get(pk=package_id)
+        if package.zipped:
+            Message.info('Unzipping package "{}"'.format(package))        
+            package.unzip()
+        package.add_dirs()
+        package.installer = package.find_installer()
+        Message.info('Found installer file "{}"'.format(package.installer))            
+        package.add_script()
+        package.save()
+    except Exception, e:
+        Message.error(str(e))
+        
 @shared_task
 def install_package(package_id, server_id):
     package = Package.objects.get(pk=package_id)
@@ -26,13 +32,16 @@ def install_package(package_id, server_id):
     res = server.cmd(package.install_cmd, package.args.split())
     success = res.status_code == 0
     if success:
-        message = 'Deployed %s. %s' % (package,res.std_out)
+        message = 'Installed "{}". {}'.format(package, res.std_out)
         log.info(package.message)
+        Message.success(message)        
         package.message = message
         package.installed = True
+
     else:
-        message = 'Error deploying %s: %s' % (package,res.std_err)
-        log.info(message)
+        message = 'Error deploying "{}": {}'.format(package, res.std_err)
+        log.error(message)
+        Message.error(message)        
         package.message = message
         package.installed = False
         
