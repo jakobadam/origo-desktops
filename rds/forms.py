@@ -48,7 +48,7 @@ class PackageForm(forms.ModelForm):
 
     class Meta:
         model = Package
-        exclude = ['message', 'installed', 'installer']
+        exclude = ['message', 'installed', 'installer', 'installing']
         widgets = {
             'args': _get_widget('Args to installer, e.g., -ms')
             }

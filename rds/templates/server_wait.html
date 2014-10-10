@@ -6,7 +6,7 @@
 {% block page_title%}Starting up server{% endblock %}
 
 {% block head %}
-<meta http-equiv="refresh" content="5">
+<meta http-equiv="refresh" content="15">
 {% endblock %}
 
 {% block navbar %}RDP Services{% endblock %}
@@ -16,19 +16,23 @@
 <style>
 #spinner-wrapper {
 height: 200px;
+position:relative;
 }
 </style>
 <div class="col-xs-12">
 
   {% include '_menu.html' %}
 
-  <div id="spinner-wrapper">
+  <div id="spinner-wrapper">&nbsp;
     <div id="spinner"></div>
   </div>
   
   <div class="text-center">
-    <h2><small>Starting up your Windows server ...</small></h2>
-    <p>Refreshing in <span id="seconds">5</span> seconds</p>
+    <h2 style="margin-top:0"><small>Starting up your Windows server ...</small></h2>
+
+    <p>You can continue to select software for installation at <a href="{% url 'software'%}">software</a></p>
+
+    <p><small>Refreshing in <span id="seconds">15</span> seconds</small></p>
   </div>
 
   <form method="POST" action="{% url 'cancel' %}">

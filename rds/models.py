@@ -1,4 +1,5 @@
 import os
+import re
 import glob
 import zipfile
 import winrm
@@ -11,6 +12,8 @@ from django.conf import settings
 from django.utils import text
 
 log = logging.getLogger(__name__)
+
+RE_EXECUTABLE = re.compile('.*exe$|.*EXE$|.*MSI$|.*msi$')
 
 def generate_filename(instance, filename):
     """Create a filename like firefox31/software/firefox31.exe"""
@@ -28,12 +31,14 @@ class Package(models.Model):
         help_text='File type must one of (%s)' % ', '.join(VALID_FILE_TYPES))
     message = models.TextField()
     installer = models.CharField(max_length=1000, blank=True)
-    
+
+    # TODO: Maybe create status field instaed
+    installing = models.BooleanField(default=False)
     installed = models.BooleanField(default=False)
     args = models.CharField(max_length=1000, blank=True)
 
     def __str__(self):
-        return self.name
+        return '{} {}'.format(self.name,self.version)
                 
     def save(self, *args, **kwargs):
         log.info('Saving Package {}'.format(self))
@@ -70,7 +75,7 @@ class Package(models.Model):
 
     @property
     def test_script_path(self):
-        path = os.path.join(self.path, 'script', self.name.lower())
+        path = os.path.join(self.path, 'script', self.dirname)
         return '{}_install.bat'.format(path)
 
     @property
@@ -129,22 +134,24 @@ class Package(models.Model):
     def delete_files(self):
         """Delete software folder with install files and test files
         """
-        log.info('Deleting package "{}" from filesystem'.format(self.path))
+        log.info('Removing package directory "{}"'.format(self.path))
         try:
             if os.path.isdir(self.path):
-                log.info('Deleting package directory "{}"'.format(self.path))
+                log.info('Removing package directory "{}"'.format(self.path))
                 shutil.rmtree(self.path)
                 return
-        except OSError:
-            pass
+        except OSError, e:
+            log.error(e)
         finally:
-            log.info('Trying to delete package files, but there are none "{}"'.format(self.path))
+            log.info('Tried deleting package, but there is no dir named "{}"'.format(self.path))
     
     def install(self, server):
         """Install software on server
         """
-        log.info('Adding install tasks for package "{}"'.format(self))
+        log.info('Adding install task for package "{}" to worker'.format(self))
         from rds import tasks
+        self.installing = True
+        self.save()
         tasks.install_package.delay(self.pk, server.pk)
 
     def uninstall(self, server):
@@ -159,6 +166,7 @@ class Package(models.Model):
         log.info('Creating package dirs: {}'.format(dirs))        
         for d in dirs:
             os.makedirs(d)
+        # make it writable
         os.chmod(os.path.join(self.path,'log'), 0777)
 
     @property
@@ -172,12 +180,31 @@ class Package(models.Model):
             directory = os.path.join(self.path, 'software')
             z.extractall(directory)
 
+    def find_executables(self):
+        executables = []
+        software_dir = os.path.join(self.path, 'software')
+        for root, dirnames, filenames in os.walk(software_dir):
+            # file_matches = [f for f in filenames if re.match(RE_EXECUTABLE, f)]
+            # for f in file_matches:
+            #     executables.append(os.path.join(root, f))
+
+            # fuck it... make everything executable
+            for f in filenames:
+                executables.append(os.path.join(root, f))
+        return executables
+
+    def make_executable(self):
+        log.info('Setting execution bits')
+        for f in self.find_executables():
+            os.chmod(f, 0755)
+                
     def find_installer(self):
         """Take a guess on which should be run to install
+        only looks in toplevel directory
         """
         for ext in ('exe', 'EXE', 'msi', 'MSI'):
             path = os.path.join(self.path, 'software', '*.{}'.format(ext))
-            log.info('Looking for package with glob "{}"'.format(path))            
+            log.info('Looking for installer with glob "{}"'.format(path))            
             files = glob.glob(path)
             if files:
                 installer_path = files[0]

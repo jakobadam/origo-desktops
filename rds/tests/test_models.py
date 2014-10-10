@@ -21,8 +21,7 @@ def _add_file(package):
     filename = 'Firefox Setup 31.0.exe'
 
     path = os.path.join(settings.SOFTWARE_ROOT, filename)
-    test_path = models.generate_filename(package, filename)    
-
+    test_path = models.generate_filename(package, filename)
     assert os.path.isfile(path), "There is no file there"
     
     dirname = os.path.dirname(test_path)
@@ -57,7 +56,13 @@ class TestPackage(TestCase):
         p = Package(name='MS Access', version='2007')
         expected = settings.PACKAGE_DIR + '/ms_access_2007'
         self.assertEqual(p.path, expected)
-    
+
+    def test_find_executables(self):
+        _add_file(self.p)
+        self.p.save()
+        files = self.p.find_executables()
+        self.assertTrue(files)
+
     def test_find_installer(self):
         _add_file(self.p)
         self.p.save()

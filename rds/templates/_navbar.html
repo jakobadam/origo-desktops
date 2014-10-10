@@ -21,6 +21,7 @@ border: 1px solid transparent;
 
     <div class="collapse navbar-collapse" role="navigation">
 
+      {% if servers %}
       <ul class="nav navbar-nav navbar-left">
         <li>
           <div class="navbar-form dropdown">
@@ -44,6 +45,7 @@ border: 1px solid transparent;
           </div>
         </li>
       </ul>
+      {% endif %}
 
       <ul class="nav navbar-nav navbar-right">
               {% for s in servers%}

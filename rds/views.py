@@ -28,6 +28,8 @@ from rds.models import (
     ActiveDirectory,
     )
 
+from async_messages.models import Message
+
 log = logging.getLogger(__name__)
 
 PACKAGE_DIR = '/srv/samba/'
@@ -126,7 +128,7 @@ def server_setup(request):
         form = ServerForm(data=request.POST, instance=server)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect(reverse('packages_local'))
+            return http.HttpResponseRedirect(reverse('software'))
     else:
         form = ServerForm(instance=server)
 
@@ -212,7 +214,8 @@ def join(request):
         password='V@grant',
         user='Administrator',
         **form.cleaned_data)
-    
+
+    Message.success('Windows server "{}" started'.format(server))
     return http.HttpResponse()
 
 def packages_local(request):

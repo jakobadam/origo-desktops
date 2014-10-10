@@ -18,10 +18,12 @@ def process_upload(package_id):
             package.unzip()
         package.add_dirs()
         package.installer = package.find_installer()
+        package.make_executable()
         Message.info('Found installer file "{}"'.format(package.installer))            
         package.add_script()
-        package.save()
+        package.save()        
     except Exception, e:
+        log.error(e)
         Message.error(str(e))
         
 @shared_task
@@ -37,14 +39,15 @@ def install_package(package_id, server_id):
         Message.success(message)        
         package.message = message
         package.installed = True
-
     else:
         message = 'Error deploying "{}": {}'.format(package, res.std_err)
         log.error(message)
         Message.error(message)        
         package.message = message
         package.installed = False
-        
+
+    package.installing = False
+                
     server.updated = True
     server.save()
     

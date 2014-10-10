@@ -34,11 +34,17 @@
           <td>{{p.name}}</td>
           <td>{{p.version}}</td>
           <td>
-            {% if p.installed == True %}
-            <span class="glyphicon glyphicon-ok"></span>
+            {% if p.installing %}
+            <div class="spinner-wrapper" style="position:relative">&nbsp;
+              <div class="spinner"></div>
+            </div>
             {% else %}
+              {% if p.installed == True %}
+            <span class="glyphicon glyphicon-ok"></span>
+              {% else %}
             <span class="glyphicon glyphicon-remove"></span>            
-            {% endif %}
+              {% endif %}
+            {% endif%}
           </td>
           <td>
             {{p.installer}}
@@ -89,5 +95,42 @@
 
   {% endif %}
 </div>
+
+<script>
+$(document).ready(function(){
+var opts = {
+  lines: 11, // The number of lines to draw
+  length: 5, // The length of each line
+  width: 2, // The line thickness
+  radius: 2, // The radius of the inner circle
+  corners: 1, // Corner roundness (0..1)
+  rotate: 0, // The rotation offset
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  color: '#000', // #rgb or #rrggbb or array of colors
+  speed: 1, // Rounds per second
+  trail: 34, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: '50%', // Top position relative to parent
+  left: '50%' // Left position relative to parent
+};
+
+  $.ajax({
+    url: "{% static 'spin.js/spin.js' %}",
+    dataType: "script",
+    success: function(){
+      $('.spinner').each(function(){
+        var spinner = new Spinner(opts).spin(this);
+      });
+      //$('#modal').modal();
+    }
+  });
+
+});
+</script>
+
+
 {% endblock%}
 

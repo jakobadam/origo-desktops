@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     url(r'^setup/cancel/$', 'rds.views.cancel', name='cancel'),
     url(r'^setup/server/$', 'rds.views.server_setup', name='server_setup'),    
     
-    url(r'^software/$', RedirectView.as_view(url=reverse_lazy('packages_local'), permanent=True),
+    url(r'^software/$', RedirectView.as_view(url=reverse_lazy('packages_cloud'), permanent=True),
         name='software'),
     url(r'^software/cloud/$', 'rds.views.packages_cloud', name='packages_cloud'),
     
