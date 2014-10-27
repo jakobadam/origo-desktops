@@ -35,8 +35,8 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :windows do |c|
-    # hostname doesn't work
-    c.vm.hostname = "test"
+    # Uhh. Works now:)
+    # c.vm.hostname = "test"
     c.vm.box_url = "http://192.168.50.137/windows-2012R2.box"
     # c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
     c.vm.box = "windows-2012R2"
