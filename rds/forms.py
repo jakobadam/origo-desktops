@@ -22,7 +22,7 @@ class ActiveDirectoryForm(forms.ModelForm):
 
     class Meta:
         model = Server
-        exclude = ('name',)
+        fields = ('ip', 'domain', 'user', 'password')
 
     def clean_ip(self):
         ip = self.cleaned_data['ip']

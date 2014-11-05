@@ -28,6 +28,8 @@ from rds.models import (
     ActiveDirectory,
     )
 
+from rds import tasks
+
 from async_messages.models import Message
 
 log = logging.getLogger(__name__)
@@ -164,6 +166,9 @@ def ad_type(request):
     return shortcuts.render(request, 'ad_type.html')        
 
 def ad_external_setup(request):
+    # from django.http import HttpResponse
+    # from django.template import RequestContext, loader
+    
     if request.method == 'POST':
         ad = ActiveDirectory.first_or_create()
         state = State.first_or_create()
@@ -180,6 +185,15 @@ def ad_external_setup(request):
             return http.HttpResponseRedirect(reverse('setup'))
     else:
         form = ActiveDirectoryForm()
+
+    # t = loader.get_template('ad_setup.html')
+
+    # import ipdb
+    # ipdb.set_trace()
+    
+    # c = RequestContext(request, {'form': 'form'})
+    # return HttpResponse(t.render(c))
+
     return shortcuts.render(request, 'ad_setup.html', {
         'form':form
         })
@@ -250,7 +264,6 @@ def _handle_winrm_exception(e, request):
 Please update the credentials in <a href="{}">Setup</a> '.format(e, url))        
     else:
         messages.error(request, str(e))
-
         
 @require_http_methods(['POST'])        
 def deployment_publish(request, pk):
@@ -277,14 +290,8 @@ def refresh_applications(request):
 def applications(request):
     server = Server.objects.first()
     if server.updated:
-        try:
-            server.fetch_applications()
-            messages.success(request, 'Fetched all applications from the start menu on the RDS server')
-            server.updated = False
-            server.save()
-        except Exception, e:
-            _handle_winrm_exception(e, request)
-
+        tasks.fetch_applications.delay(server.pk)
+        messages.info(request, 'Updating application list... Please refresh page')
     return shortcuts.render(request, 'application_list.html', {
         'applications':Application.objects.all(),
         'server':server

@@ -41,7 +41,8 @@ npm install -g bower
 echo '==> Installing Webserver'
 mkdir /var/run/gunicorn /var/log/gunicorn
 chown www-data: /var/run/gunicorn /var/log/gunicorn
-touch /var/log/gunicorn; chown www-data: /var/log/gunicorn/django.log
+touch /var/log/gunicorn/django.log
+chown www-data: /var/log/gunicorn/django.log
 
 rm /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
 ln -s /etc/nginx/sites-available/rds /etc/nginx/sites-enabled/rds
@@ -53,39 +54,8 @@ pip install -r /vagrant/conf/requirements.txt
 su vagrant -c 'yes n | /vagrant/manage.py bower install'
 /vagrant/manage.py collectstatic --noinput
 
-echo '==> Installing Samba'
-mkdir /srv/samba
-chown -R www-data: /srv/samba
-
-# FIXME: duing developement I want to be able to quick switch to the django dev server
-cat >> /etc/samba/smb.conf <<EOF
-[share]
-    comment = Software
-    writable = yes
-    path = /srv/samba
-    browsable = yes
-    guest ok = yes
-    read only = no
-    create mask = 0755
-
-[source]
-    comment = Source
-    writable = yes
-    path = /vagrant
-    browsable = yes
-    guest ok = yes
-    read only = no
-    create mask = 0777
-
-[scripts]
-    comment = Scripts
-    writable = yes
-    path = /srv/www/rds/scripts
-    browsable = yes
-    guest ok = yes
-    read only = no
-    create mask = 0777
-EOF
+# samba-tool domain provision --use-rfc2307 --interactive
+. install_samba.sh
 
 echo '==> Enable Celery Service'
 useradd celery

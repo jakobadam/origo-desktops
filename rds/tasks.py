@@ -61,4 +61,16 @@ def uninstall_package(package_id, server_id):
     
     package.installed = False        
     package.save()
+
+@shared_task
+def fetch_applications(server_id):
+    server = Server.objects.get(pk=server_id)
+    try:
+        server.fetch_applications()
+        message = 'Fetched all applications from the start menu on the RDS server'
+        Message.success(message)
+        server.updated = False
+        server.save()
+    except Exception, e:
+        Message.error(str(e))
     

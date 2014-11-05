@@ -77,5 +77,5 @@ Pool of servers (session hosts) that handles connections.
 ## Celery
 
 ```
-celery -A rds worker -l info
+$ runcelery.sh
 ```

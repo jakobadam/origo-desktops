@@ -257,10 +257,10 @@ class Server(models.Model):
     Currently: There is only one
     """
     ip = models.IPAddressField(db_index=True)
-    name = models.CharField(max_length=100, verbose_name='computer name')
+    name = models.CharField(max_length=100, verbose_name='Computer name')
     domain = models.CharField(max_length=100)
     user = models.CharField(max_length=100)
-    password = models.CharField(max_length=128, verbose_name='Password')
+    password = models.CharField(max_length=128, verbose_name='Administrator Password')
     updated = models.BooleanField(default=True)
     
     def __str__(self):

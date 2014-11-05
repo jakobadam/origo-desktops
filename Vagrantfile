@@ -20,6 +20,12 @@ Vagrant.configure("2") do |config|
     c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
   end
 
+  config.vm.define :debian do |c|
+    c.vm.hostname = "debian"
+    c.vm.box = "debian77"
+    c.vm.box_url = "http://192.168.50.137/debian77.box"
+  end
+
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
     # c.vm.box_url = "file:///srv/boxes/rds.box"
