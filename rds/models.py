@@ -309,5 +309,5 @@ class Application(models.Model):
         self.published = False
         self.save()
                 
-import rds.signals
-rds.signals
+# import rds.signals
+# rds.signals
