@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :ubuntu do |c|
     c.vm.box = "ubuntu14"
-    c.vm.box_url = "https://dl.dropboxusercontent.com/u/835753/ubuntu-14.04-server-vagrant-kvm.box"
+    c.vm.box_url = "https://dl.dropboxusercontent.com/u/835753/ubuntu-1404-server-vagrant-kvm.box"
     c.vm.hostname = "ubuntu"
 
     # Private networks doesn't work at the moment
@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
     # django dev server directly (when started)
     c.vm.network :forwarded_port, guest: 8000, host: 8000
 
-    c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
+    # c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
   end
 
   config.vm.define :debian do |c|
@@ -37,7 +37,19 @@ Vagrant.configure("2") do |config|
     # c.vm.synced_folder ".", "/vagrant", :type => "smb"
 
     # Forward IIS
-    c.vm.network :forwarded_port, guest: 80, host: 8001
+    # c.vm.network :forwarded_port, guest: 80, host: 8001
+  end
+
+  config.vm.define :sh1 do |c|
+    c.vm.box_url = "http://192.168.50.137/windows-2012R2.box"
+    c.vm.box = "windows-2012R2"
+    c.vm.guest = :windows
+  end
+
+  config.vm.define :ad do |c|
+    c.vm.box_url = "http://192.168.50.137/windows-ad.box"
+    c.vm.box = "windows-ad"
+    c.vm.guest = :windows
   end
 
   config.vm.define :windows do |c|
@@ -59,6 +71,11 @@ Vagrant.configure("2") do |config|
 
     # Forward rdp
     c.vm.network :forwarded_port, guest: 3389, host: 3389
+  end
+
+  config.vm.define :windows2 do |c|
+    c.vm.box = "windows-2012-R2-1"
+    c.vm.guest = :windows
   end
 
 end

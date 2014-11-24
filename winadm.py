@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 import winrm
 import os
+import logging
 
-HERE = os.path.dirname(__file__)
+log = logging.getLogger(__name__)
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+log.error('wii')
 session = None
 
 def insert_ps_args(script, args=()):

@@ -1,11 +1,10 @@
+@echo off
 @setlocal EnableDelayedExpansion
 
 set TASK="RDS Install Task"
 set STEP=1
 set STEP_STATUS_DIR=%SystemRoot%\Temp\rds_install
 set STEP_STATUS=%STEP_STATUS_DIR%\step%STEP%
-
-echo %STEP_STATUS%
 
 :next_loop
 if exist "%STEP_STATUS%" (
@@ -14,23 +13,20 @@ if exist "%STEP_STATUS%" (
   goto :next_loop
 ) else (
   mkdir %STEP_STATUS%
+  echo %TASK% Step !STEP!. Please wait...
   goto :step!STEP!
 )
 
-
 :step1
 schtasks /create /tn %TASK% /tr "%~dp0install.bat" /sc onlogon
-powershell -File %~dp0install-ad.ps1
-goto :reboot 
+powershell -ExecutionPolicy bypass -File %~dp0install-ad.ps1
+powershell -ExecutionPolicy bypass -File %~dp0ad-add-forest.ps1
+goto :finish
+:: goto :reboot
 
 :step2
-powershell -File %~dp0ad-add-forest.ps1
-goto :reboot 
-
-:step3
-
 echo "RDS deployment doesn't work:-(. Go install RDS in server manager:-("
-powershell -File %~dp0rds-add-deployment.ps1
+powershell -ExecutionPolicy bypass -File %~dp0rds-add-deployment.ps1
 pause
 call :join
 goto :finish
@@ -51,4 +47,4 @@ goto :eof
 :finish
 echo "Install Finished - Deleting Scheduled Task"
 schtasks /delete /tn %TASK% -f
-deltree %STEP_STATUS_DIR%
+rmdir /S %STEP_STATUS_DIR%

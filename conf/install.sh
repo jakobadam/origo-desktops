@@ -48,7 +48,7 @@ rm /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
 ln -s /etc/nginx/sites-available/rds /etc/nginx/sites-enabled/rds
 
 echo '==> Installing Webapp'
-pip install -r /vagrant/conf/requirements.txt
+pip install -r /vagrant/conf/requirements.txt --src=$HOME
 
 /vagrant/manage.py syncdb --noinput
 su vagrant -c 'yes n | /vagrant/manage.py bower install'

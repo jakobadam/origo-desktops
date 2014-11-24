@@ -1,11 +1,11 @@
 -e git+https://github.com/jakobadam/django-caboskin.git#egg=caboskin
--e git+https://github.com/jakobadam/pywinrm#egg=pywinrm
-django 
+-e git+https://github.com/jakobadam/pywinrm@cli#egg=pywinrm
+django
 django-bower
 django-crispy-forms
 django-debug-toolbar
 django-grappelli
 django-password-strength
-gunicorn 
+gunicorn
 ipdb
 celery
