@@ -16,8 +16,7 @@ Vagrant.configure("2") do |config|
 
     # django dev server directly (when started)
     c.vm.network :forwarded_port, guest: 8000, host: 8000
-
-    # c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
+    c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
   end
 
   config.vm.define :debian do |c|
