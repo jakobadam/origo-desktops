@@ -1,6 +1,6 @@
 -e git+https://github.com/jakobadam/django-caboskin.git#egg=caboskin
 -e git+https://github.com/jakobadam/pywinrm@cli#egg=pywinrm
-django
+django==1.7
 django-bower
 django-crispy-forms
 django-debug-toolbar
@@ -8,4 +8,4 @@ django-grappelli
 django-password-strength
 gunicorn
 ipdb
-celery
+celery==3.1
