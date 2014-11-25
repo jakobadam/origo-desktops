@@ -38,7 +38,7 @@ PACKAGE_DIR = '/srv/samba/'
 
 class PackageEdit(object):
     model = Package
-    template_name = 'package_local_form.html'
+    template_name = 'software_upload_form.html'
     form_class = PackageForm
     success_url = reverse_lazy('packages_local')
 
@@ -234,18 +234,18 @@ def join(request):
 
 def packages_local(request):
     packages = Package.objects.all()
-    return shortcuts.render(request, 'package_local_list.html', {
+    return shortcuts.render(request, 'software_uploaded.html', {
         'packages': packages
     })
 
 def packages_cloud(request):
-    return shortcuts.render(request, 'package_cloud_list.html', {
+    return shortcuts.render(request, 'software_store.html', {
     })
 
 def packages_server(request):
     packages = Package.objects.filter(installed=True)
     server = Server.objects.first()
-    return shortcuts.render(request, 'package_server_list.html', {
+    return shortcuts.render(request, 'software_installed.html', {
         'packages': packages,
         'server': server
     })
