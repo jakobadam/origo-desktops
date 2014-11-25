@@ -14,22 +14,22 @@
 </div>
 
 <div class="col-xs-9">
-  <h1>Packages <small>{{server.name}}.{{server.domain}}</small></h1>
+  <h1>Installed Software <small>{{server.name}}.{{server.domain}}</small></h1>
 
   <div class="alert alert-info alert-dismissible fade in" role="alert">
     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
     <strong>Heads Up!</strong>  This page contains a list of installed
-    packages on your RDS deployement. You install packages from the 
-    <a class="alert-link" href="{% url 'packages_cloud'%}">package cloud store
+    software on your RDS deployement. You install software from the
+    <a class="alert-link" href="{% url 'packages_cloud'%}"> software store
       <!-- <span class="glyphicon glyphicon-cloud"></span> -->
-    </a> 
-    or upload you own to your 
-    <a class="alert-link" href="{% url 'packages_local' %}">local package store
-      <!-- <span class="glyphicon glyphicon-folder-open"></span> -->
     </a>
-    at 
-    <a class="alert-link" href="{% url 'add_package'%}">add local package 
+    or
+    <a class="alert-link" href="{% url 'add_package'%}">upload
       <!-- <span class="glyphicon glyphicon-upload"></span> -->
+    </a>
+    your own and installing it from the
+    <a class="alert-link" href="{% url 'packages_local' %}">local software store
+      <!-- <span class="glyphicon glyphicon-folder-open"></span> -->
     </a>
 
   </div>
@@ -46,7 +46,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for p in packages %}        
+        {% for p in packages %}
         <tr>
           <td>{{p.name}}</td>
           <td>{{p.version}}</td>
@@ -54,7 +54,7 @@
             {% if p.installed == True %}
             <span class="glyphicon glyphicon-ok"></span>
             {% else %}
-            <span class="glyphicon glyphicon-remove"></span>            
+            <span class="glyphicon glyphicon-remove"></span>
             {% endif %}
           </td>
           <td>
@@ -72,10 +72,10 @@
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>
             </form>
-            
+
           </td>
         </tr>
-        {% endfor %}        
+        {% endfor %}
       </tbody>
 
     </table>
@@ -90,4 +90,3 @@
   {% endif %}
 </div>
 {% endblock%}
-
