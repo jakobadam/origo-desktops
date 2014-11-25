@@ -4,7 +4,7 @@ import glob
 import zipfile
 import winrm
 import logging
-import winadm
+# import winadm
 import shutil
 
 from django.db import models
@@ -39,18 +39,18 @@ class Package(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.name,self.version)
-                
+
     def save(self, *args, **kwargs):
         log.info('Saving Package {}'.format(self))
         # file updated is an attribute that is explicitly set from the view
         file_updated = kwargs.get('file_updated')
         if kwargs.has_key('file_updated'):
             del kwargs['file_updated']
-        
+
         if self.pk:
             old_instance = Package.objects.get(pk=self.pk)
             if file_updated:
-                old_instance.delete_files()       
+                old_instance.delete_files()
 
         r = super(Package, self).save(*args, **kwargs)
 
@@ -62,9 +62,9 @@ class Package(models.Model):
     def delete(self, *args, **kwargs):
         self.delete_files()
         return super(Package, self).delete()
-        
+
     def add_script(self):
-        script_path = self.test_script_path        
+        script_path = self.test_script_path
         log.info('Adding install test script "{}"'.format(script_path))
 
         with open(script_path, 'w') as f:
@@ -95,7 +95,7 @@ class Package(models.Model):
 
     def samba_path_join(self, *args):
         return "\\".join(args)
-                                
+
     @property
     def samba_path(self):
         return self.samba_path_join(settings.SAMBA_SHARE, self.dirname)
@@ -130,7 +130,7 @@ class Package(models.Model):
         if ext == '.msi':
             return 'msiexec /L*+ "%s" /passive /i "%s" %s' % (self.log_samba_path, self.samba_path, self.args)
         return '"%s" %s' % (self.samba_path_installer, self.args)
-                
+
     def delete_files(self):
         """Delete software folder with install files and test files
         """
@@ -144,7 +144,7 @@ class Package(models.Model):
             log.error(e)
         finally:
             log.info('Tried deleting package, but there is no dir named "{}"'.format(self.path))
-    
+
     def install(self, server):
         """Install software on server
         """
@@ -159,11 +159,11 @@ class Package(models.Model):
         """
         log.info('Adding un-install tasks for package "{}"'.format(self))
         from rds import tasks
-        tasks.uninstall_package.delay(self.pk, server.pk)        
-        
+        tasks.uninstall_package.delay(self.pk, server.pk)
+
     def add_dirs(self):
         dirs = [os.path.join(self.path, d) for d in ('log', 'script')]
-        log.info('Creating package dirs: {}'.format(dirs))        
+        log.info('Creating package dirs: {}'.format(dirs))
         for d in dirs:
             os.makedirs(d)
         # make it writable
@@ -197,14 +197,14 @@ class Package(models.Model):
         log.info('Setting execution bits')
         for f in self.find_executables():
             os.chmod(f, 0755)
-                
+
     def find_installer(self):
         """Take a guess on which should be run to install
         only looks in toplevel directory
         """
         for ext in ('exe', 'EXE', 'msi', 'MSI'):
             path = os.path.join(self.path, 'software', '*.{}'.format(ext))
-            log.info('Looking for installer with glob "{}"'.format(path))            
+            log.info('Looking for installer with glob "{}"'.format(path))
             files = glob.glob(path)
             if files:
                 installer_path = files[0]
@@ -221,22 +221,22 @@ class Helper(object):
         if not s:
             s = cls.objects.create()
         return s
-        
+
 class State(models.Model, Helper):
 
     LOCATION_AD_TYPE = 'ad_type'
     LOCATION_AD_EXTERNAL_SETUP = 'ad_external_setup'
-    LOCATION_AD_INTERNAL_SETUP = 'ad_internal_setup'    
-        
+    LOCATION_AD_INTERNAL_SETUP = 'ad_internal_setup'
+
     LOCATION_SERVER_WAIT = 'server_wait'
     LOCATION_SERVER_SETUP = 'server_setup'
-    
+
     EXTERNAL = 'external'
     INTERNAL = 'internal'
 
     location = models.CharField(max_length=100, default=LOCATION_AD_TYPE)
     active_directory = models.CharField(max_length=100, default=INTERNAL)
-    
+
     @classmethod
     def first_or_create(cls):
         s = cls.objects.first()
@@ -245,7 +245,7 @@ class State(models.Model, Helper):
         return s
 
 class ActiveDirectory(models.Model, Helper):
-        
+
     domain = models.CharField(max_length=1000)
     user = models.CharField(max_length=200)
     # TODO: hash it? Just one anyways
@@ -262,13 +262,13 @@ class Server(models.Model):
     user = models.CharField(max_length=100)
     password = models.CharField(max_length=128, verbose_name='Administrator Password')
     updated = models.BooleanField(default=True)
-    
+
     def __str__(self):
         return "{} ({})".format(self.name, self.ip)
 
     def winrm_session(self):
         return winrm.Session(self.ip, auth=(self.user, self.password))
-        
+
     def cmd(self, cmd, args=()):
         log.info('Running cmd: {}'.format(cmd))
         s = self.winrm_session()
@@ -276,8 +276,8 @@ class Server(models.Model):
 
     def fetch_applications(self):
 
-        winadm.set_session(self.winrm_session())
-        res = winadm.whereis('')
+        # winadm.set_session(self.winrm_session())
+        # res = winadm.whereis('')
 
         if res.status_code == 0:
             # Mozilla Firefox | C:\Program Files (x86)\Mozilla Firefox\firefox.exe
@@ -308,6 +308,6 @@ class Application(models.Model):
     def unpublish(self):
         self.published = False
         self.save()
-                
+
 # import rds.signals
 # rds.signals
