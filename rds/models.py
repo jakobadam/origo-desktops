@@ -125,7 +125,7 @@ class Package(models.Model):
     @property
     def install_cmd(self):
         if not self.installer:
-            raise Exception('Installer not found!')
+            return None
         root,ext = os.path.splitext(self.installer)
         if ext == '.msi':
             return 'msiexec /L*+ "%s" /passive /i "%s" %s' % (self.log_samba_path, self.samba_path, self.args)
@@ -165,9 +165,9 @@ class Package(models.Model):
         dirs = [os.path.join(self.path, d) for d in ('log', 'script')]
         log.info('Creating package dirs: {}'.format(dirs))
         for d in dirs:
-            os.makedirs(d)
+            os.makedirs(d, mode=settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS)
         # make it writable
-        os.chmod(os.path.join(self.path,'log'), 0777)
+        os.chmod(os.path.join(self.path,'log'), settings.FILE_UPLOAD_PERMISSIONS)
 
     @property
     def zipped(self):
@@ -194,7 +194,7 @@ class Package(models.Model):
         return executables
 
     def make_executable(self):
-        log.info('Setting execution bits')
+        log.info('Setting execution bits on: {}'.format(self))
         for f in self.find_executables():
             os.chmod(f, 0755)
 

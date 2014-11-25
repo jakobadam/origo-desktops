@@ -1,4 +1,8 @@
 #!/bin/sh
+# ========================================
+# gunicorn - Starts the gunicorn webserver
+# ========================================
+
 ### BEGIN INIT INFO
 # Provides: gunicorn
 # Required-Start: $all
@@ -25,8 +29,8 @@ SCRIPTNAME=/etc/init.d/$NAME
 APP_MODULE='rds.wsgi:application'
 
 [ -x "$DAEMON" ] || exit 0
-[ ! -d /var/run/gunicorn ] && mkdir /var/run/gunicorn && chown www-data: /var/run/gunicorn
-[ ! -d /var/log/gunicorn ] && mkdir /var/log/gunicorn && chown www-data: /var/log/gunicorn
+[ ! -d /var/run/gunicorn ] && mkdir /var/run/gunicorn && chown ${USER}: /var/run/gunicorn
+[ ! -d /var/log/gunicorn ] && mkdir /var/log/gunicorn && chown ${USER}: /var/log/gunicorn
 
 start () {
     ARGS="--start --chuid $USER:$GROUP --chdir $ROOT --pidfile $PIDFILE --background --exec $DAEMON"

@@ -20,8 +20,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 GRAPPELLI_ADMIN_TITLE = 'RDS'
 
 # Allow group to write in uploaded dirs
-FILE_UPLOAD_PERMISSIONS = 0775
-FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0775
+FILE_UPLOAD_PERMISSIONS = 0755
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0755
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -115,6 +115,7 @@ LOGGING = {
     'formatters': {
         'verbose': {
             'format': '[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s'
+    # [l:%(lineno)d] [%(module)s]
         }
     },
     'handlers': {

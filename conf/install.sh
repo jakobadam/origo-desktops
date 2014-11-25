@@ -23,27 +23,22 @@ python-pip
 python-dev
 rabbitmq-server
 samba
-sqlite3 
+sqlite3
 "
-apt-get --yes install $PACKAGES 
+apt-get --yes install $PACKAGES
 
 # NOTE: We don't need this in production just the files
 # bower
 DEV_PACKAGES="
-nodejs 
+nodejs
 nodejs-legacy
 npm
 "
-apt-get --yes install $DEV_PACKAGES 
+apt-get --yes install $DEV_PACKAGES
 
 npm install -g bower
 
 echo '==> Installing Webserver'
-mkdir /var/run/gunicorn /var/log/gunicorn
-chown www-data: /var/run/gunicorn /var/log/gunicorn
-touch /var/log/gunicorn/django.log
-chown www-data: /var/log/gunicorn/django.log
-
 rm /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
 ln -s /etc/nginx/sites-available/rds /etc/nginx/sites-enabled/rds
 
@@ -58,10 +53,12 @@ su vagrant -c 'yes n | /vagrant/manage.py bower install'
 . install_samba.sh
 
 echo '==> Enable Celery Service'
-useradd celery
-update-rc.d celeryd defaults 
+# Celery init script uses su => www-data must be able to login
+# replace nologin
+usermod -s '' www-data
+update-rc.d celeryd defaults
 update-rc.d celeryd enable
- 
+
 echo '==> Enable Gunicorn Service'
 update-rc.d gunicorn defaults
 update-rc.d gunicorn enable
