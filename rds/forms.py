@@ -43,7 +43,7 @@ class ActiveDirectoryInternalForm(forms.ModelForm):
             'domain':{'required': 'Domain must be set'},
         }
 
-                
+
 class PackageForm(forms.ModelForm):
 
     class Meta:
@@ -55,10 +55,10 @@ class PackageForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PackageForm, self).__init__(*args, **kwargs)
-        
+
         if self.instance.pk:
             self.fields['name'].widget.attrs['readonly'] = True
-        
+
     def clean_file(self):
         file = self.cleaned_data['file']
         file_root, file_ext = os.path.splitext(file.name)
@@ -101,13 +101,13 @@ class JoinForm(forms.Form):
     ip = forms.IPAddressField()
     name = forms.CharField()
     domain = forms.CharField(required=False)
-    
+
 class ServerForm(forms.ModelForm):
 
     class Meta:
         model = Server
         exclude = ('user','updated')
-        
+
         widgets = {
             'ip': forms.TextInput(attrs={'readonly':True}),
             'name': _get_widget('Enter computer name'),
