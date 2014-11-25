@@ -47,7 +47,7 @@ class PackageEdit(object):
         self.object = form.save(commit=False)
         self.object.save(file_updated=file_updated)
         return http.HttpResponseRedirect(self.success_url)
-    
+
 class PackageUpdate(PackageEdit, UpdateView):
     pass
 
@@ -56,10 +56,10 @@ class PackageCreate(PackageEdit, CreateView):
 
 class PackageDelete(PackageEdit, DeleteView):
     pass
-    
+
 @require_http_methods(['POST'])
 def install_package(request, pk=None):
-    package = shortcuts.get_object_or_404(Package, pk=pk)    
+    package = shortcuts.get_object_or_404(Package, pk=pk)
     server = Server.objects.first()
 
     if not server or not server.user or not server.password:
@@ -74,7 +74,7 @@ def install_package(request, pk=None):
 
 @require_http_methods(['POST'])
 def uninstall_package(request, pk=None):
-    package = shortcuts.get_object_or_404(Package, pk=pk)    
+    package = shortcuts.get_object_or_404(Package, pk=pk)
     server = Server.objects.first()
 
     if not server or not server.user or not server.password:
@@ -112,11 +112,11 @@ def setup(request, **kwargs):
         return http.HttpResponseRedirect(reverse('ad_external_setup'))
 
     if state.location == State.LOCATION_SERVER_WAIT:
-        return shortcuts.render(request, 'server_wait.html')            
-    
+        return shortcuts.render(request, 'server_wait.html')
+
     if state.location == State.LOCATION_SERVER_SETUP:
         return http.HttpResponseRedirect(reverse('server_setup'))
-            
+
     raise Exception('TODO: Should not happen')
 
 def server_setup(request):
@@ -125,7 +125,7 @@ def server_setup(request):
     if not server:
         msg = 'There is no server in the database! Wait for it to join.'
         return http.HttpResponseBadRequest(msg)
-    
+
     if request.method == 'POST':
         form = ServerForm(data=request.POST, instance=server)
         if form.is_valid():
@@ -138,7 +138,7 @@ def server_setup(request):
         'form':form
     })
 
-    
+
 @require_http_methods(['POST'])
 def cancel(request):
     state = State.first_or_create()
@@ -147,11 +147,11 @@ def cancel(request):
         s.delete()
 
     # TODO: destroy virtual machines
-    
+
     state.location = State.LOCATION_AD_TYPE
     state.save()
     return http.HttpResponseRedirect(reverse('setup'))
-    
+
 def ad_type(request):
     state = State.first_or_create()
     if request.method == 'POST':
@@ -163,12 +163,12 @@ def ad_type(request):
             state.location = State.LOCATION_SERVER_WAIT
         state.save()
         return http.HttpResponseRedirect(reverse('setup'))
-    return shortcuts.render(request, 'ad_type.html')        
+    return shortcuts.render(request, 'ad_type.html')
 
 def ad_external_setup(request):
     # from django.http import HttpResponse
     # from django.template import RequestContext, loader
-    
+
     if request.method == 'POST':
         ad = ActiveDirectory.first_or_create()
         state = State.first_or_create()
@@ -190,7 +190,7 @@ def ad_external_setup(request):
 
     # import ipdb
     # ipdb.set_trace()
-    
+
     # c = RequestContext(request, {'form': 'form'})
     # return HttpResponse(t.render(c))
 
@@ -206,7 +206,7 @@ def rdp_settings(request, pk):
         }, content_type=content_type)
     response['Content-Disposition'] = 'attachment; filename=settings.rdp'
     return response
-    
+
 def join(request):
     form = JoinForm(data=request.REQUEST)
 
@@ -217,11 +217,11 @@ def join(request):
     if state.location == State.LOCATION_SERVER_WAIT:
         state.location = State.LOCATION_SERVER_SETUP
         state.save()
-    
+
     # FIXME: TODO !!!
     for s in Server.objects.all():
         s.delete()
-       
+
 
     # FIXME: TODO !!!
     server, created = Server.objects.get_or_create(
@@ -233,7 +233,7 @@ def join(request):
     return http.HttpResponse()
 
 def packages_local(request):
-    packages = Package.objects.all()    
+    packages = Package.objects.all()
     return shortcuts.render(request, 'package_local_list.html', {
         'packages': packages
     })
@@ -243,7 +243,7 @@ def packages_cloud(request):
     })
 
 def packages_server(request):
-    packages = Package.objects.filter(installed=True)    
+    packages = Package.objects.filter(installed=True)
     server = Server.objects.first()
     return shortcuts.render(request, 'package_server_list.html', {
         'packages': packages,
@@ -261,11 +261,11 @@ def _handle_winrm_exception(e, request):
     elif error == UnauthorizedError:
         url = reverse('setup')
         messages.error(request, 'Unauthorized to access RDS Server: {} \
-Please update the credentials in <a href="{}">Setup</a> '.format(e, url))        
+Please update the credentials in <a href="{}">Setup</a> '.format(e, url))
     else:
         messages.error(request, str(e))
-        
-@require_http_methods(['POST'])        
+
+@require_http_methods(['POST'])
 def deployment_publish(request, pk):
     app = shortcuts.get_object_or_404(Application, pk=pk)
     # publish
@@ -296,6 +296,3 @@ def applications(request):
         'applications':Application.objects.all(),
         'server':server
     })
-    
-    
-
