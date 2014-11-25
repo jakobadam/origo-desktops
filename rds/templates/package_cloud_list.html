@@ -26,7 +26,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for p in packages %}        
+        {% for p in packages %}
         <tr>
           <td>{{p.name}}</td>
           <td>{{p.version}}</td>
@@ -34,7 +34,7 @@
             {% if p.installed == True %}
             <span class="glyphicon glyphicon-ok"></span>
             {% else %}
-            <span class="glyphicon glyphicon-remove"></span>            
+            <span class="glyphicon glyphicon-remove"></span>
             {% endif %}
           </td>
           <td>
@@ -63,17 +63,16 @@
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>
             </form>
-            
+
           </td>
         </tr>
-        {% endfor %}        
+        {% endfor %}
       </tbody>
 
     </table>
   </div>
   {% else %}
-  No packages yet
+  No software yet
   {% endif %}
 </div>
 {% endblock%}
-

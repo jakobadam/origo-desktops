@@ -58,6 +58,7 @@ class PackageForm(forms.ModelForm):
 
         if self.instance.pk:
             self.fields['name'].widget.attrs['readonly'] = True
+            self.fields['version'].widget.attrs['readonly'] = True
 
     def clean_file(self):
         file = self.cleaned_data['file']
