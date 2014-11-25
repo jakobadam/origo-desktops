@@ -18,7 +18,7 @@ ALLOWED_HOSTS = []
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 GRAPPELLI_ADMIN_TITLE = 'RDS'
-    
+
 FILE_UPLOAD_PERMISSIONS = 0755
 
 INSTALLED_APPS = (
@@ -124,10 +124,11 @@ LOGGING = {
         'file': {
             'level':'DEBUG',
             'class':'logging.FileHandler',
-            'filename': '/var/log/gunicorn/django.log',
-            'formatter':'verbose'            
+            # 'filename': '/var/log/gunicorn/django.log',
+            'filename': 'django.log',
+            'formatter':'verbose'
             }
-    },    
+    },
     'loggers': {
         '':{
             'handlers': ['console', 'file'],
@@ -140,7 +141,7 @@ LOGGING = {
         },
         'rds': {
             'handlers': ['console', 'file'],
-            'propagate': False,            
+            'propagate': False,
             'level': 'DEBUG'
         }
     }
@@ -150,11 +151,12 @@ from django.conf import global_settings
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'django.core.context_processors.media',
-    'rds.context_processors.servers',    
+    'rds.context_processors.servers',
     'async_messages.context_processors.unread'
 )
 
 if DEBUG:
+    # DEBUG_TOOLBAR_PATCH_SETTINGS = False
     # DBar is skipped if INTERNAL_IP doesn't match the requests
     # bypass that
     def always_true(request):
@@ -167,4 +169,3 @@ if DEBUG:
         'INTERCEPT_REDIRECTS': False,
         'SHOW_TOOLBAR_CALLBACK': "%s.always_true" % __name__,
     }
-
