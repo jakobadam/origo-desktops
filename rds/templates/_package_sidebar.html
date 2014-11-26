@@ -25,21 +25,22 @@ color:#rgb(186, 193, 200);
 
 
 <div class="bs-docs-sidebar hidden-print affix-top" role="complementary">
+
   <ul class="nav bs-docs-sidenav">
     <h5 style="margin-top:0"><small>RDS Deployment</small></h5>
     <li>
       <ul class="nav">
-        <li><a href="{% url 'applications'%}">Applications</a></li>
-        <li><a href="{% url 'packages_server' %}">Packages</a></li>
+        <li><a href="{% url 'applications'%}"><span class="glyphicon glyphicon-th-list"></span> Applications</a></li>
+        <li><a href="{% url 'packages_server' %}"><span class="glyphicon glyphicon-folder-close"></span> Installed Software</a></li>
       </ul>
     </li>
 
     <li>
       <h5><small>Software</small></h5>
       <ul class="nav">
-        <li><a href="{% url 'packages_cloud' %}">Software Store <span class="glyphicon glyphicon-cloud"></span></a></li>
-        <li><a href="{% url 'packages_local' %}">Uploaded software <span class="glyphicon glyphicon-folder-open"></span></a></li>
-        <li><a href="{% url 'add_package' %}">Upload software <span class="glyphicon glyphicon-upload"></span></a></li>
+        <li><a href="{% url 'packages_cloud' %}"><span class="glyphicon glyphicon-cloud"></span> Software Store</a></li>
+        <li><a href="{% url 'packages_local' %}"><span class="glyphicon glyphicon-folder-open"></span> Uploaded software </a></li>
+        <li><a href="{% url 'add_package' %}"><span class="glyphicon glyphicon glyphicon glyphicon-open"></span> Upload software</a></li>
       </ul>
     </li>
   </ul>
@@ -49,4 +50,3 @@ color:#rgb(186, 193, 200);
   </div>
 
 </div>
-
