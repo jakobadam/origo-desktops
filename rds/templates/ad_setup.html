@@ -21,28 +21,28 @@ height: 200px;
   <div class="row">
 
     <div class="col-md-2">
-      
+
     </div>
 
     <div class="col-md-8">
 
-      <h3>Connect to existing AD</h3>
+      <h3>Connect to existing Active Directory</h3>
 
       <div class="share mrl">
         <form method="POST" action="{% url 'ad_external_setup' %}">
           <ul>
             <li>
-              {{form|crispy}}              
+              {{form|crispy}}
             </li>
           </ul>
 
           <button href="#" class="btn btn-primary btn-block btn-large">Next
             <span class="fui-arrow-right"></span>
           </button>
-          
+
         </form>
       </div>
-      
+
     </div>
 
   </div>
@@ -55,5 +55,3 @@ height: 200px;
 
 </div>
 {% endblock%}
-
-
