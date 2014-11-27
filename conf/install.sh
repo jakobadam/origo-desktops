@@ -24,6 +24,7 @@ python-dev
 rabbitmq-server
 samba
 sqlite3
+ldap-utils
 "
 apt-get --yes install $PACKAGES
 

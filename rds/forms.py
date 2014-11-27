@@ -15,6 +15,10 @@ from rds.models import (
     ActiveDirectory,
     )
 
+from async_messages.models import Message
+
+from . import ldap
+
 def _get_widget(placeholder):
     return forms.TextInput(attrs={'placeholder':placeholder})
 
@@ -30,6 +34,28 @@ class ActiveDirectoryForm(forms.ModelForm):
         if status != 0:
             raise forms.ValidationError('Could not ping %s' % ip)
         return ip
+
+    def clean(self):
+        if self._errors:
+            # skip cleaning when an error is already present
+            return
+
+        data = self.cleaned_data
+
+        ip = data.get('ip')
+        domain = data.get('domain')
+        user = data.get('user')
+        password = data.get('password')
+
+        # TODO: Is this always the case sub.example.com => sub\username
+        domain_account = "{}\{}".format(domain.split('.')[0], user)
+
+        try:
+            result = ldap.find_user(ip, domain, user, auth=(domain_account,password))
+            Message.info('LDAP results: <pre>{}</pre>'.format(result))
+        except ldap.LdapException, e:
+            Message.error('Tried with AD username is {}'.format(domain_account))
+            raise forms.ValidationError(str(e))
 
 class ActiveDirectoryInternalForm(forms.ModelForm):
 

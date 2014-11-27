@@ -13,21 +13,11 @@ Vagrant.configure("2") do |config|
 
     # nginx
     c.vm.network :forwarded_port, guest: 80, host: 8080
-
-    # django dev server directly (when started)
-    c.vm.network :forwarded_port, guest: 8000, host: 8000
     c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
-  end
-
-  config.vm.define :debian do |c|
-    c.vm.hostname = "debian"
-    c.vm.box = "debian77"
-    c.vm.box_url = "http://192.168.50.137/debian77.box"
   end
 
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
-    # c.vm.box_url = "file:///srv/boxes/rds.box"
     c.vm.box_url = "http://192.168.50.137/rds.box"
     c.vm.box = "rds"
     c.vm.guest = :windows

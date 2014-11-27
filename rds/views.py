@@ -170,6 +170,8 @@ def ad_external_setup(request):
     # from django.template import RequestContext, loader
 
     if request.method == 'POST':
+
+        # There is one and only one AD
         ad = ActiveDirectory.first_or_create()
         state = State.first_or_create()
 
