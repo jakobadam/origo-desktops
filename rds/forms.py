@@ -27,6 +27,14 @@ class ActiveDirectoryForm(forms.ModelForm):
     class Meta:
         model = Server
         fields = ('ip', 'domain', 'user', 'password')
+        widgets = {
+            'ip': _get_widget('IP address of Active Directory Server'),
+            'domain': _get_widget('Enter FQDN e.g., example.com'),
+            'user': _get_widget('User with administrative rights'),
+        }
+        error_messages = {
+            'domain':{'required': 'Domain must be set'},
+        }
 
     def clean_ip(self):
         ip = self.cleaned_data['ip']

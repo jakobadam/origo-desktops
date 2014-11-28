@@ -47,7 +47,7 @@ def run(command, host,
 def hostname(host, name=None, **kwargs):
     """Get or set the system's host name
 
-    :param host: host to execute command on
+    :param host: 
     :param name: (optional) set hostname to this
     """
     if not name:
@@ -60,6 +60,7 @@ def dns(host, ips=(), **kwargs):
     """Get or set DNS for the host
 
     :param host:
+    :param ips: (optional) set dns servers to this list
     """
     if not ips:
         script = open('{}/scripts/dns-get.ps1'.format(HERE))
@@ -67,9 +68,6 @@ def dns(host, ips=(), **kwargs):
     else:
         script = open('{}/scripts/dns-set.ps1'.format(HERE))
         return run_script(script, host, args=ips, **kwargs)
-    # ps = 'ls'
-    # ps = '(Get-DncClientServerAddress -InterfaceAlias "Ethernet" -AddressFamily IPv4).ServerAddresses'
-    # return run_ps(ps, host, **kwargs)
 
 def domain(host, name=None):
     """Get or set the system's domain name

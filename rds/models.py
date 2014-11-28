@@ -262,13 +262,13 @@ class ActiveDirectory(models.Model, Helper):
 class Server(models.Model):
     """The windows server to install software on
 
-    Currently: There is only one
     """
+
     ip = models.IPAddressField(db_index=True)
     name = models.CharField(max_length=100, verbose_name='Computer name')
     domain = models.CharField(max_length=100)
     user = models.CharField(max_length=100)
-    password = models.CharField(max_length=128, verbose_name='Administrator Password')
+    password = models.CharField(max_length=128, verbose_name='Password')
     updated = models.BooleanField(default=True)
 
     def __str__(self):
@@ -298,6 +298,23 @@ class Server(models.Model):
                     Application.objects.get_or_create(name=name, path=path, server=self)
 
         # TODO: remove apps?
+
+class ServerRole(models.Model):
+
+    RDS_SESSION_HOST = 'session_host'
+    RDS_GATEWAY = 'gateway'
+    RDS_BROKER = 'broker'
+    RDS_WEB = 'web'
+
+    ROLE_CHOICES = (
+        (RDS_SESSION_HOST, 'session host'),
+        (RDS_GATEWAY, 'gateway'),
+        (RDS_BROKER, 'broker'),
+        (RDS_WEB, 'web')
+    )
+
+    name = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    server = models.ForeignKey(Server)
 
 class Application(models.Model):
 
