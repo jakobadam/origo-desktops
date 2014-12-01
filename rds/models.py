@@ -259,11 +259,24 @@ class ActiveDirectory(models.Model, Helper):
     # TODO: hash it? Just one anyways
     password = models.CharField(max_length=200)
 
+class ServerRole(object):
+
+    RDS_SESSION_HOST = 'session_host'
+    RDS_GATEWAY = 'gateway'
+    RDS_BROKER = 'broker'
+    RDS_WEB = 'web'
+
+    ROLE_CHOICES = (
+        (RDS_SESSION_HOST, 'session host'),
+        (RDS_GATEWAY, 'gateway'),
+        (RDS_BROKER, 'broker'),
+        (RDS_WEB, 'web')
+    )
+
 class Server(models.Model):
     """The windows server to install software on
 
     """
-
     ip = models.IPAddressField(db_index=True)
     name = models.CharField(max_length=100, verbose_name='Computer name')
     domain = models.CharField(max_length=100)
@@ -271,8 +284,28 @@ class Server(models.Model):
     password = models.CharField(max_length=128, verbose_name='Password')
     updated = models.BooleanField(default=True)
 
+    # denormalized one-to-many model server roles
+    # comma-separated list of roles
+    roles = models.CharField(max_length=100)
+
     def __str__(self):
         return "{} ({})".format(self.name, self.ip)
+
+    def has_role(self, role):
+        for r in self.roles.split(','):
+            if r == role:
+                return True
+        return False
+
+    def add_role(self, role):
+        roles = self.roles.split(',')
+        roles.append(role)
+        self.roles = ','.join(roles)
+
+    def remove_role(self, role):
+        """TODO
+        """
+        pass
 
     def winrm_session(self):
         return winrm.Session(self.ip, auth=(self.user, self.password))
@@ -299,22 +332,6 @@ class Server(models.Model):
 
         # TODO: remove apps?
 
-class ServerRole(models.Model):
-
-    RDS_SESSION_HOST = 'session_host'
-    RDS_GATEWAY = 'gateway'
-    RDS_BROKER = 'broker'
-    RDS_WEB = 'web'
-
-    ROLE_CHOICES = (
-        (RDS_SESSION_HOST, 'session host'),
-        (RDS_GATEWAY, 'gateway'),
-        (RDS_BROKER, 'broker'),
-        (RDS_WEB, 'web')
-    )
-
-    name = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    server = models.ForeignKey(Server)
 
 class Application(models.Model):
 
@@ -334,5 +351,3 @@ class Application(models.Model):
         self.published = False
         self.save()
 
-# import rds.signals
-# rds.signals

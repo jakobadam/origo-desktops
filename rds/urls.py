@@ -12,7 +12,8 @@ admin.autodiscover()
 from .views import (
     PackageUpdate,
     PackageCreate,
-    PackageDelete
+    PackageDelete,
+    ServerCreate
     )
 
 urlpatterns = patterns('',
@@ -49,4 +50,5 @@ urlpatterns = patterns('',
     url(r'^api/join/$', 'rds.views.join', name='api_join'),
     url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings'),
 
-     )
+    url(r'^api/server/create/$', 'rds.views.server_create', name='server_create'),
+)

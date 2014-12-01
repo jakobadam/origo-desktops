@@ -57,6 +57,11 @@ class PackageCreate(PackageEdit, CreateView):
 class PackageDelete(PackageEdit, DeleteView):
     pass
 
+class ServerCreate(CreateView):
+    model = Server
+    form_class = ServerForm
+    template_name = 'server_form.html'
+
 @require_http_methods(['POST'])
 def install_package(request, pk=None):
     package = shortcuts.get_object_or_404(Package, pk=pk)
@@ -86,21 +91,6 @@ def uninstall_package(request, pk=None):
 
     messages.info(request, 'Un-installing {} from {}'.format(package, server))
     return http.HttpResponseRedirect(reverse('packages_local'))
-
-# @require_http_methods(['POST'])
-# def rename_setup(request):
-#     form = RenameForm(request.POST)
-#     return setup(request, form=form, rename_form=form)
-
-# @require_http_methods(['POST'])
-# def domain_setup(request):
-#     form = RenameForm(request.POST)
-#     return setup(request, form=form, domain_form=form)
-
-#@require_http_methods(['POST'])
-# def password_setup(request):
-#     form = PasswordForm(request.POST)
-#     return setup(request, form=form, password_form=form)
 
 def setup(request, **kwargs):
     state = State.first_or_create()
@@ -138,12 +128,20 @@ def server_setup(request):
         'form':form
     })
 
+def server_create(request):
+    server_form = ServerForm()
+
+    return shortcuts.render(request, 'server_form.html', {
+        'form': server_form,
+    })
+
 
 @require_http_methods(['POST'])
 def cancel(request):
     state = State.first_or_create()
 
     for s in Server.objects.all():
+        # Get AD server and delete it
         s.delete()
 
     # TODO: destroy virtual machines
@@ -188,14 +186,6 @@ def ad_external_setup(request):
     else:
         form = ActiveDirectoryForm()
 
-    # t = loader.get_template('ad_setup.html')
-
-    # import ipdb
-    # ipdb.set_trace()
-
-    # c = RequestContext(request, {'form': 'form'})
-    # return HttpResponse(t.render(c))
-
     return shortcuts.render(request, 'ad_setup.html', {
         'form':form
         })
@@ -210,6 +200,10 @@ def rdp_settings(request, pk):
     return response
 
 def join(request):
+    """
+    TODO: Instead use a regular server form to create add the
+    RDS broker
+    """
     form = JoinForm(data=request.REQUEST)
 
     if not form.is_valid():

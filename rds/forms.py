@@ -11,6 +11,7 @@ from crispy_forms.helper import FormHelper
 
 from rds.models import (
     Server,
+    ServerRole,
     Package,
     ActiveDirectory,
     )
@@ -22,7 +23,26 @@ from . import ldap
 def _get_widget(placeholder):
     return forms.TextInput(attrs={'placeholder':placeholder})
 
-class ActiveDirectoryForm(forms.ModelForm):
+class ServerForm(forms.ModelForm):
+
+    class Meta:
+        model = Server
+        exclude = ('user','updated', 'password')
+        widgets = {
+            'ip': forms.TextInput(attrs={'readonly':True}),
+            'name': _get_widget('Enter computer name'),
+            'domain': _get_widget('Enter FQDN e.g., example.com'),
+            'user': _get_widget('Enter desired windows user name')
+        }
+        error_messages = {
+            'name':{'required': 'Computer name cannot be blank'},
+            'domain':{'required': 'Domain must be set'},
+            'password':{'required': 'Password cannot be blank'}
+        }
+
+# 'password': PasswordStrengthInput(attrs={'placeholder':'Enter password'})
+
+class ActiveDirectoryForm(ServerForm):
 
     class Meta:
         model = Server
@@ -31,9 +51,6 @@ class ActiveDirectoryForm(forms.ModelForm):
             'ip': _get_widget('IP address of Active Directory Server'),
             'domain': _get_widget('Enter FQDN e.g., example.com'),
             'user': _get_widget('User with administrative rights'),
-        }
-        error_messages = {
-            'domain':{'required': 'Domain must be set'},
         }
 
     def clean_ip(self):
@@ -108,69 +125,8 @@ class PackageForm(forms.ModelForm):
         name = self.cleaned_data['name']
         return name.strip()
 
-class RenameForm(forms.Form):
-
-    windows_computer_name = forms.CharField(
-        max_length=100,
-        widget=_get_widget('Enter computer name'),
-        error_messages={'required': 'Computer name cannot be blank'}
-        )
-
-class DomainForm(forms.Form):
-
-    domain = forms.CharField(
-        max_length=1024,
-        widget=_get_widget('Enter domain e.g., example.com'),
-        error_messages={'required': 'Domain must be set'}
-        )
-
-class PasswordForm(forms.Form):
-
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder':'Enter password'}),
-        error_messages={'required': 'Password cannot be blank'}
-        )
-
 class JoinForm(forms.Form):
 
     ip = forms.IPAddressField()
     name = forms.CharField()
     domain = forms.CharField(required=False)
-
-class ServerForm(forms.ModelForm):
-
-    class Meta:
-        model = Server
-        exclude = ('user','updated')
-
-        widgets = {
-            'ip': forms.TextInput(attrs={'readonly':True}),
-            'name': _get_widget('Enter computer name'),
-            'domain': _get_widget('Enter FQDN e.g., example.com'),
-            'user': _get_widget('Enter desired windows user name'),
-            'password': PasswordStrengthInput(attrs={'placeholder':'Enter password'})
-        }
-        error_messages = {
-            'name':{'required': 'Computer name cannot be blank'},
-            'domain':{'required': 'Domain must be set'},
-            'password':{'required': 'Password cannot be blank'}
-        }
-
-    # def is_valid(self):
-    #     print 'is_valid!!!'
-    #     super(ServerForm, self).is_valid()
-
-    # def clean_name(self):
-    #     print 'in clean name!!!'
-    #     raise forms.ValidationError('Required')
-
-    # def clean_password(self):
-    #     raise forms.ValidationError('Required')
-    #         # password = self.cleaned_data['password']
-    #         # if not password:
-    #         #     raise forms.ValidationError('Required')
-    #         # return password
-
-
-    # def __init__(self. *args, **kwargs):
-    #     super(ServerForm, self).__init__(*args, **kwargs)
