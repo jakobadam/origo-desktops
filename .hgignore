@@ -11,4 +11,5 @@ src
 packer/output-*
 rds/lib
 rds/bin
-.venv
+.venvlog/*
+log/*
