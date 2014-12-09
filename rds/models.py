@@ -63,6 +63,7 @@ class Package(models.Model):
         r = super(Package, self).save(*args, **kwargs)
 
         if file_updated:
+            log.info('Adding task to process uploaded package {}'.format(self))
             from rds import tasks
             tasks.process_upload.delay(self.pk)
         return r
