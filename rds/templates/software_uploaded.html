@@ -1,0 +1,140 @@
+{% extends 'project_base.html' %}
+{% load static %}
+
+{% block page_title%}Software{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block pre_body %}
+  {% include '_menu.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="col-xs-3">
+  {% include '_package_sidebar.html' %}
+</div>
+
+<div class="col-xs-9">
+
+  <h1>Uploaded software</h1>
+  {% if packages %}
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Version</th>
+          <th>Installed</th>
+          <th>Installer Path</th>
+          <th style="min-width: 200px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in packages %}        
+        <tr>
+          <td>{{p.name}}</td>
+          <td>{{p.version}}</td>
+          <td>
+            {% if p.installing %}
+            <div class="spinner-wrapper" style="position:relative">&nbsp;
+              <div class="spinner"></div>
+            </div>
+            {% else %}
+              {% if p.installed == True %}
+            <span class="glyphicon glyphicon-ok"></span>
+              {% else %}
+            <span class="glyphicon glyphicon-remove"></span>            
+              {% endif %}
+            {% endif%}
+          </td>
+          <td>
+            {{p.installer}}
+          </td>
+          <td>
+
+            {% if not p.installed %}
+            <form method="POST" action="{% url 'install_package' pk=p.id%}" style="display:inline-block">
+              <button type="submit" title="Install {{p.name}}"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
+            </form>
+            {% endif %}
+
+            <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
+              <button type="submit" title="Edit"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-pencil"></span></button>
+            </form>
+
+            {% if p.log_exists %}
+            <form method="GET" action="{{p.log_url}}" style="display:inline-block">
+              <button type="submit" title="Show Log"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-file"></span></button>
+            </form>
+            {% endif %}
+
+            <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
+              <button type="submit" title="Delete"
+                      class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-trash"></span></button>
+            </form>
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="5">
+            {{p.install_cmd}}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+
+  </div>
+  {% else %}
+  <div class="well">
+    There is no software yet, go to <a href="{% url 'add_package'%}">upload software</a>
+  </div>
+
+  {% endif %}
+</div>
+
+<script>
+$(document).ready(function(){
+var opts = {
+  lines: 11, // The number of lines to draw
+  length: 5, // The length of each line
+  width: 2, // The line thickness
+  radius: 2, // The radius of the inner circle
+  corners: 1, // Corner roundness (0..1)
+  rotate: 0, // The rotation offset
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  color: '#000', // #rgb or #rrggbb or array of colors
+  speed: 1, // Rounds per second
+  trail: 34, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: '50%', // Top position relative to parent
+  left: '50%' // Left position relative to parent
+};
+
+  $.ajax({
+    url: "{% static 'spin.js/spin.js' %}",
+    dataType: "script",
+    success: function(){
+      $('.spinner').each(function(){
+        var spinner = new Spinner(opts).spin(this);
+      });
+      //$('#modal').modal();
+    }
+  });
+
+});
+</script>
+
+
+{% endblock%}
+

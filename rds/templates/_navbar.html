@@ -1,0 +1,78 @@
+{% load static %}
+<style>
+.btn-noborder{
+background-color: transparent;
+background-image: none;
+border: 1px solid transparent;
+}
+</style>
+<header class="navbar navbar-default navbar-embossed" role="banner">
+
+  <div class="container">
+
+    <div class="navbar-header">
+
+      <a class="navbar-brand" href="">
+        <span>
+          <img src="{% static 'rdp_icon_grey.png' %}" width="30px"/>
+          RDP Services
+      </a>
+    </div>
+
+    <div class="collapse navbar-collapse" role="navigation">
+
+      {% if servers %}
+      <ul class="nav navbar-nav navbar-left">
+        <li>
+          <div class="navbar-form dropdown">
+            <button class="btn btn-primary dropdown-toggle dropdown" data-toggle="dropdown">
+              Go
+              <span class="caret"></span>
+            </button>
+            <span class="dropdown-arrow dropdown-arrow-inverse"></span>
+
+            <ul class="dropdown-menu dropdown-inverse">
+              {% for s in servers%}
+              <li>
+                <a target="_blank" href="https://{{s.ip}}/rdweb"><span class="glyphicon glyphicon-globe"></span> RD Web Access</a>
+              </li>
+              <li>
+                <a target="_blank" href="{% url 'rdp_settings' pk=s.pk %}">
+                  <img width="18px" src="{% static 'rdp_icon.png' %}" /> RDP Access</a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </li>
+      </ul>
+      {% endif %}
+
+      <ul class="nav navbar-nav navbar-right">
+              {% for s in servers%}
+              <li>
+                <a target="_blank" title="RD Web"
+                   href="https://{{s.ip}}/rdweb"><span class="glyphicon glyphicon-globe"></span></a>
+              </li>
+              <li>
+                <a target="_blank" title="RDP Connection" href="{% url 'rdp_settings' pk=s.pk %}">
+                  <img width="20px" src="{% static 'rdp_icon.png' %}" /></a>
+              </li>
+              {% endfor %}
+
+        <!-- <li> -->
+        <!--   <div class="navbar-form dropdown"> -->
+        <!--     <button class="btn-noborder dropdown-toggle dropdown" data-toggle="dropdown"> -->
+        <!--       <span class="fui-gear"></span> -->
+        <!--     </button> -->
+        <!--     <span class="dropdown-arrow dropdown-arrow-inverse"></span> -->
+
+        <!--     <ul class="dropdown-menu dropdown-inverse"> -->
+        <!--     </ul> -->
+
+        <!--   </div> -->
+        <!-- </li> -->
+      </ul>
+
+    </div>
+  </div>
+</header>
