@@ -20,11 +20,12 @@ NAME=gunicorn
 USER=www-data
 GROUP=www-data
 ROOT=/srv/www/rds
-PIDFILE=/var/run/gunicorn/gunicorn.pid
-LOGFILE=/var/log/gunicorn/gunicorn.log
-LOGLEVEL=info
+PID_FILE=/var/run/gunicorn/gunicorn.pid
+LOG_FILE=/var/log/gunicorn/gunicorn.log
+LOG_LEVEL=info
 PORT=8000
-WORKERS=1
+WORKERS=4
+TIMEOUT=3600
 SCRIPTNAME=/etc/init.d/$NAME
 APP_MODULE='rds.wsgi:application'
 
@@ -33,20 +34,20 @@ APP_MODULE='rds.wsgi:application'
 [ ! -d /var/log/gunicorn ] && mkdir /var/log/gunicorn && chown ${USER}: /var/log/gunicorn
 
 start () {
-    ARGS="--start --chuid $USER:$GROUP --chdir $ROOT --pidfile $PIDFILE --background --exec $DAEMON"
-    DAEMON_ARGS="$APP_MODULE -b 127.0.0.1:$PORT -p $PIDFILE --log-file $LOGFILE --log-level $LOGLEVEL"
+    ARGS="--start --chuid $USER:$GROUP --chdir $ROOT --pidfile $PID_FILE --background --exec $DAEMON"
+    DAEMON_ARGS="$APP_MODULE -b 127.0.0.1:$PORT -t $TIMEOUT -p $PID_FILE --log-file $LOG_FILE --log-level $LOG_LEVEL"
     start-stop-daemon $ARGS --test > /dev/null || return 1
     start-stop-daemon $ARGS -- $DAEMON_ARGS || return 2
 }
 
 stop () {
-    ARGS="--stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME"
+    ARGS="--stop --quiet --retry=TERM/30/KILL/5 --pidfile $PID_FILE --name $NAME"
     start-stop-daemon $ARGS
     RETVAL="$?"
     [ "$RETVAL" = 2 ] && return 2
     start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
     [ "$?" = 2 ] && return 2
-    rm -f $PIDFILE
+    rm -f $PID_FILE
     return "$RETVAL"
 }
 

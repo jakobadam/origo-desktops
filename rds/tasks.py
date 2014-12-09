@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from celery import shared_task
 
 import logging
+import traceback
 
 from rds.models import (Package, Server)
 from async_messages.models import Message
@@ -14,16 +15,17 @@ def process_upload(package_id):
     try:
         package = Package.objects.get(pk=package_id)
         if package.zipped:
-            Message.info('Unzipping package "{}"'.format(package))
+            Message.info(u'Unzipping package "{}"'.format(package))
             package.unzip()
         package.add_dirs()
         package.installer = package.find_installer()
         package.make_executable()
-        Message.info('Found installer file "{}"'.format(package.installer))
+        Message.info(u'Found installer file "{}"'.format(package.installer))
         package.add_script()
         package.save()
     except Exception, e:
         log.error(e)
+        log.error(traceback.format_exc())
         Message.error(str(e))
 
 @shared_task
@@ -34,13 +36,13 @@ def install_package(package_id, server_id):
     res = server.cmd(package.install_cmd, package.args.split())
     success = res.status_code == 0
     if success:
-        message = 'Installed "{}". {}'.format(package, res.std_out)
+        message = u'Installed "{}". {}'.format(package, res.std_out)
         log.info(package.message)
         Message.success(message)
         package.message = message
         package.installed = True
     else:
-        message = 'Error deploying "{}": {}'.format(package, res.std_err)
+        message = u'Error deploying "{}": {}'.format(package, res.std_err)
         log.error(message)
         Message.error(message)
         package.message = message
