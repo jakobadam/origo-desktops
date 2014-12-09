@@ -24,7 +24,6 @@
           <th>Name</th>
           <th>Version</th>
           <th>Installed</th>
-          <th>Installer Path</th>
           <th style="min-width: 200px">Actions</th>
         </tr>
       </thead>
@@ -45,9 +44,6 @@
             <span class="glyphicon glyphicon-remove"></span>            
               {% endif %}
             {% endif%}
-          </td>
-          <td>
-            {{p.installer}}
           </td>
           <td>
 
@@ -79,11 +75,6 @@
                 <span class="glyphicon glyphicon-trash"></span></button>
             </form>
             
-          </td>
-        </tr>
-        <tr>
-          <td colspan="5">
-            {{p.install_cmd}}
           </td>
         </tr>
         {% endfor %}
