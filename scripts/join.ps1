@@ -35,12 +35,12 @@ if($domain){
 
 # UseBasicParsing, otherwise IE must have been run?!?
 try{
-    $url = "http://$ubuntu_ip/api/join/?ip=$windows_ip&name=$hostname&domain=$domain"
+    $url = "http://$ubuntu_ip/api/join/?ip=$windows_ip&name=$hostname&domain=$domain&roles=session_host"
     $msg = "Reporting IP back to $url"
     LogInfo($msg)
     echo $msg
     Invoke-WebRequest -UseBasicParsing -Method Post -Uri $url
-    schtasks.exe /delete /tn $schtask -f    
+    schtasks.exe /delete /tn $schtask -f
 }
 catch{
     $err = "Error calling $url $_.Exception"

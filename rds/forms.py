@@ -29,7 +29,7 @@ class ServerForm(forms.ModelForm):
         model = Server
         exclude = ('user','updated', 'password')
         widgets = {
-            'ip': forms.TextInput(attrs={'readonly':True}),
+            # 'ip': forms.TextInput(attrs={'readonly':True}),
             'name': _get_widget('Enter computer name'),
             'domain': _get_widget('Enter FQDN e.g., example.com'),
             'user': _get_widget('Enter desired windows user name')
@@ -39,6 +39,14 @@ class ServerForm(forms.ModelForm):
             'domain':{'required': 'Domain must be set'},
             'password':{'required': 'Password cannot be blank'}
         }
+
+    def clean_roles(self):
+        roles = self.cleaned_data['roles'].split(',')
+        # ['session_host', 'gateway', ...]
+        role_choice_values = [r[0] for r in ServerRole.ROLE_CHOICES]
+        for r in roles:
+            if r not in role_choice_values:
+                raise forms.ValidationError('{} is not a valid role!'.format(r))
 
 # 'password': PasswordStrengthInput(attrs={'placeholder':'Enter password'})
 
@@ -125,8 +133,3 @@ class PackageForm(forms.ModelForm):
         name = self.cleaned_data['name']
         return name.strip()
 
-class JoinForm(forms.Form):
-
-    ip = forms.IPAddressField()
-    name = forms.CharField()
-    domain = forms.CharField(required=False)
