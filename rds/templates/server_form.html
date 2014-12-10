@@ -21,13 +21,10 @@
 
       <div class="share mrl">
 
-        <form action="{% url 'server_setup' %}" method="POST">
+        <form action="{% url 'server_create' %}" method="POST">
           <ul>
             <li>
               {{form|crispy}}
-            </li>
-            <li>
-              {{formset|crispy}}
             </li>
           </ul>
 
