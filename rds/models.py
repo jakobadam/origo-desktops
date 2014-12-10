@@ -92,9 +92,22 @@ class Package(models.Model):
         """
         return os.path.join(settings.PACKAGE_DIR, self.dirname)
 
+    # @property
+    # def path_samba(self):
+    #     return "\\".join((settings.SAMBA_SHARE, self.dirname))
+
     @property
-    def path_samba(self):
-        return "\\".join((settings.SAMBA_SHARE, self.dirname))
+    def samba_base_path(self):
+        """TODO: cache this
+        """
+        samba_server = Server.objects.filter(roles__icontains=ServerRole.RDS_ORCHESTRATOR).first()
+        return self.samba_path_join('\\\\' + samba_server.ip, 'share')
+
+    @property
+    def samba_path(self):
+        """Samba path of package
+        """
+        return self.samba_path_join(self.samba_base_path, self.dirname)
 
     @property
     def dirname(self):
@@ -102,17 +115,13 @@ class Package(models.Model):
         return text.get_valid_filename(filename)
 
     def samba_path_join(self, *args):
-        return "\\".join(args)
-
-    @property
-    def samba_path(self):
-        return self.samba_path_join(settings.SAMBA_SHARE, self.dirname)
+        return '\\'.join(args)
 
     @property
     def samba_path_installer(self):
         # slice away /foo/bar/
         relative = self.installer[len(settings.PACKAGE_DIR)+1:]
-        return self.samba_path_join(settings.SAMBA_SHARE, *relative.split('/'))
+        return self.samba_path_join(self.samba_base_path, *relative.split('/'))
 
     @property
     def log_samba_path(self):
@@ -272,12 +281,16 @@ class ServerRole(object):
     RDS_GATEWAY = 'gateway'
     RDS_BROKER = 'broker'
     RDS_WEB = 'web'
+    RDS_AD = 'ad'
+    RDS_ORCHESTRATOR = 'orchestrator'
 
     ROLE_CHOICES = (
         (RDS_SESSION_HOST, 'session host'),
         (RDS_GATEWAY, 'gateway'),
         (RDS_BROKER, 'broker'),
-        (RDS_WEB, 'web')
+        (RDS_WEB, 'web'),
+        (RDS_AD, 'ad'),
+        (RDS_ORCHESTRATOR, 'orchestrator')
     )
 
 class Server(models.Model):
@@ -286,9 +299,9 @@ class Server(models.Model):
     """
     ip = models.IPAddressField(db_index=True)
     name = models.CharField(max_length=100, verbose_name='Computer name')
-    domain = models.CharField(max_length=100)
-    user = models.CharField(max_length=100)
-    password = models.CharField(max_length=128, verbose_name='Password')
+    domain = models.CharField(max_length=100, blank=True)
+    user = models.CharField(max_length=100, blank=True)
+    password = models.CharField(max_length=128, verbose_name='Password', blank=True)
     updated = models.BooleanField(default=True)
 
     # denormalized one-to-many model server roles
