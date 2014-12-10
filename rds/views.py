@@ -204,7 +204,7 @@ def join(request):
     TODO: Instead use a regular server form to create add the
     RDS broker
     """
-    form = JoinForm(data=request.REQUEST)
+    form = ServerForm(data=request.REQUEST)
 
     if not form.is_valid():
         return http.HttpResponseBadRequest(json.dumps(form.errors))
@@ -214,15 +214,7 @@ def join(request):
         state.location = State.LOCATION_SERVER_SETUP
         state.save()
 
-    # FIXME: TODO !!!
-    for s in Server.objects.all():
-        s.delete()
-
-
-    # FIXME: TODO !!!
     server, created = Server.objects.get_or_create(
-        password='V@grant',
-        user='Administrator',
         **form.cleaned_data)
 
     Message.success('Windows server "{}" started'.format(server))
