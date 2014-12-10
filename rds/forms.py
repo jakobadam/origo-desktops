@@ -47,6 +47,7 @@ class ServerForm(forms.ModelForm):
         for r in roles:
             if r not in role_choice_values:
                 raise forms.ValidationError('{} is not a valid role!'.format(r))
+        return self.cleaned_data['roles']
 
 # 'password': PasswordStrengthInput(attrs={'placeholder':'Enter password'})
 
