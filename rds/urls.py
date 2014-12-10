@@ -50,5 +50,5 @@ urlpatterns = patterns('',
     url(r'^api/join/$', 'rds.views.join', name='api_join'),
     url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings'),
 
-    url(r'^api/server/create/$', 'rds.views.server_create', name='server_create'),
+    url(r'^api/server/create/$', ServerCreate.as_view(), name='server_create'),
 )

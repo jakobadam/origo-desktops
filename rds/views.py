@@ -15,7 +15,6 @@ from django.views.generic.edit import (
 from rds.forms import (
     ServerForm,
     PackageForm,
-    JoinForm,
     ActiveDirectoryForm,
     ActiveDirectoryInternalForm
     )
@@ -61,11 +60,23 @@ class ServerCreate(CreateView):
     model = Server
     form_class = ServerForm
     template_name = 'server_form.html'
+    success_url = reverse_lazy('packages_local')
+
+    # def get_form_kwargs(self):
+    #     kwargs = super(ServerCreate, self).get_form_kwargs()
+    #     if self.request.method == 'POST':
+    #         kwargs.update({
+    #             'data': self.request.REQUEST
+    #             })
+    #     return kwargs
 
 @require_http_methods(['POST'])
 def install_package(request, pk=None):
+    """
+    TODO: take the server to install on as a query arg
+    """
     package = shortcuts.get_object_or_404(Package, pk=pk)
-    server = Server.objects.first()
+    server = Server.objects.filter(roles__icontains='session_host').first()
 
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
@@ -127,14 +138,6 @@ def server_setup(request):
     return shortcuts.render(request, 'server_setup.html', {
         'form':form
     })
-
-def server_create(request):
-    server_form = ServerForm()
-
-    return shortcuts.render(request, 'server_form.html', {
-        'form': server_form,
-    })
-
 
 @require_http_methods(['POST'])
 def cancel(request):
