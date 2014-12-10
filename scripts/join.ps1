@@ -1,6 +1,6 @@
 $log = "Application"
 $source = "RDS"
-$hostname = "UBUNTU"
+$hostname = "RDS"
 $schtask = "RDS Join Task"
 
 Function CreateLog(){
