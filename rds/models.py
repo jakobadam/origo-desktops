@@ -10,23 +10,31 @@ import shutil
 from django.db import models
 from django.conf import settings
 from django.utils import text
+from django.core.validators import RegexValidator
 
 log = logging.getLogger(__name__)
 
 RE_EXECUTABLE = re.compile('.*exe$|.*EXE$|.*MSI$|.*msi$')
+RE_PACKAGE_NAME = re.compile(r'^[-a-zA-Z0-9_() ]+$')
 
 def generate_filename(instance, filename):
     """Create a filename like firefox31/software/firefox31.exe"""
     return os.path.join(instance.path, 'software', filename)
 
+
 class Package(models.Model):
+
+    class Meta:
+        ordering = ('name',)
 
     VALID_FILE_TYPES = ['exe','msi','zip', 'EXE', 'MSI', 'ZIP']
 
     name = models.CharField(
         db_index=True,
         max_length=512,
-        verbose_name='Software name')
+        verbose_name='Software name',
+        validators=[RegexValidator(RE_PACKAGE_NAME, 'Use ASCII characters only')]
+        )
 
     version = models.CharField(
         max_length=20,
@@ -37,7 +45,7 @@ class Package(models.Model):
         verbose_name='File',
         help_text='File type must one of (%s)' % ', '.join(VALID_FILE_TYPES))
 
-    message = models.TextField()
+    message = models.TextField(blank=True)
     installer = models.CharField(max_length=1000, blank=True)
 
     # TODO: Maybe create status field instaed
@@ -105,7 +113,10 @@ class Package(models.Model):
 
     @property
     def samba_path(self):
-        """Samba path of package
+        """Samba path of package.
+        .
+        ./log
+        ./software
         """
         return self.samba_path_join(self.samba_base_path, self.dirname)
 
@@ -129,7 +140,11 @@ class Package(models.Model):
 
     @property
     def log_path(self):
-        return os.path.join(self.path, 'log', u'{}.log'.format(self.dirname))
+        return os.path.join(self.path, 'log', self.log_name)
+
+    @property
+    def log_name(self):
+        return u'{}.log'.format(self.dirname)
 
     @property
     def log_exists(self):
@@ -137,16 +152,18 @@ class Package(models.Model):
 
     @property
     def log_url(self):
-        return os.path.join(settings.MEDIA_URL, self.name, 'log', self.basename + '.log')
+        return settings.MEDIA_URL + self.log_path[len(settings.PACKAGE_DIR)+1:]
+        # return os.path.join(settings.MEDIA_URL, self.name, 'log', self.log_name)
 
     @property
     def install_cmd(self):
         if not self.installer:
             return None
         root,ext = os.path.splitext(self.installer)
+        args = self.args.format(dirname=self.samba_path_join(self.samba_path, 'software') + '\\')
         if ext == '.msi':
-            return u'msiexec /L*+ "%s" /passive /i "%s" %s' % (self.log_samba_path, self.samba_path, self.args)
-        return u'"%s" %s' % (self.samba_path_installer, self.args)
+            return u'msiexec /L*+ "{}" /passive /i "{}" {}'.format(self.log_samba_path, self.samba_path_installer, args)
+        return u'"{}" {}'.format(self.samba_path_installer, args)
 
     def delete_files(self):
         """Delete software folder with install files and test files
