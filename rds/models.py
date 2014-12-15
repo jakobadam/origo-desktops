@@ -216,9 +216,9 @@ class Package(models.Model):
 
     def make_executable(self):
         software_dir = os.path.join(self.path, 'software')
-        for root, dirnames, filenames in os.walk(software_dir):
+        for dirpath, dirnames, filenames in os.walk(software_dir):
             for f in filenames:
-                os.chmod(os.path.join(software_dir,f), 0755)
+                os.chmod(os.path.join(dirpath,f), 0755)
 
     def find_executables(self):
         executables = []
