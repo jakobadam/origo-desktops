@@ -15,7 +15,7 @@ from django.core.validators import RegexValidator
 log = logging.getLogger(__name__)
 
 RE_EXECUTABLE = re.compile('.*exe$|.*EXE$|.*MSI$|.*msi$')
-RE_PACKAGE_NAME = re.compile(r'^[-a-zA-Z0-9_() ]+$')
+RE_PACKAGE_NAME = re.compile(r'^[-a-zA-Z0-9_() .]+$')
 
 def generate_filename(instance, filename):
     """Create a filename like firefox31/software/firefox31.exe"""

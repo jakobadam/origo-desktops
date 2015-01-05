@@ -6,6 +6,11 @@ from django import http
 from django.core.urlresolvers import (reverse, reverse_lazy)
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
+
+from django.views.generic import (
+    ListView
+    )
+
 from django.views.generic.edit import (
     CreateView,
     DeleteView,
@@ -70,6 +75,10 @@ class ServerCreate(CreateView):
     #             })
     #     return kwargs
 
+class ServerList(ListView):
+    model = Server
+    template_name = 'server_list.html'
+    
 @require_http_methods(['POST'])
 def install_package(request, pk=None):
     """
@@ -84,8 +93,9 @@ def install_package(request, pk=None):
         return http.HttpResponseRedirect(reverse('packages_local'))
 
     package.install(server)
-
-    messages.info(request, 'Installing {} on {}'.format(package, server))
+    msg = u'Installing {} on {}'.format(package, server)
+    log.info(msg)
+    messages.info(request, msg)
     return http.HttpResponseRedirect(reverse('packages_local'))
 
 @require_http_methods(['POST'])

@@ -35,7 +35,7 @@ if($domain){
 
 # UseBasicParsing, otherwise IE must have been run?!?
 try{
-    $url = "http://$ubuntu_ip/api/join/?ip=$windows_ip&name=$hostname&domain=$domain&roles=session_host"
+    $url = "http://$ubuntu_ip/api/server/create/?ip=$windows_ip&name=$hostname&domain=$domain&roles=session_host"
     $msg = "Reporting IP back to $url"
     LogInfo($msg)
     echo $msg

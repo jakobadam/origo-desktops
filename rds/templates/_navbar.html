@@ -21,7 +21,7 @@ border: 1px solid transparent;
 
     <div class="collapse navbar-collapse" role="navigation">
 
-      {% if servers %}
+      {% if remove_servers %}
       <ul class="nav navbar-nav navbar-left">
         <li>
           <div class="navbar-form dropdown">
@@ -48,6 +48,7 @@ border: 1px solid transparent;
       {% endif %}
 
       <ul class="nav navbar-nav navbar-right">
+        {% if remove %}
               {% for s in servers%}
               <li>
                 <a target="_blank" title="RD Web"
@@ -58,6 +59,7 @@ border: 1px solid transparent;
                   <img width="20px" src="{% static 'rdp_icon.png' %}" /></a>
               </li>
               {% endfor %}
+              {% endif %}
 
         <!-- <li> -->
         <!--   <div class="navbar-form dropdown"> -->

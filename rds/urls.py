@@ -13,7 +13,8 @@ from .views import (
     PackageUpdate,
     PackageCreate,
     PackageDelete,
-    ServerCreate
+    ServerCreate,
+    ServerList
     )
 
 urlpatterns = patterns('',
@@ -44,6 +45,7 @@ urlpatterns = patterns('',
     url(r'^software/server/applications/$', 'rds.views.applications', name='applications'),
     url(r'^software/server/applications/refresh/$', 'rds.views.refresh_applications', name='refresh_applications'),
 
+    url(r'^deployment/', ServerList.as_view(), name='deployment'),
     url(r'^deployment/publish/(?P<pk>\d+)/$', 'rds.views.deployment_publish', name='deployment_publish'),
     url(r'^deployment/unpublish/(?P<pk>\d+)/$', 'rds.views.deployment_unpublish', name='deployment_unpublish'),
 
