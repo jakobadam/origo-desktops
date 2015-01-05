@@ -6,12 +6,10 @@ from rds.models import (
     )
 
 class PackageAdmin(admin.ModelAdmin):
-    readonly_fields = [field.name for field in Package._meta.fields]
-    list_display = readonly_fields
+    list_display = [field.name for field in Package._meta.fields]
 
 class ServerAdmin(admin.ModelAdmin):
-    readonly_fields = [field.name for field in Server._meta.fields]
-    list_display = readonly_fields
+    list_display = [field.name for field in Server._meta.fields]
 
 admin.site.register(Package, PackageAdmin)
 admin.site.register(Server, ServerAdmin)
