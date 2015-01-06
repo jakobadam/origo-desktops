@@ -21,6 +21,7 @@ def generate_filename(instance, filename):
     """Create a filename like firefox31/software/firefox31.exe"""
     return os.path.join(instance.path, 'software', filename)
 
+SAMBA_SERVER_IP = None
 
 class Package(models.Model):
 
@@ -108,8 +109,11 @@ class Package(models.Model):
     def samba_base_path(self):
         """TODO: cache this
         """
-        samba_server = Server.objects.filter(roles__icontains=ServerRole.RDS_ORCHESTRATOR).first()
-        return self.samba_path_join('\\\\' + samba_server.ip, 'share')
+        if not SAMBA_SERVER_IP:
+            global SAMBA_SERVER_IP
+            samba_server = Server.objects.filter(roles__icontains=ServerRole.RDS_ORCHESTRATOR).first()
+            SAMBA_SERVER_IP = samba_server.ip
+        return self.samba_path_join('\\\\' + SAMBA_SERVER_IP, 'share')
 
     @property
     def samba_path(self):
@@ -171,13 +175,12 @@ class Package(models.Model):
         log.info(u'Removing package directory "{}"'.format(self.path))
         try:
             if os.path.isdir(self.path):
-                log.info(u'Removing package directory "{}"'.format(self.path))
                 shutil.rmtree(self.path)
                 return
+            else:
+                log.info(u'Tried deleting package, but there is no dir named "{}"'.format(self.path))                
         except OSError, e:
             log.error(e)
-        finally:
-            log.info(u'Tried deleting package, but there is no dir named "{}"'.format(self.path))
 
     def install(self, server):
         """Install software on server
@@ -224,9 +227,9 @@ class Package(models.Model):
         executables = []
         for ext in ('exe', 'EXE', 'msi', 'MSI'):
             path = os.path.join(self.path, 'software', '*.{}'.format(ext))
-            log.info(u'Looking for installer with glob "{}"'.format(path))
             files = glob.glob(path)
             executables.extend(files)
+        log.info(u'Executables "{}"'.format(executables))
         return executables
 
     def guess_install_executable(self, executables):

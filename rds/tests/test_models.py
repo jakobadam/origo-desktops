@@ -7,7 +7,10 @@ from django.test.utils import override_settings
 
 from django.core.files import File
 
-from rds.models import Package
+from rds.models import (
+    Package, Server, ServerRole
+    )
+
 from rds import models
 
 test_settings = {
@@ -16,21 +19,23 @@ test_settings = {
     }
 
 def _add_file(package):
-    settings.SOFTWARE_ROOT = settings.BASE_DIR + '/software'
-
-    filename = 'Firefox Setup 31.0.exe'
+    """
+    Copy test file to settings.TEST_PACKAGE_DIR
+    and add it to the package
+    """
+    settings.SOFTWARE_ROOT = settings.BASE_DIR + '/rds/tests/software'
+    filename = 'firefox_setup_test.exe'
 
     path = os.path.join(settings.SOFTWARE_ROOT, filename)
-    test_path = models.generate_filename(package, filename)
     assert os.path.isfile(path), "There is no file there"
 
+    test_path = models.generate_filename(package, filename)
     dirname = os.path.dirname(test_path)
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
-    shutil.copy(path, test_path)
-    assert os.path.isfile(test_path), "There is no file there"
-    package.file = File(open(test_path))
+    package.file = File(open(path), test_path)
+    package._file_added = True
 
 @override_settings(**test_settings)
 class TestPackage(TestCase):
@@ -42,11 +47,12 @@ class TestPackage(TestCase):
 
         self.p = Package(name=self.name, args=self.args, version=self.version)
 
+        self.s = Server(ip='127.0.0.1', roles=ServerRole.RDS_ORCHESTRATOR)
+        self.s.save()
+
     def tearDown(self):
-        try:
+        if hasattr(self.p, '_file_added'):
             self.p.delete_files()
-        except OSError:
-            pass
 
     def test_path(self):
         path = self.p.path
@@ -67,10 +73,11 @@ class TestPackage(TestCase):
         _add_file(self.p)
         self.p.save()
         path = self.p.find_installer()
-        expected = settings.PACKAGE_DIR + '/firefox_31.0/software/Firefox Setup 31.0.exe'
+        expected = settings.PACKAGE_DIR + '/firefox_31.0/software/firefox_setup_test.exe'
         self.assertEqual(path, expected)
 
     def test_script_path(self):
+        _add_file(self.p)
         self.p.save()
         self.p.installer = self.p.find_installer()
         path = self.p.test_script_path
@@ -88,7 +95,7 @@ class TestPackage(TestCase):
 
     def test_samba_path(self):
         samba_path = self.p.samba_path
-        expected = r'\\ubuntu\share\firefox_31.0'
+        expected = r'\\127.0.0.1\share\firefox_31.0'
         self.assertEqual(samba_path, expected)
 
     def test_samba_path_installer(self):
@@ -97,14 +104,15 @@ class TestPackage(TestCase):
         self.p.installer = self.p.find_installer()
 
         samba_path = self.p.samba_path_installer
-        expected = r'\\ubuntu\share\firefox_31.0\software\Firefox Setup 31.0.exe'
+        expected = r'\\127.0.0.1\share\firefox_31.0\software\firefox_setup_test.exe'
         self.assertEqual(samba_path, expected)
 
     def test_install_cmd(self):
         _add_file(self.p)
+
         self.p.save()
         self.p.installer = self.p.find_installer()
 
-        expected = '"%s" %s' % (r"\\ubuntu\share\firefox_31.0\software\Firefox Setup 31.0.exe", self.args)
+        expected = '"%s" %s' % (r"\\127.0.0.1\share\firefox_31.0\software\firefox_setup_test.exe", self.args)
         actual = self.p.install_cmd
         self.assertEqual(actual, expected)

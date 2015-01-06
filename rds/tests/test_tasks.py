@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.test.utils import override_settings
 
+from rds import models
 from rds.models import Package
 from rds import tasks
 
@@ -14,6 +15,8 @@ conf = {
     'PACKAGE_DIR': settings.TEST_PACKAGE_DIR,
     'MEDIA_ROOT': settings.TEST_PACKAGE_DIR 
     }
+
+models.SAMBA_SERVER_IP = '127.0.0.1'
 
 @override_settings(**conf)
 class TestPackageTasks(TestCase):

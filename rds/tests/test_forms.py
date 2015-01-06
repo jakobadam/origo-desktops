@@ -13,7 +13,7 @@ models.PACKAGE_DIR = settings.MEDIA_ROOT
 class TestPackageForm(TestCase):
 
     def setUp(self):
-        f = File(open('software/Firefox Setup 31.0.exe'))
+        f = File(open('rds/tests/software/firefox_setup_test.exe'))
         self.FILES = {
             'file': SimpleUploadedFile(f.name, f.read())
             }
@@ -25,7 +25,7 @@ class TestPackageForm(TestCase):
             'version': '31.0'
             }
         self.form = PackageForm(POST, self.FILES)
-        self.assertTrue(self.form.is_valid())
+        self.assertTrue(self.form.is_valid(), str(self.form))
 
     def test_enforce_naming(self):
         POST = {
@@ -39,16 +39,14 @@ class TestPackageForm(TestCase):
 
 class TestServerForm(TestCase):
 
-    def setUp(self):
-        pass
-
     def test_form(self):
         POST = {
             'ip': '127.0.0.1',
             'name': 'RDS',
             'domain': 'example.com',
             'user': 'Administrator',
-            'password': 'V@grant'
+            'password': 'V@grant',
+            'roles': 'orchestrator'
             }
-        self.form = ServerForm(POST, self.FILES)
+        self.form = ServerForm(POST)
         self.assertTrue(self.form.is_valid())
