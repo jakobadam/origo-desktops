@@ -110,9 +110,11 @@ class TestPackage(TestCase):
     def test_install_cmd(self):
         _add_file(self.p)
 
+        self.p.args = 'TRANSFORMS="{dirname}transform.mst"'
+
         self.p.save()
         self.p.installer = self.p.find_installer()
 
-        expected = '"%s" %s' % (r"\\127.0.0.1\share\firefox_31.0\software\firefox_setup_test.exe", self.args)
+        expected = r'"\\127.0.0.1\share\firefox_31.0\software\firefox_setup_test.exe" TRANSFORMS="\\127.0.0.1\share\firefox_31.0\software\transform.mst"'
         actual = self.p.install_cmd
         self.assertEqual(actual, expected)
