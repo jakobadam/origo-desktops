@@ -1,0 +1,13 @@
+function usage(){
+    $path = $MyInvocation.ScriptName
+    echo "Usage: powershell $path SSL_CERT_HASH"
+}
+
+if($args.Count -eq 0){
+    echo 'Error. Missing SSL Cert Hash'
+    usage
+    exit 1
+}
+
+$cert_hash = $args[0]
+wmic /namespace:\\root\cimv2\TerminalServices PATH Win32_TSGeneralSetting Set SSLCertificateSHA1Hash="$cert_hash"
