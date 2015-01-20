@@ -1,9 +1,11 @@
 import os
 import subprocess
+import re
 
 from django import forms
 
 from django_password_strength.widgets import PasswordStrengthInput
+from django.core.validators import RegexValidator
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
@@ -103,6 +105,9 @@ class ActiveDirectoryInternalForm(forms.ModelForm):
             'domain':{'required': 'Domain must be set'},
         }
 
+# subset of ascii
+RE_ASCII = re.compile(r'^[-a-zA-Z0-9_() .]+$')
+ASCII_VALIDATOR = RegexValidator(RE_ASCII, 'Filename must contain ASCII characters only')
 
 class PackageForm(forms.ModelForm):
 
@@ -128,9 +133,11 @@ class PackageForm(forms.ModelForm):
         if not file_ext in Package.VALID_FILE_TYPES:
             msg = '%s not supported! Must be %s' % (file_ext,', '.join(Package.VALID_FILE_TYPES))
             raise forms.ValidationError(msg)
+
+        ASCII_VALIDATOR(file.name)
+
         return file
 
     def clean_name(self):
         name = self.cleaned_data['name']
         return name.strip()
-
