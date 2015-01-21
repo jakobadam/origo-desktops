@@ -324,9 +324,10 @@ class ServerRole(object):
     )
 
 class Server(models.Model):
-    """The windows server to install software on
 
-    """
+    class Meta:
+        ordering = ['name']
+
     ip = models.IPAddressField(db_index=True)
     name = models.CharField(max_length=100, verbose_name='Computer name')
     domain = models.CharField(max_length=100, blank=True)
