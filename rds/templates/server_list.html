@@ -1,0 +1,77 @@
+{% extends 'project_base.html' %}
+{% load static %}
+
+{% block page_title%}Deployment{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block pre_body %}
+  {% include '_menu.html' %}
+{% endblock %}
+
+{% block body %}
+
+<div class="col-xs-3">
+  {% include '_package_sidebar.html' %}
+</div>
+
+<div class="col-xs-9">
+  {% if object_list %}
+
+  <h1>Deployment <small>{{server.name}}.{{server.domain}}</small></h1>
+
+  <div class="alert alert-info alert-dismissible fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>Heads Up!</strong> This is a list of servers in your RDS farm. 
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>IP</th>
+          <th>Roles</th>
+          <th style="min-width: 200px">Links
+            <span class="tooltip-wrapper" 
+                  data-toggle="tooltip" 
+                  data-placement="left" 
+                  data-original-title="">
+              <span class="fui-question-circle"></span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in object_list %}
+        <tr>
+          <td>{{o.name}}</td>
+          <td>{{o.ip}}</td>
+          <td>{{o.roles}}</td>
+          <td>
+            <ul>
+              {% if 'web' in o.roles %}
+              <a target="_blank" href="https://{{o.ip}}/rdweb"><span class="glyphicon glyphicon-globe"></span></a>
+              {% endif %}
+              <a target="_blank" href="{% url 'rdp_settings' pk=o.pk %}">
+                <img width="18px" src="{% static 'rdp_icon.png' %}" /></a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+  {% else %}
+
+  {% endif %}
+</div>
+{% endblock%}
+
+{% block scripts%}
+<script>
+$(document).ready(function(){
+  $('.tooltip-wrapper').tooltip()
+});
+
+</script>
+{% endblock%}
