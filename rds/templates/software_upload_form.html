@@ -1,8 +1,12 @@
 {% extends 'project_base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block page_title%}Add Program{% endblock %}
 {% block navbar %}RDP Services{% endblock %}
+{% block head %}
+<script src="{% static 'modernizr/feature-detects/file-api.js' %}"></script>
+{% endblock %}
 
 {% block pre_body %}
   {% include '_menu.html' %}
@@ -26,6 +30,7 @@
           {{form|crispy}}
             </li>
           </ul>
+
         
           <button type="submit" 
                   class="btn btn-primary btn-block">{% if object.id %}Update{% else %}Upload{% endif %}
@@ -37,7 +42,45 @@
 
       <small><a href="{% url 'packages_local' %}"><span class="fui-arrow-left"></span>Cancel</a></small>
 
-
+      {% include 'upload_progress_modal.html' %}
 </div>
+
+<script>
+$(document).ready(function(){
+
+  if(!Modernizr.filereader){
+    // skip decorating form
+    return;
+  }
+
+  var form = $('form');
+  var progress_bar = $('.progress-bar');
+  var progress_modal = $('#upload-progress-modal');
+
+  form.submit(function(e){
+    e.preventDefault();
+
+    progress_modal.modal({
+      backdrop: 'static',
+      keyboard: false
+    });
+
+    var form_data = new FormData(this);
+    var xhr = new XMLHttpRequest();
+
+    xhr.upload.onprogress = function(/*ProgressEvent*/e){
+      var percent = Math.round((e.loaded / e.total) * 100);
+      progress_bar.attr('aria-valuenow', percent);
+      progress_bar.text(percent + '%')
+      progress_bar.css('width', percent + '%');
+    };
+
+    xhr.open(this.method, window.location.href);
+    xhr.send(form_data);
+
+  });
+});
+</script>
+
 
 {% endblock%}

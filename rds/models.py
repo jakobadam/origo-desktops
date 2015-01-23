@@ -19,6 +19,7 @@ RE_PACKAGE_NAME = re.compile(r'^[-a-zA-Z0-9_() .]+$')
 
 def generate_filename(instance, filename):
     """Create a filename like firefox31/software/firefox31.exe"""
+    print os.path.join(instance.path, 'software', filename)    
     return os.path.join(instance.path, 'software', filename)
 
 SAMBA_SERVER_IP = None

@@ -45,6 +45,7 @@ BOWER_INSTALLED_APPS = (
     'jquery#1.9',
     'jquery-ui#1.10',
     'bootstrap#3.1.0',
+    'modernizr',
     'flat-ui',
     'html5shiv',
     'respond',
