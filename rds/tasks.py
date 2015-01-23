@@ -33,7 +33,7 @@ def install_package(package_id, server_id):
     package = Package.objects.get(pk=package_id)
     server = Server.objects.get(pk=server_id)
 
-    res = server.cmd(package.install_cmd, package.args.split())
+    res = server.cmd(package.install_cmd)
     success = res.status_code == 0
     if success:
         message = u'Installed "{}". {}'.format(package, res.std_out)

@@ -107,8 +107,6 @@ class Package(models.Model):
 
     @property
     def samba_base_path(self):
-        """TODO: cache this
-        """
         if not SAMBA_SERVER_IP:
             global SAMBA_SERVER_IP
             samba_server = Server.objects.filter(roles__icontains=ServerRole.RDS_ORCHESTRATOR).first()
@@ -161,10 +159,15 @@ class Package(models.Model):
 
     @property
     def install_cmd(self):
+        """
+        Install cmd for the package
+
+        Support for {dirname} variable in args
+        """
         if not self.installer:
             return None
-        root,ext = os.path.splitext(self.installer)
         args = self.args.format(dirname=self.samba_path_join(self.samba_path, 'software') + '\\')
+        root,ext = os.path.splitext(self.installer)
         if ext == '.msi':
             return u'msiexec /L*+ "{}" /passive /i "{}" {}'.format(self.log_samba_path, self.samba_path_installer, args)
         return u'"{}" {}'.format(self.samba_path_installer, args)
@@ -350,10 +353,10 @@ class Server(models.Model):
     def winrm_session(self):
         return winrm.Session(self.ip, auth=(self.user, self.password))
 
-    def cmd(self, cmd, args=()):
+    def cmd(self, cmd):
         log.info(u'Running cmd: {}'.format(cmd))
         s = self.winrm_session()
-        return s.run_cmd(cmd, args)
+        return s.run_cmd(cmd)
 
     def fetch_applications(self):
 
