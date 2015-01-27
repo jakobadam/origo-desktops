@@ -5,7 +5,11 @@
 {% block page_title%}Add Program{% endblock %}
 {% block navbar %}RDP Services{% endblock %}
 {% block head %}
-<script src="{% static 'modernizr/feature-detects/file-api.js' %}"></script>
+<!-- <script src="{% static 'modernizr/feature-detects/file-api.js' %}"></script> -->
+
+<script src="{% static 'bootstrap-filestyle/src/bootstrap-filestyle.js' %}"></script>
+<!-- <script src="{% static 'rds/js/fileprogress.js' %}"></script> -->
+
 {% endblock %}
 
 {% block pre_body %}
@@ -19,68 +23,37 @@
 
 <div class="col-xs-9">
 
-      <h3 style="margin-top:0">{% if object.id %}Update{% else %}Upload{% endif %} Software</h3>      
+  <h3 style="margin-top:0">{% if object.id %}Update{% else %}Upload{% endif %} Software</h3>
 
-      <div class="share mrl">
+  <!-- <span class="btn btn-success fileinput-button"> -->
+  <!--   <i class="glyphicon glyphicon-plus"></i> -->
+  <!--   <span>Add files...</span> -->
+  <!--   <input type="file" name="file" multiple> -->
+  <!-- </span> -->
 
-        <form role="form" enctype="multipart/form-data" method="POST">
-        
-          <ul>
-            <li>
+  <div class="share mrl">
+    <form role="form" enctype="multipart/form-data" method="POST">
+      <ul>
+        <li>
           {{form|crispy}}
-            </li>
-          </ul>
+        </li>
+      </ul>
+      <button type="submit"
+              class="btn btn-primary btn-block">{% if object.id %}Update{% else %}Upload{% endif %}
+        <span class="glyphicon glyphicon-upload"></span>
+      </button>
+    </form>
+  </div>
 
-        
-          <button type="submit" 
-                  class="btn btn-primary btn-block">{% if object.id %}Update{% else %}Upload{% endif %}
-            <span class="glyphicon glyphicon-upload"></span>
-          </button>
-        
-        </form>
-      </div>
-
-      <small><a href="{% url 'packages_local' %}"><span class="fui-arrow-left"></span>Cancel</a></small>
-
-      {% include 'upload_progress_modal.html' %}
+  <small><a href="{% url 'packages_local' %}"><span class="fui-arrow-left"></span>Cancel</a></small>
 </div>
 
+
+<script src="{% static 'rds/js/fileprogress.js' %}"></script>
+<script src="{% static 'rds/js/jQuery.FileDrop.js' %}"></script>
 <script>
-$(document).ready(function(){
-
-  if(!Modernizr.filereader){
-    // skip decorating form
-    return;
-  }
-
-  var form = $('form');
-  var progress_bar = $('.progress-bar');
-  var progress_modal = $('#upload-progress-modal');
-
-  form.submit(function(e){
-    e.preventDefault();
-
-    progress_modal.modal({
-      backdrop: 'static',
-      keyboard: false
-    });
-
-    var form_data = new FormData(this);
-    var xhr = new XMLHttpRequest();
-
-    xhr.upload.onprogress = function(/*ProgressEvent*/e){
-      var percent = Math.round((e.loaded / e.total) * 100);
-      progress_bar.attr('aria-valuenow', percent);
-      progress_bar.text(percent + '%')
-      progress_bar.css('width', percent + '%');
-    };
-
-    xhr.open(this.method, window.location.href);
-    xhr.send(form_data);
-
-  });
-});
+  $(":file").filestyle({buttonBefore: true});
+  $(":file").fileprogress();
 </script>
-
 
 {% endblock%}
