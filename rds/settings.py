@@ -50,7 +50,8 @@ BOWER_INSTALLED_APPS = (
     'html5shiv',
     'respond',
     'zxcvbn',
-    'spin.js'
+    'spin.js',
+    'bootstrap-filestyle'
 )
 
 MIDDLEWARE_CLASSES = (
