@@ -52,8 +52,36 @@ class PackageEdit(object):
         self.object.save(file_updated=file_updated)
         return http.HttpResponseRedirect(self.success_url)
 
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form), status=422)
+
 class PackageUpdate(PackageEdit, UpdateView):
     pass
+
+def package_create(request):
+    status = 200
+    if request.method == 'POST':
+        form = PackageForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.save(file_updated=True)
+            messages.success(request, u'{} uploaded'.format(instance))
+            url = reverse('packages_local')
+            if request.is_ajax():
+                return http.JsonResponse({'location': url})
+            else:
+                return http.HttpResponseRedirect(url)
+        else:
+            if request.is_ajax():
+                # trigger ajax error handler
+                status = 422
+    else:
+        form = PackageForm()
+
+    return shortcuts.render(request, 'software_upload_form.html', {
+        'form':form
+    }, status=status)
 
 class PackageCreate(PackageEdit, CreateView):
     pass
