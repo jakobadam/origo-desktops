@@ -28,6 +28,7 @@ def process_upload(package_id):
         log.error(traceback.format_exc())
         Message.error(str(e))
 
+
 @shared_task
 def install_package(package_id, server_id):
     package = Package.objects.get(pk=package_id)

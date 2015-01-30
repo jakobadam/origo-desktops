@@ -25,6 +25,7 @@ from rds.forms import (
     )
 
 from rds.models import (
+    Farm,
     Package,
     Server,
     State,
@@ -324,4 +325,43 @@ def applications(request):
     return shortcuts.render(request, 'application_list.html', {
         'applications':Application.objects.all(),
         'server':server
+    })
+
+def farm_list(request):
+    farms = Farm.objects.all()
+    return shortcuts.render(request, 'farm_list.html', {
+        'farms': farms
+    })
+
+def farm_show(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+    farms = Farm.objects.all()
+
+    return shortcuts.render(request, 'farm_show.html', {
+        'farm': farm,
+        'farms': farms
+    })
+
+@require_http_methods(['POST'])
+def farm_package_add(request, farm_pk, farm_package_pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=farm_pk)
+
+    qs = farm.farm_packages.filter(pk=farm_package_pk)
+    farm_package = shortcuts.get_object_or_404(qs)
+
+    return shortcuts.render(request, 'farm_show.html', {
+        'farm': farm,
+        'farms': Farm.objects.all()
+    })
+
+@require_http_methods(['POST'])
+def farm_package_delete(request, farm_pk, farm_package_pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=farm_pk)
+
+    qs = farm.farm_packages.filter(pk=farm_package_pk)
+    farm_package = shortcuts.get_object_or_404(qs)
+
+    return shortcuts.render(request, 'farm_show.html', {
+        'farm': farm,
+        'farms': Farm.objects.all()
     })

@@ -1,0 +1,56 @@
+{% extends 'project_base.html' %}
+{% load static %}
+
+{% block page_title%}Farm {{farm}}{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block pre_body %}
+  {% include '_menu.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="col-xs-3">
+  {% include '_farm_sidebar.html' %}
+</div>
+
+<div class="col-xs-9">
+  <h1>Farm {{farm}} <small>{{blueprint.status}}</small></h1>
+
+  <div class="alert alert-info alert-dismissible fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>Heads Up!</strong>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Version</th>
+          <th>Installed</th>
+          <th style="min-width: 200px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in farm.blueprint_packages.all %}
+        <tr>
+          <td>{{o.package.name}}</td>
+          <td>{{o.package.version}}</td>
+          <td>{{o.status}}</td>
+          <td>
+            {% if farm.status == 'open' %}
+            <form method="POST" action="{% url 'farm_package_delete' blueprint_pk=blueprint.pk blueprint_package_pk=o.pk %}" style="display:inline-block">
+              <button type="submit" title="Remove {{o.package.name}} from farm"
+                      class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-trash"></span></button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+</div>
+{% endblock%}

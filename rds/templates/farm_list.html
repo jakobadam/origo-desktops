@@ -1,0 +1,71 @@
+{% extends 'project_base.html' %}
+{% load static %}
+
+{% block page_title%}Farms{% endblock %}
+{% block navbar %}RDS Services{% endblock %}
+
+{% block pre_body %}
+  {% include '_menu.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="col-xs-3">
+  {% include '_farm_sidebar.html' %}
+</div>
+<div class="col-xs-9">
+  {% if farms %}
+
+  <div class="pull-right">
+    <a title="Refresh applications" href="{% url 'refresh_applications' %}">
+      <span class="glyphicon glyphicon-refresh"></span>
+    </a>
+  </div>
+
+  <h1>Farms</h1>
+
+  <div class="alert alert-info alert-dismissible fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>Heads Up!</strong> This is a list of your RDS farms
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Path</th>          
+          <th style="min-width: 200px">Publish or Un-publish to Remote Apps
+            <span class="tooltip-wrapper" 
+                  data-toggle="tooltip" 
+                  data-placement="left" 
+                  data-original-title="Remote Apps are applications which are remotely accessible via RDP">
+              <span class="fui-question-circle"></span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in farms %}
+        <tr>
+          <td>{{o.name}}</td>
+          </td>
+        </tr>
+        {% endfor %}        
+      </tbody>
+
+    </table>
+  </div>
+  {% else %}
+
+  {% endif %}
+</div>
+{% endblock%}
+
+{% block scripts%}
+<script>
+$(document).ready(function(){
+  $('.tooltip-wrapper').tooltip()
+});
+
+</script>
+{% endblock%}

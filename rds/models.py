@@ -11,6 +11,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import text
 from django.core.validators import RegexValidator
+from django.core.urlresolvers import reverse
 
 log = logging.getLogger(__name__)
 
@@ -324,6 +325,38 @@ class ServerRole(object):
         (RDS_ORCHESTRATOR, 'orchestrator')
     )
 
+class Farm(models.Model):
+
+    STATUS_INSTALLING = 'installing'
+    STATUS_INSTALLED = 'installed'
+    STATUS_OPEN = 'open'
+    
+    name = models.CharField(max_length=100)
+    status = models.CharField(max_length=100)
+    master = models.CharField(max_length=1000, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('blueprint_show', kwargs={'pk': self.pk})
+
+class FarmPackages(models.Model):
+
+    STATUS_INSTALLING = 'installing'
+    STATUS_INSTALLED = 'installed'
+    STATUS_ERROR = 'error'
+
+    STATUS_CHOICES = (
+        (1, STATUS_INSTALLING),
+        (2, STATUS_INSTALLED),
+        (3, STATUS_ERROR),
+        )
+
+    farm = models.ForeignKey(Farm, related_name='farm_packages')
+    package = models.ForeignKey(Package)
+    status = models.CharField(max_length=100, blank=True, choices=STATUS_CHOICES)
+
 class Server(models.Model):
 
     class Meta:
@@ -335,6 +368,7 @@ class Server(models.Model):
     user = models.CharField(max_length=100, blank=True)
     password = models.CharField(max_length=128, verbose_name='Password', blank=True)
     updated = models.BooleanField(default=True)
+    farm = models.ForeignKey(Farm, related_name='servers')
 
     # denormalized one-to-many model server roles
     # comma-separated list of roles
@@ -383,8 +417,7 @@ class Server(models.Model):
                     Application.objects.get_or_create(name=name, path=path, server=self)
 
         # TODO: remove apps?
-
-
+    
 class Application(models.Model):
 
     name = models.CharField(max_length=100)
@@ -402,4 +435,3 @@ class Application(models.Model):
     def unpublish(self):
         self.published = False
         self.save()
-

@@ -30,8 +30,7 @@ urlpatterns = patterns('',
     url(r'^setup/cancel/$', 'rds.views.cancel', name='cancel'),
     url(r'^setup/server/$', 'rds.views.server_setup', name='server_setup'),
 
-    url(r'^software/$', RedirectView.as_view(url=reverse_lazy('packages_cloud'), permanent=True),
-        name='software'),
+    url(r'^software/$', RedirectView.as_view(url=reverse_lazy('packages_local'), permanent=True), name='software'),
     url(r'^software/store/$', 'rds.views.packages_cloud', name='packages_cloud'),
 
     url(r'^software/local/$', 'rds.views.packages_local', name='packages_local'),
@@ -44,6 +43,11 @@ urlpatterns = patterns('',
     url(r'^software/server/packages$', 'rds.views.packages_server', name='packages_server'),
     url(r'^software/server/applications/$', 'rds.views.applications', name='applications'),
     url(r'^software/server/applications/refresh/$', 'rds.views.refresh_applications', name='refresh_applications'),
+
+    url(r'^farms/$', 'rds.views.farm_list', name='farm_list'),
+    url(r'^farms/(?P<pk>\d+)/$', 'rds.views.farm_show', name='farm_show'),
+    url(r'^farms/(?P<farm_pk>\d+)/package/(?P<farm_package_pk>\d+)/delete/$', 'rds.views.farm_package_delete', name='farm_package_delete'),
+    url(r'^farms/(?P<farm_pk>\d+)/package/(?P<farm_package_pk>\d+)/add/$', 'rds.views.farm_package_add', name='farm_package_add'),        
 
     url(r'^deployment/', ServerList.as_view(), name='deployment'),
     url(r'^deployment/publish/(?P<pk>\d+)/$', 'rds.views.deployment_publish', name='deployment_publish'),
