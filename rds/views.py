@@ -182,9 +182,9 @@ def server_setup(request):
 def cancel(request):
     state = State.first_or_create()
 
-    for s in Server.objects.all():
-        # Get AD server and delete it
-        s.delete()
+    # for s in Server.objects.all():
+    #     # Get AD server and delete it
+    #     s.delete()
 
     # TODO: destroy virtual machines
 

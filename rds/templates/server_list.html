@@ -11,13 +11,13 @@
 {% block body %}
 
 <div class="col-xs-3">
-  {% include '_package_sidebar.html' %}
+  {% include '_farm_sidebar.html' %}
 </div>
 
 <div class="col-xs-9">
   {% if object_list %}
 
-  <h1>Deployment <small>{{server.name}}.{{server.domain}}</small></h1>
+  <h1>Servers <small>{{server.name}}.{{server.domain}}</small></h1>
 
   <div class="alert alert-info alert-dismissible fade in" role="alert">
     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
