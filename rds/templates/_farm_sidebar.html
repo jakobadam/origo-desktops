@@ -34,23 +34,21 @@ background-color: #e5e5e5;
 <div class="bs-docs-sidebar hidden-print affix-top" role="complementary">
 
   <ul class="nav bs-docs-sidenav">
-    <h5 style="margin-top:0"><small>Farm</small></h5>
+    {% for o in farms %}
+    <h5 style="margin-top:0"><small>Farm {{o}}</small></h5>
     <li>
       <ul class="nav">
-        <li><a href=""><span class="glyphicon glyphicon-cog"></span> Setup</a></li>
-        <li><a href=""><span class="glyphicon glyphicon-folder-open"></span> Software</a></li>
-        <li><a href="{% url 'deployment' %}"><span class="glyphicon glyphicon-th"></span> Servers</a><li>
-
-        {% for o in farms %}
+        <li><a href="{% url 'farm_setup' pk=o.pk %}"><span class="glyphicon glyphicon-cog"></span> Setup</a></li>
+        <li><a href="{% url 'farm_software' pk=o.pk %}"><span class="glyphicon glyphicon-folder-open"></span> Software</a></li>
+        <li><a href="{% url 'farm_deployment' pk=o.pk %}"><span class="glyphicon glyphicon-th"></span> Servers</a><li>
         <li><a href="{% url 'farm_show' pk=o.pk %}"><span class="glyphicon glyphicon-edit"></span> {{o}}</a></li>
-        {% endfor %}
+
         <li class="divider"></li>
         <li><a href=""><span class="glyphicon glyphicon-file"></span>new</a></li>
         <li><a href=""><span class="glyphicon glyphicon-dashboard"></span>new</a></li>
-        
       </ul>
     </li>
-    
+    {% endfor %}    
 
   </ul>
 

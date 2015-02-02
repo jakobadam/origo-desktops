@@ -28,6 +28,7 @@ from rds.models import (
     Farm,
     Package,
     Server,
+    ServerRole,
     State,
     Application,
     ActiveDirectory,
@@ -45,7 +46,7 @@ class PackageEdit(object):
     model = Package
     template_name = 'software_upload_form.html'
     form_class = PackageForm
-    success_url = reverse_lazy('packages_local')
+    success_url = reverse_lazy('software_uploaded')
 
     def form_valid(self, form):
         file_updated = self.request.FILES.get('file')
@@ -68,7 +69,7 @@ def package_create(request):
             instance = form.save(commit=False)
             instance.save(file_updated=True)
             messages.success(request, u'{} uploaded'.format(instance))
-            url = reverse('packages_local')
+            url = reverse('software_uploaded')
             if request.is_ajax():
                 return http.JsonResponse({'location': url})
             else:
@@ -94,7 +95,7 @@ class ServerCreate(CreateView):
     model = Server
     form_class = ServerForm
     template_name = 'server_form.html'
-    success_url = reverse_lazy('packages_local')
+    success_url = reverse_lazy('software_uploaded')
 
     # def get_form_kwargs(self):
     #     kwargs = super(ServerCreate, self).get_form_kwargs()
@@ -119,13 +120,13 @@ def install_package(request, pk=None):
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('packages_local'))
+        return http.HttpResponseRedirect(reverse('software_uploaded'))
 
     package.install(server)
     msg = u'Installing {} on {}'.format(package, server)
     log.info(msg)
     messages.info(request, msg)
-    return http.HttpResponseRedirect(reverse('packages_local'))
+    return http.HttpResponseRedirect(reverse('software_uploaded'))
 
 @require_http_methods(['POST'])
 def uninstall_package(request, pk=None):
@@ -135,12 +136,12 @@ def uninstall_package(request, pk=None):
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('packages_local'))
+        return http.HttpResponseRedirect(reverse('software_uploaded'))
 
     package.uninstall(server)
 
     messages.info(request, 'Un-installing {} from {}'.format(package, server))
-    return http.HttpResponseRedirect(reverse('packages_local'))
+    return http.HttpResponseRedirect(reverse('software_uploaded'))
 
 def setup(request, **kwargs):
     state = State.first_or_create()
@@ -262,13 +263,13 @@ def join(request):
     Message.success('Windows server "{}" started'.format(server))
     return http.HttpResponse()
 
-def packages_local(request):
+def software_uploaded(request):
     packages = Package.objects.all()
     return shortcuts.render(request, 'software_uploaded.html', {
         'packages': packages
     })
 
-def packages_cloud(request):
+def software_cloud(request):
     return shortcuts.render(request, 'software_store.html', {
     })
 
@@ -362,6 +363,47 @@ def farm_package_delete(request, farm_pk, farm_package_pk):
     farm_package = shortcuts.get_object_or_404(qs)
 
     return shortcuts.render(request, 'farm_show.html', {
+        'farm': farm,
+        'farms': Farm.objects.all()
+    })
+
+def farm_setup(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+    
+    queryset = farm.servers.filter(roles__icontains=ServerRole.RDS_AD)
+    ad = shortcuts.get_object_or_404(queryset)
+
+    form = ActiveDirectoryForm(instance=ad)
+
+    return shortcuts.render(request, 'farm_existing_ad_setup_form.html', {
+        'farms': Farm.objects.all(),
+        'farm':farm,
+        'form':form
+    })
+
+    # if request.method == 'POST':
+    #     form = ServerForm(data=request.POST, instance=server)
+    #     if form.is_valid():
+    #         form.save()
+    #         return http.HttpResponseRedirect(reverse('software'))
+    # else:
+    # form = ServerForm(instance=server)
+    # return shortcuts.render(request, 'server_setup.html', {
+    #     'form':form
+    # })
+
+def farm_deployment(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+
+    return shortcuts.render(request, 'farm_deployment.html', {
+        'farm':farm,
+        'farms': Farm.objects.all()
+    })
+
+def farm_software(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+
+    return shortcuts.render(request, 'farm_software.html', {
         'farm': farm,
         'farms': Farm.objects.all()
     })
