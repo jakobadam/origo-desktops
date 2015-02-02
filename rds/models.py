@@ -341,20 +341,20 @@ class Farm(models.Model):
     def get_absolute_url(self):
         return reverse('blueprint_show', kwargs={'pk': self.pk})
 
-class FarmPackages(models.Model):
+class FarmPackage(models.Model):
 
     STATUS_INSTALLING = 'installing'
     STATUS_INSTALLED = 'installed'
     STATUS_ERROR = 'error'
 
     STATUS_CHOICES = (
-        (1, STATUS_INSTALLING),
-        (2, STATUS_INSTALLED),
-        (3, STATUS_ERROR),
+        (STATUS_INSTALLING, STATUS_INSTALLING),
+        (STATUS_INSTALLED , STATUS_INSTALLED),
+        (STATUS_ERROR     , STATUS_ERROR),
         )
 
     farm = models.ForeignKey(Farm, related_name='farm_packages')
-    package = models.ForeignKey(Package)
+    package = models.ForeignKey(Package, related_name='farm_packages')
     status = models.CharField(max_length=100, blank=True, choices=STATUS_CHOICES)
 
 class Server(models.Model):
@@ -435,3 +435,5 @@ class Application(models.Model):
     def unpublish(self):
         self.published = False
         self.save()
+
+
