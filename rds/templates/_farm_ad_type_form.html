@@ -1,0 +1,52 @@
+<h3>Active Directory</h3>
+
+<p><span class="fui-question-circle"></span> Server must get a DHCP assigned IP
+</p>
+
+<div class="share mrl">
+  <form method="POST" id="" action="{% url 'ad_type' %}">
+
+    <ul>
+      <li>
+        <label class="radio">
+          <input type="radio" name="existing_active_directory" value="true" data-toggle="radio" class="custom-radio">
+          <span class="icons">
+            <span class="icon-unchecked"></span>
+            <span class="icon-checked"></span>
+          </span>
+          Connect to existing Active Directory
+        </label>
+      </li>
+      <li>
+        <label class="radio">
+          <input type="radio" name="existing_active_directory" value="" data-toggle="radio" checked="" class="custom-radio">
+          <span class="icons">
+            <span class="icon-unchecked"></span>
+            <span class="icon-checked"></span>
+          </span>
+          Setup Active Directory
+        </label>
+      </li>
+    </ul>
+
+    <button href="#" class="btn btn-primary btn-block btn-large">Next<span class="fui-arrow-right"></span></button>
+    
+  </form>
+
+</div> 
+
+  <div class="row">
+
+    <div class="col-md-12">
+
+      <br>
+
+      <p><span class="fui-question-circle"></span> Remote Desktop Services (RDS) must connect to an Active
+      Directory (AD). Therefore you have the option to <i>connect to
+      your existing AD</i> or install a new one.
+      </p>
+
+    </div>
+  </div>
+
+
