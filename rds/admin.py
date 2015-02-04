@@ -2,13 +2,13 @@ from django.contrib import admin
 
 from rds.models import (
     Farm,
-    FarmPackages,
+    FarmPackage,
     Package,
     Server,
     )
 
-class FarmPackagesInline(admin.TabularInline):
-    model = FarmPackages
+class FarmPackageInline(admin.TabularInline):
+    model = FarmPackage
 
 class PackageAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Package._meta.fields]
@@ -19,7 +19,7 @@ class ServerAdmin(admin.ModelAdmin):
 class FarmAdmin(admin.ModelAdmin):
     model = Farm
     inlines = [
-        FarmPackagesInline
+        FarmPackageInline
     ]
 
 

@@ -32,19 +32,7 @@
         <tr>
           <td>{{p.name}}</td>
           <td>{{p.version}}</td>
-          <td>
-            {% if p.installing %}
-            <div class="spinner-wrapper" style="position:relative">&nbsp;
-              <div class="spinner"></div>
-            </div>
-            {% else %}
-              {% if p.installed == True %}
-            <span class="glyphicon glyphicon-ok"></span>
-              {% else %}
-            <span class="glyphicon glyphicon-remove"></span>            
-              {% endif %}
-            {% endif%}
-          </td>
+          <td></td>
           <td>
 
             {% if not p.installed %}
@@ -60,14 +48,6 @@
                       class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon-pencil"></span></button>
             </form>
-
-            {% if p.log_exists %}
-            <form method="GET" action="{{p.log_url}}" style="display:inline-block">
-              <button type="submit" title="Show Log"
-                      class="btn btn-primary btn-xs">
-                <span class="glyphicon glyphicon-file"></span></button>
-            </form>
-            {% endif %}
 
             <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
               <button type="submit" title="Delete"

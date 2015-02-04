@@ -16,7 +16,7 @@
 <div class="col-xs-9">
 
   <h1>Software</h1>
-  {% if farm.software %}
+  {% if farm.farm_packages %}
   <div class="table-responsive">
     <table class="table table-striped">
       <thead>
@@ -28,17 +28,17 @@
         </tr>
       </thead>
       <tbody>
-        {% for p in packages %}        
+        {% for fp in farm.farm_packages.all %}        
         <tr>
-          <td>{{p.name}}</td>
-          <td>{{p.version}}</td>
+          <td>{{fp.package.name}}</td>
+          <td>{{fp.package.version}}</td>
           <td>
-            {% if p.installing %}
+            {% if fp.installing %}
             <div class="spinner-wrapper" style="position:relative">&nbsp;
               <div class="spinner"></div>
             </div>
             {% else %}
-              {% if p.installed == True %}
+              {% if fp.installed == True %}
             <span class="glyphicon glyphicon-ok"></span>
               {% else %}
             <span class="glyphicon glyphicon-remove"></span>            
@@ -47,30 +47,30 @@
           </td>
           <td>
 
-            {% if not p.installed %}
-            <form method="POST" action="{% url 'install_package' pk=p.id%}" style="display:inline-block">
-              <button type="submit" title="Install {{p.name}}"
+            {% if not fp.installed %}
+            <form method="POST" action="{% url 'install_package' pk=fp.id%}" style="display:inline-block">
+              <button type="submit" title="Install {{fp.name}}"
                       class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
             </form>
             {% endif %}
 
-            <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
-              <button type="submit" title="Edit"
-                      class="btn btn-primary btn-xs">
-                <span class="glyphicon glyphicon-pencil"></span></button>
-            </form>
+            <!-- <form method="GET" action="{% url 'update_package' pk=fp.id %}" style="display:inline-block"> -->
+            <!--   <button type="submit" title="Edit" -->
+            <!--           class="btn btn-primary btn-xs"> -->
+            <!--     <span class="glyphicon glyphicon-pencil"></span></button> -->
+            <!-- </form> -->
 
-            {% if p.log_exists %}
-            <form method="GET" action="{{p.log_url}}" style="display:inline-block">
+            {% if fp.log_exists %}
+            <form method="GET" action="{{fp.log_url}}" style="display:inline-block">
               <button type="submit" title="Show Log"
                       class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon-file"></span></button>
             </form>
             {% endif %}
 
-            <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
-              <button type="submit" title="Delete"
+            <form method="POST" action="{% url 'delete_package' pk=fp.id %}" style="display:inline-block">
+              <button type="submit" title="Remove {{fp}}"
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>
             </form>

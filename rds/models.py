@@ -357,6 +357,9 @@ class FarmPackage(models.Model):
     package = models.ForeignKey(Package, related_name='farm_packages')
     status = models.CharField(max_length=100, blank=True, choices=STATUS_CHOICES)
 
+    def __str__(self):
+        return u'{} ({})'.format(self.package, self.farm)
+
 class Server(models.Model):
 
     class Meta:
