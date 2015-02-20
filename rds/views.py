@@ -362,10 +362,11 @@ def farm_package_delete(request, farm_pk, farm_package_pk):
     qs = farm.farm_packages.filter(pk=farm_package_pk)
     farm_package = shortcuts.get_object_or_404(qs)
 
-    return shortcuts.render(request, 'farm_show.html', {
-        'farm': farm,
-        'farms': Farm.objects.all()
-    })
+    farm_package.delete()
+    messages.info(request, 'Deleted {}'.format(farm_package, farm))
+
+    url = reverse('farm_software', kwargs={'pk': farm.pk})
+    return http.HttpResponseRedirect(url)
 
 def farm_setup(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)

@@ -69,7 +69,7 @@
             </form>
             {% endif %}
 
-            <form method="POST" action="{% url 'delete_package' pk=fp.id %}" style="display:inline-block">
+            <form method="POST" action="{% url 'farm_package_delete' farm_pk=fp.farm.pk farm_package_pk=fp.id %}" style="display:inline-block">
               <button type="submit" title="Remove {{fp}}"
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>

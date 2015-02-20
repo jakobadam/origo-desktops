@@ -49,12 +49,12 @@
                 <span class="glyphicon glyphicon-pencil"></span></button>
             </form>
 
-            <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
-              <button type="submit" title="Delete"
+            <form class="delete-form" method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
+              <button type="submit" title="Delete {{p}}"
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>
             </form>
-            
+
           </td>
         </tr>
         {% endfor %}
@@ -71,39 +71,9 @@
   {% endif %}
 </div>
 
+<script src="{% static 'rds/js/formconfirm.js' %}"></script>
 <script>
-$(document).ready(function(){
-var opts = {
-  lines: 11, // The number of lines to draw
-  length: 5, // The length of each line
-  width: 2, // The line thickness
-  radius: 2, // The radius of the inner circle
-  corners: 1, // Corner roundness (0..1)
-  rotate: 0, // The rotation offset
-  direction: 1, // 1: clockwise, -1: counterclockwise
-  color: '#000', // #rgb or #rrggbb or array of colors
-  speed: 1, // Rounds per second
-  trail: 34, // Afterglow percentage
-  shadow: false, // Whether to render a shadow
-  hwaccel: false, // Whether to use hardware acceleration
-  className: 'spinner', // The CSS class to assign to the spinner
-  zIndex: 2e9, // The z-index (defaults to 2000000000)
-  top: '50%', // Top position relative to parent
-  left: '50%' // Left position relative to parent
-};
-
-  $.ajax({
-    url: "{% static 'spin.js/spin.js' %}",
-    dataType: "script",
-    success: function(){
-      $('.spinner').each(function(){
-        var spinner = new Spinner(opts).spin(this);
-      });
-      //$('#modal').modal();
-    }
-  });
-
-});
+  $(".delete-form").formconfirm();
 </script>
 
 
