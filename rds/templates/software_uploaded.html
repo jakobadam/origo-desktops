@@ -43,7 +43,7 @@
             </form>
             {% endif %}
 
-            <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
+            <form method="GET" action="{% url 'package_update' pk=p.id %}" style="display:inline-block">
               <button type="submit" title="Edit"
                       class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon-pencil"></span></button>

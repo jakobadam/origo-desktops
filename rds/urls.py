@@ -35,7 +35,7 @@ urlpatterns = patterns('',
     url(r'^software/local/$', 'rds.views.software_uploaded', name='software_uploaded'),
     url(r'^software/local/upload/$', PackageCreate.as_view(), name='add_package'),
     url(r'^software/local/delete/(?P<pk>\d+)/$', 'rds.views.package_delete', name='package_delete'),
-    url(r'^software/local/update/(?P<pk>\d+)/$', PackageUpdate.as_view(), name='update_package'),
+    url(r'^software/local/update/(?P<pk>\d+)/$', PackageUpdate.as_view(), name='package_update'),
     url(r'^software/local/install/(?P<pk>\d+)/$', 'rds.views.install_package', name='install_package'),
     url(r'^software/local/uninstall/(?P<pk>\d+)/$', 'rds.views.uninstall_package', name='uninstall_package'),
 
