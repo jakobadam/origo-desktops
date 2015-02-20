@@ -201,14 +201,14 @@ class Package(models.Model):
         from rds import tasks
         self.installing = True
         self.save()
-        tasks.install_package.delay(self.pk, server.pk)
+        tasks.package_install.delay(self.pk, server.pk)
 
     def uninstall(self, server):
         """Install software on server
         """
         log.info(u'Adding un-install tasks for package "{}"'.format(self))
         from rds import tasks
-        tasks.uninstall_package.delay(self.pk, server.pk)
+        tasks.unpackage_install.delay(self.pk, server.pk)
 
     def add_dirs(self):
         dirs = [os.path.join(self.path, d) for d in ('log', 'script')]

@@ -46,7 +46,7 @@ class PackageEdit(object):
     model = Package
     template_name = 'software_upload_form.html'
     form_class = PackageForm
-    success_url = reverse_lazy('software_uploaded')
+    success_url = reverse_lazy('package_list')
 
     def form_valid(self, form):
         file_updated = self.request.FILES.get('file')
@@ -69,7 +69,7 @@ def package_create(request):
             instance = form.save(commit=False)
             instance.save(file_updated=True)
             messages.success(request, u'{} uploaded'.format(instance))
-            url = reverse('software_uploaded')
+            url = reverse('package_list')
             if request.is_ajax():
                 return http.JsonResponse({'location': url})
             else:
@@ -96,13 +96,13 @@ def package_delete(request, pk):
     package = shortcuts.get_object_or_404(Package, pk=pk)
     package.delete()
     messages.info(request, 'Deleted {}'.format(package))
-    return http.HttpResponseRedirect(reverse('software_uploaded'))
+    return http.HttpResponseRedirect(reverse('package_list'))
 
 class ServerCreate(CreateView):
     model = Server
     form_class = ServerForm
     template_name = 'server_form.html'
-    success_url = reverse_lazy('software_uploaded')
+    success_url = reverse_lazy('package_list')
 
     # def get_form_kwargs(self):
     #     kwargs = super(ServerCreate, self).get_form_kwargs()
@@ -117,7 +117,7 @@ class ServerList(ListView):
     template_name = 'server_list.html'
     
 @require_http_methods(['POST'])
-def install_package(request, pk=None):
+def package_install(request, pk=None):
     """
     TODO: take the server to install on as a query arg
     """
@@ -127,28 +127,28 @@ def install_package(request, pk=None):
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('software_uploaded'))
+        return http.HttpResponseRedirect(reverse('package_list'))
 
     package.install(server)
     msg = u'Installing {} on {}'.format(package, server)
     log.info(msg)
     messages.info(request, msg)
-    return http.HttpResponseRedirect(reverse('software_uploaded'))
+    return http.HttpResponseRedirect(reverse('package_list'))
 
 @require_http_methods(['POST'])
-def uninstall_package(request, pk=None):
+def package_uninstall(request, pk=None):
     package = shortcuts.get_object_or_404(Package, pk=pk)
     server = Server.objects.first()
 
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('software_uploaded'))
+        return http.HttpResponseRedirect(reverse('package_list'))
 
     package.uninstall(server)
 
     messages.info(request, 'Un-installing {} from {}'.format(package, server))
-    return http.HttpResponseRedirect(reverse('software_uploaded'))
+    return http.HttpResponseRedirect(reverse('package_list'))
 
 def setup(request, **kwargs):
     state = State.first_or_create()
@@ -270,9 +270,9 @@ def join(request):
     Message.success('Windows server "{}" started'.format(server))
     return http.HttpResponse()
 
-def software_uploaded(request):
+def package_list(request):
     packages = Package.objects.all()
-    return shortcuts.render(request, 'software_uploaded.html', {
+    return shortcuts.render(request, 'package_list.html', {
         'packages': packages
     })
 
@@ -280,7 +280,7 @@ def software_cloud(request):
     return shortcuts.render(request, 'software_store.html', {
     })
 
-def packages_server(request):
+def server_package_list(request):
     packages = Package.objects.filter(installed=True)
     server = Server.objects.first()
     return shortcuts.render(request, 'software_installed.html', {
@@ -319,7 +319,7 @@ def deployment_unpublish(request, pk):
     messages.success(request, "Un-published '{}' to RDS".format(app))
     return http.HttpResponseRedirect(reverse('applications'))
 
-def refresh_applications(request):
+def applications_refresh(request):
     server = Server.objects.first()
     server.updated = True
     server.save()
@@ -351,7 +351,7 @@ def farm_show(request, pk):
     })
 
 @require_http_methods(['POST'])
-def farm_package_add(request, farm_pk, farm_package_pk):
+def farm_package_create(request, farm_pk, farm_package_pk):
     farm = shortcuts.get_object_or_404(Farm, pk=farm_pk)
 
     qs = farm.farm_packages.filter(pk=farm_package_pk)
