@@ -91,7 +91,7 @@
                 <span class="glyphicon glyphicon-pencil"></span></button>
             </form>
 
-            <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
+            <form method="POST" action="{% url 'package_delete' pk=p.id %}" style="display:inline-block">
               <button type="submit" title="Delete"
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>

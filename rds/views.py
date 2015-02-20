@@ -91,6 +91,13 @@ class PackageCreate(PackageEdit, CreateView):
 class PackageDelete(PackageEdit, DeleteView):
     pass
 
+@require_http_methods(['POST'])
+def package_delete(request, pk):
+    package = shortcuts.get_object_or_404(Package, pk=pk)
+    package.delete()
+    messages.info(request, 'Deleted {}'.format(package))
+    return http.HttpResponseRedirect(reverse('software_uploaded'))
+
 class ServerCreate(CreateView):
     model = Server
     form_class = ServerForm
