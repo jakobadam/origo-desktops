@@ -45,6 +45,7 @@ urlpatterns = patterns('',
 
     url(r'^farm/$', 'rds.views.farm_list', name='farm_list'),
     url(r'^farm/(?P<pk>\d+)/$', 'rds.views.farm_show', name='farm_show'),
+    url(r'^farm/(?P<pk>\d+)/clone$', 'rds.views.farm_clone', name='farm_clone'),
     url(r'^farm/(?P<pk>\d+)/deployment/$', 'rds.views.farm_deployment', name='farm_deployment'),
     url(r'^farm/(?P<pk>\d+)/software/$', 'rds.views.farm_software', name='farm_software'),
     url(r'^farm/(?P<pk>\d+)/setup/$', 'rds.views.farm_setup', name='farm_setup'),
@@ -55,6 +56,7 @@ urlpatterns = patterns('',
     url(r'^farm/deployment/', ServerList.as_view(), name='deployment'),
     url(r'^farm/deployment/publish/(?P<pk>\d+)/$', 'rds.views.deployment_publish', name='deployment_publish'),
     url(r'^farm/deployment/unpublish/(?P<pk>\d+)/$', 'rds.views.deployment_unpublish', name='deployment_unpublish'),
+    
 
     url(r'^api/join/$', 'rds.views.join', name='api_join'),
     url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings'),

@@ -44,7 +44,7 @@ PACKAGE_DIR = '/srv/samba/'
 
 class PackageEdit(object):
     model = Package
-    template_name = 'software_upload_form.html'
+    template_name = 'package_form.html'
     form_class = PackageForm
     success_url = reverse_lazy('package_list')
 
@@ -59,6 +59,12 @@ class PackageEdit(object):
 
 class PackageUpdate(PackageEdit, UpdateView):
     pass
+
+def package_list(request):
+    packages = Package.objects.all()
+    return shortcuts.render(request, 'package_list.html', {
+        'packages': packages
+    })
 
 def package_create(request):
     status = 200
@@ -270,12 +276,6 @@ def join(request):
     Message.success('Windows server "{}" started'.format(server))
     return http.HttpResponse()
 
-def package_list(request):
-    packages = Package.objects.all()
-    return shortcuts.render(request, 'package_list.html', {
-        'packages': packages
-    })
-
 def software_cloud(request):
     return shortcuts.render(request, 'software_store.html', {
     })
@@ -348,6 +348,14 @@ def farm_show(request, pk):
     return shortcuts.render(request, 'farm_show.html', {
         'farm': farm,
         'farms': farms
+    })
+
+def farm_clone(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+
+    return shortcuts.render(request, 'farm_show.html', {
+        'farm': farm,
+        'farms': Farm.objects.all()
     })
 
 @require_http_methods(['POST'])

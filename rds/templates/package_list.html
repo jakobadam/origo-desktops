@@ -15,7 +15,16 @@
 
 <div class="col-xs-9">
 
-  <h1>Uploaded software</h1>
+  <h1>Software</h1>
+
+  <!--  <select class="form-control"> -->
+  <!--   <option>1</option> -->
+  <!--   <option>2</option> -->
+  <!--   <option>3</option> -->
+  <!--   <option>4</option> -->
+  <!--   <option>5</option> -->
+  <!-- </select> -->
+
   {% if packages %}
   <div class="table-responsive">
     <table class="table table-striped">
@@ -23,7 +32,6 @@
         <tr>
           <th>Name</th>
           <th>Version</th>
-          <th>Installed</th>
           <th style="min-width: 200px">Actions</th>
         </tr>
       </thead>
@@ -32,12 +40,11 @@
         <tr>
           <td>{{p.name}}</td>
           <td>{{p.version}}</td>
-          <td></td>
           <td>
 
             {% if not p.installed %}
-            <form method="POST" action="{% url 'install_package' pk=p.id%}" style="display:inline-block">
-              <button type="submit" title="Install {{p.name}}"
+            <form method="POST" action="{% url 'package_install' pk=p.id%}" style="display:inline-block">
+              <button type="submit" title="Add {{p.name}} to farm"
                       class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
             </form>
@@ -65,7 +72,7 @@
   </div>
   {% else %}
   <div class="well">
-    There is no software yet, go to <a href="{% url 'add_package'%}">upload software</a>
+    There is no software yet, go to <a href="{% url 'package_create'%}">upload software</a>
   </div>
 
   {% endif %}

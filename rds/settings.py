@@ -42,14 +42,14 @@ INSTALLED_APPS = (
 )
 
 BOWER_INSTALLED_APPS = (
-    'jquery#1.9',
-    'jquery-ui#1.10',
-    'bootstrap#3.1.0',
+    'jquery',
+    'jquery-ui',
+    'bootstrap',
     'modernizr',
     'flat-ui',
     'html5shiv',
     'respond',
-    'zxcvbn',
+    #'zxcvbn',
     'spin.js',
     'bootstrap-filestyle'
 )
