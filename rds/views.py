@@ -357,8 +357,8 @@ def farm_clone(request, pk):
     if request.method == 'POST':
         form = forms.FarmCloneForm(request.POST)
         if form.is_valid():
-            farm.clone(form.name)
-            messages.success(request, 'New farm created')
+            new_farm = farm.clone(form.cleaned_data['name'])
+            messages.success(request, '{} created'.format(new_farm))
             return http.HttpResponseRedirect(reverse('farm_list'))
 
     else:
@@ -369,6 +369,13 @@ def farm_clone(request, pk):
         'farm': farm,
         'farms': Farm.objects.all()
     })
+
+@require_http_methods(['POST'])
+def farm_delete(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+    farm.delete()
+    messages.success(request, '{} deleted'.format(farm))
+    return http.HttpResponseRedirect(reverse('farm_list'))
 
 @require_http_methods(['POST'])
 def farm_package_create(request, farm_pk, farm_package_pk):

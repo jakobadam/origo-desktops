@@ -45,10 +45,16 @@
           <td>{{o.status}}</td>
           <td>
 
-            <form method="POST" action="{% url 'farm_clone' pk=o.pk %}" style="display:inline-block">
+            <form method="GET" action="{% url 'farm_clone' pk=o.pk %}" style="display:inline-block">
               <button type="submit" title="Clone Farm"
                       class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon-duplicate"></span></button>
+            </form>
+
+            <form method="POST" action="{% url 'farm_delete' pk=o.pk %}" class="delete-form" style="display:inline-block">
+              <button type="submit" title="Delete Farm {{o}}"
+                      class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-remove"></span></button>
             </form>
 
           </td>
@@ -65,10 +71,11 @@
 {% endblock%}
 
 {% block scripts%}
+<script src="{% static 'rds/js/formconfirm.js' %}"></script>
 <script>
 $(document).ready(function(){
   $('[data-toggle="tooltip"]').tooltip()
+  $(".delete-form").formconfirm();
 });
-
 </script>
 {% endblock%}
