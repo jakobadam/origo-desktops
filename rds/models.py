@@ -11,6 +11,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import text
 from django.core.validators import RegexValidator
+from django.core.urlresolvers import reverse
 
 log = logging.getLogger(__name__)
 
@@ -200,14 +201,14 @@ class Package(models.Model):
         from rds import tasks
         self.installing = True
         self.save()
-        tasks.install_package.delay(self.pk, server.pk)
+        tasks.package_install.delay(self.pk, server.pk)
 
     def uninstall(self, server):
         """Install software on server
         """
         log.info(u'Adding un-install tasks for package "{}"'.format(self))
         from rds import tasks
-        tasks.uninstall_package.delay(self.pk, server.pk)
+        tasks.unpackage_install.delay(self.pk, server.pk)
 
     def add_dirs(self):
         dirs = [os.path.join(self.path, d) for d in ('log', 'script')]
@@ -324,6 +325,41 @@ class ServerRole(object):
         (RDS_ORCHESTRATOR, 'orchestrator')
     )
 
+class Farm(models.Model):
+
+    STATUS_INSTALLING = 'installing'
+    STATUS_INSTALLED = 'installed'
+    STATUS_OPEN = 'open'
+    
+    name = models.CharField(max_length=100)
+    status = models.CharField(max_length=100)
+    master = models.CharField(max_length=1000, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('blueprint_show', kwargs={'pk': self.pk})
+
+class FarmPackage(models.Model):
+
+    STATUS_INSTALLING = 'installing'
+    STATUS_INSTALLED = 'installed'
+    STATUS_ERROR = 'error'
+
+    STATUS_CHOICES = (
+        (STATUS_INSTALLING, STATUS_INSTALLING),
+        (STATUS_INSTALLED , STATUS_INSTALLED),
+        (STATUS_ERROR     , STATUS_ERROR),
+        )
+
+    farm = models.ForeignKey(Farm, related_name='farm_packages')
+    package = models.ForeignKey(Package, related_name='farm_packages')
+    status = models.CharField(max_length=100, blank=True, choices=STATUS_CHOICES)
+
+    def __str__(self):
+        return u'{} farm {}'.format(self.package, self.farm)
+
 class Server(models.Model):
 
     class Meta:
@@ -335,6 +371,7 @@ class Server(models.Model):
     user = models.CharField(max_length=100, blank=True)
     password = models.CharField(max_length=128, verbose_name='Password', blank=True)
     updated = models.BooleanField(default=True)
+    farm = models.ForeignKey(Farm, related_name='servers')
 
     # denormalized one-to-many model server roles
     # comma-separated list of roles
@@ -383,8 +420,7 @@ class Server(models.Model):
                     Application.objects.get_or_create(name=name, path=path, server=self)
 
         # TODO: remove apps?
-
-
+    
 class Application(models.Model):
 
     name = models.CharField(max_length=100)
@@ -402,4 +438,5 @@ class Application(models.Model):
     def unpublish(self):
         self.published = False
         self.save()
+
 

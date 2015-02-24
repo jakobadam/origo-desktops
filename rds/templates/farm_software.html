@@ -10,13 +10,13 @@
 
 {% block body %}
 <div class="col-xs-3">
-  {% include '_package_sidebar.html' %}
+  {% include '_farm_sidebar.html' %}
 </div>
 
 <div class="col-xs-9">
 
-  <h1>Uploaded software</h1>
-  {% if packages %}
+  <h1>Software</h1>
+  {% if farm.farm_packages %}
   <div class="table-responsive">
     <table class="table table-striped">
       <thead>
@@ -28,17 +28,17 @@
         </tr>
       </thead>
       <tbody>
-        {% for p in packages %}        
+        {% for fp in farm.farm_packages.all %}        
         <tr>
-          <td>{{p.name}}</td>
-          <td>{{p.version}}</td>
+          <td>{{fp.package.name}}</td>
+          <td>{{fp.package.version}}</td>
           <td>
-            {% if p.installing %}
+            {% if fp.installing %}
             <div class="spinner-wrapper" style="position:relative">&nbsp;
               <div class="spinner"></div>
             </div>
             {% else %}
-              {% if p.installed == True %}
+              {% if fp.installed == True %}
             <span class="glyphicon glyphicon-ok"></span>
               {% else %}
             <span class="glyphicon glyphicon-remove"></span>            
@@ -47,30 +47,30 @@
           </td>
           <td>
 
-            {% if not p.installed %}
-            <form method="POST" action="{% url 'install_package' pk=p.id%}" style="display:inline-block">
-              <button type="submit" title="Install {{p.name}}"
+            {% if not fp.installed %}
+            <form method="POST" action="{% url 'package_install' pk=fp.id%}" style="display:inline-block">
+              <button type="submit" title="Install {{fp.name}}"
                       class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
             </form>
             {% endif %}
 
-            <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
-              <button type="submit" title="Edit"
-                      class="btn btn-primary btn-xs">
-                <span class="glyphicon glyphicon-pencil"></span></button>
-            </form>
+            <!-- <form method="GET" action="{% url 'package_update' pk=fp.id %}" style="display:inline-block"> -->
+            <!--   <button type="submit" title="Edit" -->
+            <!--           class="btn btn-primary btn-xs"> -->
+            <!--     <span class="glyphicon glyphicon-pencil"></span></button> -->
+            <!-- </form> -->
 
-            {% if p.log_exists %}
-            <form method="GET" action="{{p.log_url}}" style="display:inline-block">
+            {% if fp.log_exists %}
+            <form method="GET" action="{{fp.log_url}}" style="display:inline-block">
               <button type="submit" title="Show Log"
                       class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon-file"></span></button>
             </form>
             {% endif %}
 
-            <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
-              <button type="submit" title="Delete"
+            <form method="POST" action="{% url 'farm_package_delete' farm_pk=fp.farm.pk farm_package_pk=fp.id %}" style="display:inline-block">
+              <button type="submit" title="Remove {{fp}}"
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>
             </form>
@@ -85,7 +85,9 @@
   </div>
   {% else %}
   <div class="well">
-    There is no software yet, go to <a href="{% url 'add_package'%}">upload software</a>
+    The farm does not contain any software yet. You can select software to install from the
+    <a href="{% url 'software_cloud' %}">Software Cloud</a> or your own uploaded software at
+    <a href="{% url 'package_list' %}">Uploaded Software</a>
   </div>
 
   {% endif %}

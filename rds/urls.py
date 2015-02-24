@@ -11,8 +11,7 @@ admin.autodiscover()
 
 from .views import (
     PackageUpdate,
-    # PackageCreate,
-    PackageDelete,
+    PackageCreate,
     ServerCreate,
     ServerList
     )
@@ -30,24 +29,34 @@ urlpatterns = patterns('',
     url(r'^setup/cancel/$', 'rds.views.cancel', name='cancel'),
     url(r'^setup/server/$', 'rds.views.server_setup', name='server_setup'),
 
-    url(r'^software/$', RedirectView.as_view(url=reverse_lazy('packages_cloud'), permanent=True),
-        name='software'),
-    url(r'^software/store/$', 'rds.views.packages_cloud', name='packages_cloud'),
+    url(r'^software/$', RedirectView.as_view(url=reverse_lazy('package_list'), permanent=True), name='software'),
+    url(r'^software/store/$', 'rds.views.software_cloud', name='software_cloud'),
 
-    url(r'^software/local/$', 'rds.views.packages_local', name='packages_local'),
-    url(r'^software/local/upload/$', 'rds.views.package_create', name='add_package'),
-    url(r'^software/local/delete/(?P<pk>\d+)/$', PackageDelete.as_view(), name='delete_package'),
-    url(r'^software/local/update/(?P<pk>\d+)/$', PackageUpdate.as_view(), name='update_package'),
-    url(r'^software/local/install/(?P<pk>\d+)/$', 'rds.views.install_package', name='install_package'),
-    url(r'^software/local/uninstall/(?P<pk>\d+)/$', 'rds.views.uninstall_package', name='uninstall_package'),
+    url(r'^software/local/$', 'rds.views.package_list', name='package_list'),
+    url(r'^software/local/upload/$', PackageCreate.as_view(), name='package_create'),
+    url(r'^software/local/delete/(?P<pk>\d+)/$', 'rds.views.package_delete', name='package_delete'),
+    url(r'^software/local/update/(?P<pk>\d+)/$', PackageUpdate.as_view(), name='package_update'),
+    url(r'^software/local/install/(?P<pk>\d+)/$', 'rds.views.package_install', name='package_install'),
+    url(r'^software/local/uninstall/(?P<pk>\d+)/$', 'rds.views.package_uninstall', name='package_uninstall'),
 
-    url(r'^software/server/packages$', 'rds.views.packages_server', name='packages_server'),
+    url(r'^software/server/packages$', 'rds.views.server_package_list', name='server_package_list'),
     url(r'^software/server/applications/$', 'rds.views.applications', name='applications'),
-    url(r'^software/server/applications/refresh/$', 'rds.views.refresh_applications', name='refresh_applications'),
+    url(r'^software/server/applications/refresh/$', 'rds.views.applications_refresh', name='applications_refresh'),
 
-    url(r'^deployment/', ServerList.as_view(), name='deployment'),
-    url(r'^deployment/publish/(?P<pk>\d+)/$', 'rds.views.deployment_publish', name='deployment_publish'),
-    url(r'^deployment/unpublish/(?P<pk>\d+)/$', 'rds.views.deployment_unpublish', name='deployment_unpublish'),
+    url(r'^farm/$', 'rds.views.farm_list', name='farm_list'),
+    url(r'^farm/(?P<pk>\d+)/$', 'rds.views.farm_show', name='farm_show'),
+    url(r'^farm/(?P<pk>\d+)/clone$', 'rds.views.farm_clone', name='farm_clone'),
+    url(r'^farm/(?P<pk>\d+)/deployment/$', 'rds.views.farm_deployment', name='farm_deployment'),
+    url(r'^farm/(?P<pk>\d+)/software/$', 'rds.views.farm_software', name='farm_software'),
+    url(r'^farm/(?P<pk>\d+)/setup/$', 'rds.views.farm_setup', name='farm_setup'),
+
+    url(r'^farm/(?P<farm_pk>\d+)/package/(?P<farm_package_pk>\d+)/delete/$', 'rds.views.farm_package_delete', name='farm_package_delete'),
+    url(r'^farm/(?P<farm_pk>\d+)/package/(?P<farm_package_pk>\d+)/create/$', 'rds.views.farm_package_create', name='farm_package_create'),        
+
+    url(r'^farm/deployment/', ServerList.as_view(), name='deployment'),
+    url(r'^farm/deployment/publish/(?P<pk>\d+)/$', 'rds.views.deployment_publish', name='deployment_publish'),
+    url(r'^farm/deployment/unpublish/(?P<pk>\d+)/$', 'rds.views.deployment_unpublish', name='deployment_unpublish'),
+    
 
     url(r'^api/join/$', 'rds.views.join', name='api_join'),
     url(r'^api/server/(?P<pk>\d+)/rdp/settings.rdp', 'rds.views.rdp_settings', name='rdp_settings'),

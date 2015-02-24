@@ -28,8 +28,9 @@ def process_upload(package_id):
         log.error(traceback.format_exc())
         Message.error(str(e))
 
+
 @shared_task
-def install_package(package_id, server_id):
+def package_install(package_id, server_id):
     package = Package.objects.get(pk=package_id)
     server = Server.objects.get(pk=server_id)
 
@@ -56,7 +57,7 @@ def install_package(package_id, server_id):
     package.save()
 
 @shared_task
-def uninstall_package(package_id, server_id):
+def unpackage_install(package_id, server_id):
     log.info("TODO uninstall from server?")
 
     package = Package.objects.get(pk=package_id)

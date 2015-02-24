@@ -25,8 +25,10 @@ from rds.forms import (
     )
 
 from rds.models import (
+    Farm,
     Package,
     Server,
+    ServerRole,
     State,
     Application,
     ActiveDirectory,
@@ -42,9 +44,9 @@ PACKAGE_DIR = '/srv/samba/'
 
 class PackageEdit(object):
     model = Package
-    template_name = 'software_upload_form.html'
+    template_name = 'package_form.html'
     form_class = PackageForm
-    success_url = reverse_lazy('packages_local')
+    success_url = reverse_lazy('package_list')
 
     def form_valid(self, form):
         file_updated = self.request.FILES.get('file')
@@ -58,6 +60,12 @@ class PackageEdit(object):
 class PackageUpdate(PackageEdit, UpdateView):
     pass
 
+def package_list(request):
+    packages = Package.objects.all()
+    return shortcuts.render(request, 'package_list.html', {
+        'packages': packages
+    })
+
 def package_create(request):
     status = 200
     if request.method == 'POST':
@@ -67,7 +75,7 @@ def package_create(request):
             instance = form.save(commit=False)
             instance.save(file_updated=True)
             messages.success(request, u'{} uploaded'.format(instance))
-            url = reverse('packages_local')
+            url = reverse('package_list')
             if request.is_ajax():
                 return http.JsonResponse({'location': url})
             else:
@@ -89,11 +97,18 @@ class PackageCreate(PackageEdit, CreateView):
 class PackageDelete(PackageEdit, DeleteView):
     pass
 
+@require_http_methods(['POST'])
+def package_delete(request, pk):
+    package = shortcuts.get_object_or_404(Package, pk=pk)
+    package.delete()
+    messages.info(request, 'Deleted {}'.format(package))
+    return http.HttpResponseRedirect(reverse('package_list'))
+
 class ServerCreate(CreateView):
     model = Server
     form_class = ServerForm
     template_name = 'server_form.html'
-    success_url = reverse_lazy('packages_local')
+    success_url = reverse_lazy('package_list')
 
     # def get_form_kwargs(self):
     #     kwargs = super(ServerCreate, self).get_form_kwargs()
@@ -108,7 +123,7 @@ class ServerList(ListView):
     template_name = 'server_list.html'
     
 @require_http_methods(['POST'])
-def install_package(request, pk=None):
+def package_install(request, pk=None):
     """
     TODO: take the server to install on as a query arg
     """
@@ -118,28 +133,28 @@ def install_package(request, pk=None):
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('packages_local'))
+        return http.HttpResponseRedirect(reverse('package_list'))
 
     package.install(server)
     msg = u'Installing {} on {}'.format(package, server)
     log.info(msg)
     messages.info(request, msg)
-    return http.HttpResponseRedirect(reverse('packages_local'))
+    return http.HttpResponseRedirect(reverse('package_list'))
 
 @require_http_methods(['POST'])
-def uninstall_package(request, pk=None):
+def package_uninstall(request, pk=None):
     package = shortcuts.get_object_or_404(Package, pk=pk)
     server = Server.objects.first()
 
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('packages_local'))
+        return http.HttpResponseRedirect(reverse('package_list'))
 
     package.uninstall(server)
 
     messages.info(request, 'Un-installing {} from {}'.format(package, server))
-    return http.HttpResponseRedirect(reverse('packages_local'))
+    return http.HttpResponseRedirect(reverse('package_list'))
 
 def setup(request, **kwargs):
     state = State.first_or_create()
@@ -181,9 +196,9 @@ def server_setup(request):
 def cancel(request):
     state = State.first_or_create()
 
-    for s in Server.objects.all():
-        # Get AD server and delete it
-        s.delete()
+    # for s in Server.objects.all():
+    #     # Get AD server and delete it
+    #     s.delete()
 
     # TODO: destroy virtual machines
 
@@ -261,17 +276,11 @@ def join(request):
     Message.success('Windows server "{}" started'.format(server))
     return http.HttpResponse()
 
-def packages_local(request):
-    packages = Package.objects.all()
-    return shortcuts.render(request, 'software_uploaded.html', {
-        'packages': packages
-    })
-
-def packages_cloud(request):
+def software_cloud(request):
     return shortcuts.render(request, 'software_store.html', {
     })
 
-def packages_server(request):
+def server_package_list(request):
     packages = Package.objects.filter(installed=True)
     server = Server.objects.first()
     return shortcuts.render(request, 'software_installed.html', {
@@ -310,7 +319,7 @@ def deployment_unpublish(request, pk):
     messages.success(request, "Un-published '{}' to RDS".format(app))
     return http.HttpResponseRedirect(reverse('applications'))
 
-def refresh_applications(request):
+def applications_refresh(request):
     server = Server.objects.first()
     server.updated = True
     server.save()
@@ -324,4 +333,93 @@ def applications(request):
     return shortcuts.render(request, 'application_list.html', {
         'applications':Application.objects.all(),
         'server':server
+    })
+
+def farm_list(request):
+    farms = Farm.objects.all()
+    return shortcuts.render(request, 'farm_list.html', {
+        'farms': farms
+    })
+
+def farm_show(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+    farms = Farm.objects.all()
+
+    return shortcuts.render(request, 'farm_show.html', {
+        'farm': farm,
+        'farms': farms
+    })
+
+def farm_clone(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+
+    return shortcuts.render(request, 'farm_show.html', {
+        'farm': farm,
+        'farms': Farm.objects.all()
+    })
+
+@require_http_methods(['POST'])
+def farm_package_create(request, farm_pk, farm_package_pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=farm_pk)
+
+    qs = farm.farm_packages.filter(pk=farm_package_pk)
+    farm_package = shortcuts.get_object_or_404(qs)
+
+    return shortcuts.render(request, 'farm_show.html', {
+        'farm': farm,
+        'farms': Farm.objects.all()
+    })
+
+@require_http_methods(['POST'])
+def farm_package_delete(request, farm_pk, farm_package_pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=farm_pk)
+
+    qs = farm.farm_packages.filter(pk=farm_package_pk)
+    farm_package = shortcuts.get_object_or_404(qs)
+
+    farm_package.delete()
+    messages.info(request, 'Deleted {}'.format(farm_package, farm))
+
+    url = reverse('farm_software', kwargs={'pk': farm.pk})
+    return http.HttpResponseRedirect(url)
+
+def farm_setup(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+    
+    queryset = farm.servers.filter(roles__icontains=ServerRole.RDS_AD)
+    ad = shortcuts.get_object_or_404(queryset)
+
+    form = ActiveDirectoryForm(instance=ad)
+
+    return shortcuts.render(request, 'farm_existing_ad_setup_form.html', {
+        'farms': Farm.objects.all(),
+        'farm':farm,
+        'form':form
+    })
+
+    # if request.method == 'POST':
+    #     form = ServerForm(data=request.POST, instance=server)
+    #     if form.is_valid():
+    #         form.save()
+    #         return http.HttpResponseRedirect(reverse('software'))
+    # else:
+    # form = ServerForm(instance=server)
+    # return shortcuts.render(request, 'server_setup.html', {
+    #     'form':form
+    # })
+
+def farm_deployment(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+
+    return shortcuts.render(request, 'farm_deployment.html', {
+        'farm':farm,
+        'farms': Farm.objects.all()
+    })
+
+def farm_software(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+
+    return shortcuts.render(request, 'farm_software.html', {
+        'farm': farm,
+        'farms': Farm.objects.all()
     })

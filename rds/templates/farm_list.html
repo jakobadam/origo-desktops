@@ -1,0 +1,67 @@
+{% extends 'project_base.html' %}
+{% load static %}
+
+{% block page_title%}Farms{% endblock %}
+{% block navbar %}RDS Services{% endblock %}
+
+{% block pre_body %}
+  {% include '_menu.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="col-xs-3">
+  {% include '_farm_sidebar.html' %}
+</div>
+<div class="col-xs-9">
+  {% if farms %}
+
+  <h1>Farms</h1>
+
+  <div class="alert alert-info alert-dismissible fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>Heads Up!</strong> This is a list of your RDS farms
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in farms %}
+        <tr>
+          <td><a href="{% url 'farm_show' pk=o.pk %}">{{o.name}}</a></td>
+          <td>{{o.status}}</td>
+          <td>
+
+            <form method="POST" action="{% url 'farm_clone' pk=o.pk %}" style="display:inline-block">
+              <button type="submit" title="Clone Farm"
+                      class="btn btn-info btn-xs">
+                <span class="glyphicon glyphicon-duplicate"></span></button>
+            </form>
+
+          </td>
+        </tr>
+        {% endfor %}        
+      </tbody>
+
+    </table>
+  </div>
+  {% else %}
+
+  {% endif %}
+</div>
+{% endblock%}
+
+{% block scripts%}
+<script>
+$(document).ready(function(){
+  $('.tooltip-wrapper').tooltip()
+});
+
+</script>
+{% endblock%}

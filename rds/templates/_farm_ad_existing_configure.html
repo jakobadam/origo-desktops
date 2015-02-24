@@ -1,0 +1,26 @@
+{% load crispy_forms_tags %}
+
+<h3>Configure connection to existing AD</h3>
+
+<div class="share mrl">
+  <form method="POST" action="{% url 'ad_external_setup' %}">
+    <ul>
+      <li>
+        {{form|crispy}}
+      </li>
+    </ul>
+
+    <button href="#" class="btn btn-primary btn-block btn-large">Next
+      <span class="fui-arrow-right"></span>
+    </button>
+
+  </form>
+</div>
+
+
+<div class="row">
+  <form method="POST" action="{% url 'cancel' %}">
+    <button class="btn btn-link"><span class="fui-arrow-left"></span>Cancel</button>
+  </form>
+</div>
+

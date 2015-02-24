@@ -16,7 +16,7 @@
   {% if applications %}
 
   <div class="pull-right">
-    <a title="Refresh applications" href="{% url 'refresh_applications' %}">
+    <a title="Refresh applications" href="{% url 'applications_refresh' %}">
       <span class="glyphicon glyphicon-refresh"></span>
     </a>
   </div>
@@ -35,7 +35,7 @@
       <span class="glyphicon glyphicon-remove"></span>
     </button>.
 
-    New applications are added to this list by selecting them for install in the <a class="alert-link" href="{% url 'packages_cloud'%}">packages cloud</a> or in the local store with your own uploaded packages.
+    New applications are added to this list by selecting them for install in the <a class="alert-link" href="{% url 'software_cloud'%}">packages cloud</a> or in the local store with your own uploaded packages.
   </div>
 
   <div class="table-responsive">
@@ -85,13 +85,13 @@
                 <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
             </form>
 
-            <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
+            <form method="GET" action="{% url 'package_update' pk=p.id %}" style="display:inline-block">
               <button type="submit" title="Edit"
                       class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon-pencil"></span></button>
             </form>
 
-            <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
+            <form method="POST" action="{% url 'package_delete' pk=p.id %}" style="display:inline-block">
               <button type="submit" title="Delete"
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>
