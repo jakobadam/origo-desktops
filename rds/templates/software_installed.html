@@ -1,0 +1,92 @@
+{% extends 'project_base.html' %}
+{% load static %}
+
+{% block page_title%}Software{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block pre_body %}
+  {% include '_menu.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="col-xs-3">
+  {% include '_package_sidebar.html' %}
+</div>
+
+<div class="col-xs-9">
+  <h1>Installed Software <small>{{server.name}}.{{server.domain}}</small></h1>
+
+  <div class="alert alert-info alert-dismissible fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>Heads Up!</strong>  This page contains a list of installed
+    software on your RDS deployement. You install software from the
+    <a class="alert-link" href="{% url 'software_cloud'%}"> software store
+      <!-- <span class="glyphicon glyphicon-cloud"></span> -->
+    </a>
+    or
+    <a class="alert-link" href="{% url 'package_create'%}">upload
+      <!-- <span class="glyphicon glyphicon-upload"></span> -->
+    </a>
+    your own and installing it from the
+    <a class="alert-link" href="{% url 'package_list' %}">local software store
+      <!-- <span class="glyphicon glyphicon-folder-open"></span> -->
+    </a>
+
+  </div>
+
+  {% if packages %}
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Version</th>
+          <th>Installed</th>
+          <th style="min-width: 200px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in packages %}
+        <tr>
+          <td>{{p.name}}</td>
+          <td>{{p.version}}</td>
+          <td>
+            {% if p.installed == True %}
+            <span class="glyphicon glyphicon-ok"></span>
+            {% else %}
+            <span class="glyphicon glyphicon-remove"></span>
+            {% endif %}
+          </td>
+          <td>
+
+            {% if p.log_exists %}
+            <form method="GET" action="{{p.log_url}}" style="display:inline-block">
+              <button type="submit" title="Show Log"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-file"></span></button>
+            </form>
+            {% endif %}
+
+            <form method="POST" action="{% url 'unpackage_install' pk=p.id %}" style="display:inline-block">
+              <button type="submit" title="Un-install"
+                      class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-trash"></span></button>
+            </form>
+
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+
+    <p>TODO: Removal of packages</p>
+  </div>
+  {% else %}
+  <div class="well">
+    No installed software yet!
+  </div>
+
+  {% endif %}
+</div>
+{% endblock%}
