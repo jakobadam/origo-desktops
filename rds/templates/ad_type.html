@@ -1,0 +1,84 @@
+{% extends 'project_base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block page_title%}Select AD{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block body%}
+
+<style>
+#spinner-wrapper {
+height: 200px;
+}
+</style>
+<div class="col-xs-12">
+
+  {% include '_menu.html' %}
+
+  <div class="row">
+
+    <div class="col-md-2">
+      
+    </div>
+
+    <div class="col-md-8">
+
+      <h3>Select AD type</h3>
+
+      <p><span class="fui-question-circle"></span> Server must get a DHCP assigned IP
+      </p>
+
+      <div class="share mrl">
+        <form method="POST" id="" action="{% url 'ad_type' %}">
+
+        <ul>
+          <li>
+            <label class="radio">
+              <input type="radio" name="existing_active_directory" value="true" data-toggle="radio" class="custom-radio">
+              <span class="icons">
+                <span class="icon-unchecked"></span>
+                <span class="icon-checked"></span>
+              </span>
+              Connect to existing Active Directory
+            </label>
+          </li>
+          <li>
+            <label class="radio">
+              <input type="radio" name="existing_active_directory" value="" data-toggle="radio" checked="" class="custom-radio">
+              <span class="icons">
+                <span class="icon-unchecked"></span>
+                <span class="icon-checked"></span>
+              </span>
+              Include Active Directory
+            </label>
+          </li>
+        </ul>
+
+        <button href="#" class="btn btn-primary btn-block btn-large">Next<span class="fui-arrow-right"></span></button>
+          
+        </form>
+      </div> 
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-md-12">
+
+      <br>
+
+      <p><span class="fui-question-circle"></span> Remote Desktop Services (RDS) must connect to an Active
+      Directory (AD). Therefore you have the option to <i>connect to
+      your existing AD</i> or install a new one.
+      </p>
+
+    </div>
+    
+  </div>
+
+</div>
+{% endblock%}
+
+

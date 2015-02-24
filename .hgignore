@@ -1,0 +1,15 @@
+syntax:glob
+bower_components
+*.pyc
+.vagrant
+*~
+static
+*.pyc
+\#*\#
+db.sqlite3
+src
+packer/output-*
+rds/lib
+rds/bin
+.venvlog/*
+log/*

@@ -1,0 +1,78 @@
+{% extends 'project_base.html' %}
+{% load static %}
+
+{% block page_title%}Software Cloud{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block pre_body %}
+  {% include '_menu.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="col-xs-3">
+  {% include '_package_sidebar.html' %}
+</div>
+
+<div class="col-xs-9">
+  {% if packages %}
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Version</th>
+          <th>Tested</th>
+          <th style="min-width: 200px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in packages %}
+        <tr>
+          <td>{{p.name}}</td>
+          <td>{{p.version}}</td>
+          <td>
+            {% if p.installed == True %}
+            <span class="glyphicon glyphicon-ok"></span>
+            {% else %}
+            <span class="glyphicon glyphicon-remove"></span>
+            {% endif %}
+          </td>
+          <td>
+
+            <form method="POST" action="{% url 'deploy_package' %}" style="display:inline-block">
+              <input type="hidden" name="id" value="{{p.id}}" />
+              <button type="submit" title="Install {{p.name}}"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
+            </form>
+
+            <form method="GET" action="{% url 'update_package' pk=p.id %}" style="display:inline-block">
+              <button type="submit" title="Edit"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-pencil"></span></button>
+            </form>
+
+            <form method="GET" action="{{p.log_url}}" style="display:inline-block">
+              <button type="submit" title="Show Log"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-file"></span></button>
+            </form>
+
+            <form method="POST" action="{% url 'delete_package' pk=p.id %}" style="display:inline-block">
+              <button type="submit" title="Delete"
+                      class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-trash"></span></button>
+            </form>
+
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+  {% else %}
+  No software yet
+  {% endif %}
+</div>
+{% endblock%}

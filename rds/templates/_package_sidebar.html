@@ -1,0 +1,52 @@
+<style>
+.bs-docs-sidebar .nav>.active>a, .bs-docs-sidebar .nav>.active:focus>a {
+padding-left: 18px;
+font-weight: 700;
+color: #16a085;
+background-color: transparent;
+border-right: 2px solid #16a085;
+}
+
+.nav .nav>li:hover>a {
+border-right: 2px solid #16a085;
+}
+
+.bs-docs-sidebar .nav .nav>li>a {
+padding-top: 1px;
+padding-bottom: 1px;
+padding-left: 30px;
+font-size: 12px;
+font-weight: 400;
+}
+h5{
+color:#rgb(186, 193, 200);
+}
+</style>
+
+
+<div class="bs-docs-sidebar hidden-print affix-top" role="complementary">
+
+  <ul class="nav bs-docs-sidenav">
+    <h5 style="margin-top:0"><small>RDS Deployment</small></h5>
+    <li>
+      <ul class="nav">
+        <li><a href="{% url 'applications'%}"><span class="glyphicon glyphicon-th-list"></span> Applications</a></li>
+        <li><a href="{% url 'packages_server' %}"><span class="glyphicon glyphicon-folder-close"></span> Installed Software</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <h5><small>Software</small></h5>
+      <ul class="nav">
+        <li><a href="{% url 'packages_cloud' %}"><span class="glyphicon glyphicon-cloud"></span> Software Store</a></li>
+        <li><a href="{% url 'packages_local' %}"><span class="glyphicon glyphicon-folder-open"></span> Uploaded software </a></li>
+        <li><a href="{% url 'add_package' %}"><span class="glyphicon glyphicon glyphicon glyphicon-open"></span> Upload software</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="form-group">
+
+  </div>
+
+</div>
