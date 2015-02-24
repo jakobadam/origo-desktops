@@ -13,6 +13,9 @@ models.PACKAGE_DIR = settings.MEDIA_ROOT
 class TestPackageForm(TestCase):
 
     def setUp(self):
+        self.farm = models.Farm(name='test farm')
+        self.farm.save()
+
         f = File(open('rds/tests/software/firefox_setup_test.exe'))
         self.FILES = {
             'file': SimpleUploadedFile(f.name, f.read())
@@ -22,7 +25,8 @@ class TestPackageForm(TestCase):
         POST = {
             'args': '-ms',
             'name': 'Firefox',
-            'version': '31.0'
+            'version': '31.0',
+            'farm': self.farm.pk
             }
         self.form = PackageForm(POST, self.FILES)
         self.assertTrue(self.form.is_valid(), str(self.form))

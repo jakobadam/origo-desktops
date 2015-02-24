@@ -45,9 +45,11 @@ class TestPackage(TestCase):
         self.version = '31.0'
         self.args = '-ms'
 
-        self.p = Package(name=self.name, args=self.args, version=self.version)
+        self.farm = models.Farm(name='test farm')
+        self.farm.save()
 
-        self.s = Server(ip='127.0.0.1', roles=ServerRole.RDS_ORCHESTRATOR)
+        self.p = Package(name=self.name, args=self.args, version=self.version)
+        self.s = Server(ip='127.0.0.1', roles=ServerRole.RDS_ORCHESTRATOR, farm=self.farm)
         self.s.save()
 
     def tearDown(self):
