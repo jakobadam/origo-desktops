@@ -120,3 +120,25 @@ class TestPackage(TestCase):
         expected = r'"\\127.0.0.1\share\firefox_31.0\software\firefox_setup_test.exe" TRANSFORMS="\\127.0.0.1\share\firefox_31.0\software\transform.mst"'
         actual = self.p.install_cmd
         self.assertEqual(actual, expected)
+
+class TestFarm(TestCase):
+
+    def setUp(self):
+        self.farm = models.Farm(name='test farm')
+        self.package = models.Package(name='package', args='', version='0.1')
+
+        self.farm.save()
+        self.package.save()
+
+        self.farm_package = models.FarmPackage(farm=self.farm, package=self.package)
+        self.farm_package.save()
+
+    def test_clone(self):
+        new_farm = self.farm.clone('new farm')
+
+        assert new_farm.name == 'new farm'
+        assert new_farm.farm_packages.count() == 1
+
+        farm_package = new_farm.farm_packages.first()
+        assert farm_package.status == ''
+        assert farm_package.package.name == 'package'

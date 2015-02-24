@@ -343,10 +343,13 @@ class Farm(models.Model):
 
     def clone(self, new_name):
         new_farm = Farm(name=new_name)
-        for farm_package in self.farm_packages:
+        new_farm.save()
+
+        for farm_package in self.farm_packages.all():
             new_farm_package = FarmPackage(farm=new_farm, package=farm_package.package)
             new_farm_package.save()
-        new_farm.save()
+
+        return new_farm
 
 class FarmPackage(models.Model):
 
