@@ -94,6 +94,37 @@ cmd.exe /C %software%\salto\unzip.exe %software%\salto\rw_pro-access.zip -d "%Pr
 :: KMD Dagpleje
 msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\kmd_dagpleje\kmd_dagpleje-3.8.0.0.msi" 
 
+:: 3270
+msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\ibm3270\20120412\5_Completed_MSI\CICS3270 1020003401.msi" TRANSFORMS="%software%\ibm3270\20120412\5_Completed_MSI\CICS3270 1020003401.mst"
+
+:: KMD BØPAS
+cmd.exe /C %software%\kmd_boepas\4.0.16\Setup_BoepasCics2000.EXE /s
+cmd.exe /C del /q "C:\Users\Public\Desktop\BPAS~1.LNK"
+
+:: ØRS1 Bestiller
+call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\ors\ors1\ors1.msi"
+
+::ØRS3
+msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\ors\ors3\ors3.msi"
+
+:: KMD Matrix
+msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\kmd_matrix\kmd_matrix_4-10-1.msi"
+call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\KMDMAT~1.lnk" 
+call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\KMDMAT~1.lnk"
+
+:: KMD Matrix Forvaltning
+call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\kmd_matrix_forvaltning\kmd_matrix_forvaltning_2-9-0.msi" 
+
+:: Skipped
+call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\KMDMAT~1.lnk"
+call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\KMDMAT~2.lnk"
+call:log_execute cmd.exe /C md "C:\Appl\KMD Matrix Forvaltning\excel"
+call:log_execute cmd.exe /C move /y "c:\ArbejdstidskontiStatistik.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
+call:log_execute cmd.exe /C move /y "c:\KlasseStatistik.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
+call:log_execute cmd.exe /C move /y "c:\PersonaleStatistik.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
+call:log_execute cmd.exe /C move /y "c:\TILLGG~1.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
+call:log_execute cmd.exe /C move /y "c:\UndervisningstidStatistik.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
+
 
 :: Mislykkes
 :: .net 3.5 mangler, men er installeret?
@@ -287,41 +318,13 @@ REM INFO: Contact: support-aak@cabo.dk
 REM DISABLED 20120905 call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\sep\Sep64.msi"
 REM DISABLED 20120905 call:log_execute regedit /s "%software%\sep\Citrix-symantec.reg"
 
-REM Install 3270
-call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\ibm3270\20120412\5_Completed_MSI\CICS3270 1020003401.msi" TRANSFORMS="%software%\ibm3270\20120412\5_Completed_MSI\CICS3270 1020003401.mst"
-
 REM Renomatic suite
 call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\renomatic\renomatic_akv_bi-2.0.msi"
 call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\renomatic\renomatic-akv_emimport-2.5.13.msi"
 call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\renomatic\renomatic_akv-2.34.2.msi"
 
-REM INFO: Package: KMD Matrix
-REM INFO: Version: 4.10.0 Opdaterer version 4.9.2, men kan installeres selvstændigt.
-REM INFO: Description: Skolelærernes lønsystem. 
-REM INFO: Updated: 20140127
-REM INFO: Contact: jsn@aarhus.dk
-
-call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\kmd_matrix\kmd_matrix_4-10-1.msi"
-call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\KMDMAT~1.lnk" 
-call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\KMDMAT~1.lnk"
 
 
-REM KMD Matrix Forvaltning
-REM INFO: Package: KMD Matrix Forvaltning
-REM INFO: Version:  2.9.0.
-REM INFO: Description: Skolelærernes lønsystem
-REM INFO: Updated: 20130313
-REM INFO: Contact: jsn@aarhus.dk
-
-call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\kmd_matrix_forvaltning\kmd_matrix_forvaltning_2-9-0.msi" 
-call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\KMDMAT~1.lnk"
-call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\KMDMAT~2.lnk"
-call:log_execute cmd.exe /C md "C:\Appl\KMD Matrix Forvaltning\excel"
-call:log_execute cmd.exe /C move /y "c:\ArbejdstidskontiStatistik.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
-call:log_execute cmd.exe /C move /y "c:\KlasseStatistik.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
-call:log_execute cmd.exe /C move /y "c:\PersonaleStatistik.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
-call:log_execute cmd.exe /C move /y "c:\TILLGG~1.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
-call:log_execute cmd.exe /C move /y "c:\UndervisningstidStatistik.xlt" "C:\Appl\KMD Matrix Forvaltning\excel"
 
 REM KMD ProKap
 call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\kmd_prokap\kmd_prokap-3.0.3.0.msi" 
@@ -348,17 +351,8 @@ call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\tmtand\t
 call:log_execute cmd.exe /C copy /y "%software%\tmtand\TMTServerConfig.xml" "C:\Program Files (x86)\TM Care\TM Tand\Config"
 call:log_execute cmd.exe /C cacls "C:\Program Files (x86)\TM Care\TM Tand" /T /E /C /G "adm\GG-DIST-APP-MBU-PAK-GRP-TAND:C"
 
-REM TABULEX TEA
-call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\tabulex_tea\tabulex_tea-2.3.0.msi" 
-call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\Tabulex Tea.lnk"
-
 REM KMD RAMMESTYRING
 call:log_execute cmd.exe /C %software%\kmd_rammestyring\02.00.007\Setup_Rammestyring.exe /s
-
-REM KMD BØPAS
-call:log_execute cmd.exe /C %software%\kmd_boepas\4.0.16\Setup_BoepasCics2000.EXE /s
-call:log_execute cmd.exe /C del /q "C:\Users\Public\Desktop\BPAS~1.LNK"
-
 
 REM INFO: Package: Visio viewer til Internet Explorer
 REM INFO: Version: 14.0.4730.1010
@@ -375,19 +369,6 @@ REM INFO: Contact: jsn@aarhus.dk
 call:log_execute msiexec.exe /L*+ %logfile_msi% INSTALLDIR="C:\Appl\OpenSSL-Win32\" /passive /i "%software%\kingo\OpenSSL_Light_1-0-0e.msi" 
 
 
-REM INFO: Package: ØRS1 Bestiller
-REM INFO: Version: 7.2013
-REM INFO: Description:ØRS1 Bestiller 
-REM INFO: Updated: 20132506
-REM INFO: Contact: krj@aarhus.dk
-call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\ors\ors1\ors1.msi"
-
-REM INFO: Package: ØRS3
-REM INFO: Version: 8.2013
-REM INFO: Description:ØRS 3
-REM INFO: Updated: 20130828
-REM INFO: Contact: krj@aarhus.dk
-call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i "%software%\ors\ors3\ors3.msi"
 
 
 REM INFO: Package: UnikBolig4Win32KlientDrift.msi
@@ -396,7 +377,6 @@ REM INFO: Description:
 REM INFO: Updated: 20121115
 REM INFO: Contact: krj@aarhus.dk
 call:log_execute cmd.exe /C %software%\unik\4.3.0306\vstor30sp1-KB949258-x86.exe /q /norestart
-REM call:log_execute cmd.exe /C %software%\unik\4.3.0306\vjredist64.exe /Q
 call:log_execute msiexec.exe /L*+ %logfile_msi% /passive /i %software%\unik\4.3.0306\UnikBolig4Win32KlientDrift.msi
 call:log_execute cmd.exe /C copy "%software%\unik\4.3.0306\UnikPdata.dll" "C:\Program Files (x86)\Unik System Design as\Bolig 4\Drift"
 call:log_execute cmd.exe /C regsvr32 /S "C:\Program Files (x86)\Common Files\Unik System Design as\Common\midas.dll" 

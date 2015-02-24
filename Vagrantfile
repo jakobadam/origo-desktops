@@ -4,8 +4,8 @@
 Vagrant.configure("2") do |config|
 
   config.vm.define :ubuntu do |c|
-    c.vm.box = "ubuntu14"
-    c.vm.box_url = "https://dl.dropboxusercontent.com/u/835753/ubuntu-1404-server-vagrant-kvm.box"
+    c.vm.box = "ubuntu-14"
+    # c.vm.box_url = "https://dl.dropboxusercontent.com/u/835753/ubuntu-1404-server-vagrant-kvm.box"
     c.vm.hostname = "ubuntu"
 
     # Private networks doesn't work at the moment
@@ -13,8 +13,21 @@ Vagrant.configure("2") do |config|
 
     # nginx
     c.vm.network :forwarded_port, guest: 80, host: 8080
+    # django 
+    c.vm.network :forwarded_port, guest: 8000, host: 8000
     c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
   end
+
+  config.vm.define :u do |c|
+    c.vm.box = "u"
+    # c.vm.box_url = "https://dl.dropboxusercontent.com/u/835753/ubuntu-1404-server-vagrant-kvm.box"
+    c.vm.hostname = "ubuntu"
+
+    # Private networks doesn't work at the moment
+    # c.vm.network :private_network, ip: "192.168.50.10"
+
+  end
+
 
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
@@ -48,6 +61,7 @@ Vagrant.configure("2") do |config|
     # c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
     c.vm.box = "windows-2012R2"
     c.vm.guest = :windows
+    c.ssh.insert_key = false
 
     # 
     # c.vm.synced_folder ".", "S:", :nfs => true, id: "vagrant-root"
