@@ -17,6 +17,7 @@ from django.views.generic.edit import (
     UpdateView
     )
 
+from . import forms
 from rds.forms import (
     ServerForm,
     PackageForm,
@@ -353,7 +354,18 @@ def farm_show(request, pk):
 def farm_clone(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
 
-    return shortcuts.render(request, 'farm_show.html', {
+    if request.method == 'POST':
+        form = forms.FarmCloneForm(request.POST)
+        if form.is_valid():
+            farm.clone(form.name)
+            messages.success(request, 'New farm created')
+            return http.HttpResponseRedirect(reverse('farm_list'))
+
+    else:
+        form = forms.FarmCloneForm()
+
+    return shortcuts.render(request, 'farm_clone_form.html', {
+        'form': form,
         'farm': farm,
         'farms': Farm.objects.all()
     })

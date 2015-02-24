@@ -12,6 +12,7 @@ from crispy_forms.layout import Layout, Field
 from crispy_forms.helper import FormHelper
 
 from rds.models import (
+    Farm,
     Server,
     ServerRole,
     Package,
@@ -24,6 +25,10 @@ from . import ldap
 
 def _get_widget(placeholder):
     return forms.TextInput(attrs={'placeholder':placeholder})
+
+class FarmCloneForm(forms.Form):
+
+    name = forms.CharField(label='New farm name')
 
 class ServerForm(forms.ModelForm):
 

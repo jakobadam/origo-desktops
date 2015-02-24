@@ -22,12 +22,19 @@
     <strong>Heads Up!</strong> This is a list of your RDS farms
   </div>
 
+
   <div class="table-responsive">
     <table class="table table-striped">
       <thead>
         <tr>
           <th>Name</th>
-          <th>Status</th>
+          <th>Status
+            <span data-toggle="tooltip"
+                  data-placement="right"
+                  title="Whether software can be added to the farm or not">
+              <span class="fui-question-circle"></span>
+            </span>
+          </th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -60,7 +67,7 @@
 {% block scripts%}
 <script>
 $(document).ready(function(){
-  $('.tooltip-wrapper').tooltip()
+  $('[data-toggle="tooltip"]').tooltip()
 });
 
 </script>

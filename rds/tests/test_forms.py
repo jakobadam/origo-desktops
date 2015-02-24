@@ -39,6 +39,10 @@ class TestPackageForm(TestCase):
 
 class TestServerForm(TestCase):
 
+    def setUp(self):
+        self.farm = models.Farm(name='test farm')
+        self.farm.save()
+
     def test_form(self):
         POST = {
             'ip': '127.0.0.1',
@@ -46,7 +50,8 @@ class TestServerForm(TestCase):
             'domain': 'example.com',
             'user': 'Administrator',
             'password': 'V@grant',
-            'roles': 'orchestrator'
+            'roles': 'orchestrator',
+            'farm': self.farm.pk
             }
         self.form = ServerForm(POST)
-        self.assertTrue(self.form.is_valid())
+        self.assertTrue(self.form.is_valid(), self.form.errors)

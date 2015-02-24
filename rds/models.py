@@ -332,7 +332,7 @@ class Farm(models.Model):
     STATUS_OPEN = 'open'
     
     name = models.CharField(max_length=100)
-    status = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, default=STATUS_OPEN)
     master = models.CharField(max_length=1000, blank=True)
 
     def __str__(self):
@@ -340,6 +340,13 @@ class Farm(models.Model):
 
     def get_absolute_url(self):
         return reverse('blueprint_show', kwargs={'pk': self.pk})
+
+    def clone(self, new_name):
+        new_farm = Farm(name=new_name)
+        for farm_package in self.farm_packages:
+            new_farm_package = FarmPackage(farm=new_farm, package=farm_package.package)
+            new_farm_package.save()
+        new_farm.save()
 
 class FarmPackage(models.Model):
 
