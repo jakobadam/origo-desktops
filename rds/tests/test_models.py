@@ -125,7 +125,7 @@ class TestFarm(TestCase):
 
     def setUp(self):
         self.farm = models.Farm(name='test farm')
-        self.package = models.Package(name='package', args='', version='0.1')
+        self.package = models.Package(name='Firefox', args='', version='0.1')
 
         self.farm.save()
         self.package.save()
@@ -134,11 +134,11 @@ class TestFarm(TestCase):
         self.farm_package.save()
 
     def test_clone(self):
-        new_farm = self.farm.clone('new farm')
+        new_farm = self.farm.clone('New Farm')
 
-        assert new_farm.name == 'new farm'
+        assert new_farm.name == 'New Farm'
         assert new_farm.farm_packages.count() == 1
 
         farm_package = new_farm.farm_packages.first()
         assert farm_package.status == ''
-        assert farm_package.package.name == 'package'
+        assert farm_package.package.name == 'Firefox'
