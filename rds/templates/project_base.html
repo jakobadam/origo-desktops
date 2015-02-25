@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block site_title%}Origo RDS{% endblock %}
 {% block page_title%}{% endblock %}
+
+{% block base_head%}
+<link href="{% static 'rds/css/style.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block head%}
 {% endblock %}

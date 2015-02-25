@@ -1,55 +1,42 @@
-
-<style>
-.bs-docs-sidebar .nav>.active>a, .bs-docs-sidebar .nav>.active:focus>a {
-padding-left: 18px;
-font-weight: 700;
-color: #16a085;
-background-color: transparent;
-border-right: 2px solid #16a085;
-}
-
-.nav .nav>li:hover>a {
-border-right: 2px solid #16a085;
-}
-
-.bs-docs-sidebar .nav .nav>li>a {
-padding-top: 1px;
-padding-bottom: 1px;
-padding-left: 30px;
-font-size: 12px;
-font-weight: 400;
-}
-h5{
-color:#rgb(186, 193, 200);
-}
-.divider {
-height: 1px;
-margin: 9px 0;
-overflow: hidden;
-background-color: #e5e5e5;
-}
-</style>
-
-
 <div class="bs-docs-sidebar hidden-print affix-top" role="complementary">
 
-  <ul class="nav bs-docs-sidenav">
+  <ul class="nav">
+    <li>
+      <a href=""><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
+    </li>
+    <li><a href=""><span class="glyphicon glyphicon-file"></span>new</a></li>
+  </ul>
+
+  <ul class="nav sidebar">
     {% for o in farms %}
     <h5 style="margin-top:0"><small>Farm {{o}}</small></h5>
     <li>
       <ul class="nav">
-        <li><a href="{% url 'farm_setup' pk=o.pk %}"><span class="glyphicon glyphicon-cog"></span> Setup</a></li>
-        <li><a href="{% url 'farm_package_list' pk=o.pk %}"><span class="glyphicon glyphicon-folder-open"></span> Software</a></li>
-        <li><a href="{% url 'farm_deployment' pk=o.pk %}"><span class="glyphicon glyphicon-th"></span> Servers</a><li>
-        <li><a href="{% url 'farm_show' pk=o.pk %}"><span class="glyphicon glyphicon-edit"></span> {{o}}</a></li>
+        <li>
+          <a href="{% url 'farm_setup' pk=o.pk %}">
+            <span class="glyphicon glyphicon-cog"></span> Setup</a>
+        </li>
 
-        <li class="divider"></li>
-        <li><a href=""><span class="glyphicon glyphicon-file"></span>new</a></li>
-        <li><a href=""><span class="glyphicon glyphicon-dashboard"></span>new</a></li>
+        <li>
+          <a href="{% url 'farm_package_list' pk=o.pk %}">
+            <span class="glyphicon glyphicon-folder-open"></span> Software</a>
+        </li>
+
+        <li>
+          <a href="{% url 'farm_deployment' pk=o.pk %}">
+            <span class="glyphicon glyphicon-th"></span> Servers</a>
+        <li>
+
+        <li>
+          <a href="{% url 'farm_show' pk=o.pk %}">
+            <span class="glyphicon glyphicon-edit"></span> {{o}}</a>
+        </li>
+
+        <li class="nav-divider"></li>
+
       </ul>
     </li>
-    {% endfor %}    
-
+    {% endfor %}
   </ul>
 
   <div class="form-group">
