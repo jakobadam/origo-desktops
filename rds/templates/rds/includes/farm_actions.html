@@ -1,0 +1,14 @@
+<form method="GET" action="{% url 'farm_clone' pk=o.pk %}" style="display:inline-block">
+  <button type="submit" title="Clone Farm {{o}}"
+          class="btn btn-info btn-xs">Clone
+    <span class="glyphicon glyphicon-duplicate"></span></button>
+</form>
+
+<form method="POST" action="{% url 'farm_delete' pk=o.pk %}" class="delete-form"
+      data-toggle="confirm" title="Delete Farm {{o}}"
+      data-confirm-body="Delete '{{o}}' and all things associated with it?"
+      style="display:inline-block">
+  <button type="submit" title="Delete Farm {{o}}"
+          class="btn btn-danger btn-xs">
+    <span class="glyphicon glyphicon-remove"></span></button>
+</form>
