@@ -39,7 +39,7 @@ background-color: #e5e5e5;
     <li>
       <ul class="nav">
         <li><a href="{% url 'farm_setup' pk=o.pk %}"><span class="glyphicon glyphicon-cog"></span> Setup</a></li>
-        <li><a href="{% url 'farm_software' pk=o.pk %}"><span class="glyphicon glyphicon-folder-open"></span> Software</a></li>
+        <li><a href="{% url 'farm_package_list' pk=o.pk %}"><span class="glyphicon glyphicon-folder-open"></span> Software</a></li>
         <li><a href="{% url 'farm_deployment' pk=o.pk %}"><span class="glyphicon glyphicon-th"></span> Servers</a><li>
         <li><a href="{% url 'farm_show' pk=o.pk %}"><span class="glyphicon glyphicon-edit"></span> {{o}}</a></li>
 

@@ -27,6 +27,7 @@ from rds.forms import (
 
 from rds.models import (
     Farm,
+    FarmPackage,
     Package,
     Server,
     ServerRole,
@@ -47,7 +48,7 @@ class PackageEdit(object):
     model = Package
     template_name = 'package_form.html'
     form_class = PackageForm
-    success_url = reverse_lazy('package_list')
+    success_url = reverse_lazy('package_list_redirect')
 
     def form_valid(self, form):
         file_updated = self.request.FILES.get('file')
@@ -89,7 +90,7 @@ def package_create(request):
             instance = form.save(commit=False)
             instance.save(file_updated=True)
             messages.success(request, u'{} uploaded'.format(instance))
-            url = reverse('package_list')
+            url = reverse('package_list_redirect')
             if request.is_ajax():
                 return http.JsonResponse({'location': url})
             else:
@@ -116,13 +117,13 @@ def package_delete(request, pk):
     package = shortcuts.get_object_or_404(Package, pk=pk)
     package.delete()
     messages.info(request, 'Deleted {}'.format(package))
-    return http.HttpResponseRedirect(reverse('package_list'))
+    return http.HttpResponseRedirect(reverse('package_list_redirect'))
 
 class ServerCreate(CreateView):
     model = Server
     form_class = ServerForm
     template_name = 'server_form.html'
-    success_url = reverse_lazy('package_list')
+    success_url = reverse_lazy('package_list_redirect')
 
     # def get_form_kwargs(self):
     #     kwargs = super(ServerCreate, self).get_form_kwargs()
@@ -147,13 +148,13 @@ def package_install(request, pk=None):
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('package_list'))
+        return http.HttpResponseRedirect(reverse('package_list_redirect'))
 
     package.install(server)
     msg = u'Installing {} on {}'.format(package, server)
     log.info(msg)
     messages.info(request, msg)
-    return http.HttpResponseRedirect(reverse('package_list'))
+    return http.HttpResponseRedirect(reverse('package_list_redirect'))
 
 @require_http_methods(['POST'])
 def package_uninstall(request, pk=None):
@@ -163,12 +164,12 @@ def package_uninstall(request, pk=None):
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('package_list'))
+        return http.HttpResponseRedirect(reverse('package_list_redirect'))
 
     package.uninstall(server)
 
     messages.info(request, 'Un-installing {} from {}'.format(package, server))
-    return http.HttpResponseRedirect(reverse('package_list'))
+    return http.HttpResponseRedirect(reverse('package_list_redirect'))
 
 def setup(request, **kwargs):
     state = State.first_or_create()
@@ -391,28 +392,21 @@ def farm_delete(request, pk):
     return http.HttpResponseRedirect(reverse('farm_list'))
 
 @require_http_methods(['POST'])
-def farm_package_create(request, farm_pk, farm_package_pk):
+def farm_package_add(request, farm_pk, package_pk):
     farm = shortcuts.get_object_or_404(Farm, pk=farm_pk)
+    package = shortcuts.get_object_or_404(Package, pk=package_pk)
 
-    qs = farm.farm_packages.filter(pk=farm_package_pk)
-    farm_package = shortcuts.get_object_or_404(qs)
+    farm_package = FarmPackage.objects.create(farm=farm, package=package)
+    messages.info(request, 'Added {}'.format(farm_package))
 
-    return shortcuts.render(request, 'farm_show.html', {
-        'farm': farm,
-        'farms': Farm.objects.all()
-    })
+    return http.HttpResponseRedirect(reverse('package_list', kwargs={'pk': farm.pk}))
 
 @require_http_methods(['POST'])
-def farm_package_delete(request, farm_pk, farm_package_pk):
-    farm = shortcuts.get_object_or_404(Farm, pk=farm_pk)
-
-    qs = farm.farm_packages.filter(pk=farm_package_pk)
-    farm_package = shortcuts.get_object_or_404(qs)
-
+def farm_package_delete(request, farm_package_pk):
+    farm_package = shortcuts.get_object_or_404(FarmPackage, pk=farm_package_pk)
+    url = reverse('farm_package_list', kwargs={'pk': farm_package.farm.pk})
+    messages.info(request, 'Deleted {}'.format(farm_package, farm_package.farm))
     farm_package.delete()
-    messages.info(request, 'Deleted {}'.format(farm_package, farm))
-
-    url = reverse('farm_software', kwargs={'pk': farm.pk})
     return http.HttpResponseRedirect(url)
 
 def farm_setup(request, pk):
@@ -448,10 +442,10 @@ def farm_deployment(request, pk):
         'farms': Farm.objects.all()
     })
 
-def farm_software(request, pk):
+def farm_package_list(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
 
-    return shortcuts.render(request, 'farm_software.html', {
+    return shortcuts.render(request, 'farm_package_list.html', {
         'farm': farm,
         'farms': Farm.objects.all()
     })

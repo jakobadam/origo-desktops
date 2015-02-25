@@ -28,7 +28,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for fp in farm.farm_packages.all %}        
+        {% for fp in farm.farm_packages.all %}
         <tr>
           <td>{{fp.package.name}}</td>
           <td>{{fp.package.version}}</td>
@@ -41,7 +41,7 @@
               {% if fp.installed == True %}
             <span class="glyphicon glyphicon-ok"></span>
               {% else %}
-            <span class="glyphicon glyphicon-remove"></span>            
+            <span class="glyphicon glyphicon-remove"></span>
               {% endif %}
             {% endif%}
           </td>
@@ -69,7 +69,7 @@
             </form>
             {% endif %}
 
-            <form method="POST" action="{% url 'farm_package_delete' farm_pk=fp.farm.pk farm_package_pk=fp.id %}" style="display:inline-block">
+            <form method="POST" action="{% url 'farm_package_delete' farm_package_pk=fp.id %}" style="display:inline-block">
               <button type="submit" title="Remove {{fp}}"
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-trash"></span></button>
