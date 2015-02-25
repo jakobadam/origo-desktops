@@ -1,0 +1,52 @@
+<style>
+.bs-docs-sidebar .nav>.active>a, .bs-docs-sidebar .nav>.active:focus>a {
+padding-left: 18px;
+font-weight: 700;
+color: #16a085;
+background-color: transparent;
+border-right: 2px solid #16a085;
+}
+
+.nav .nav>li:hover>a {
+border-right: 2px solid #16a085;
+}
+
+.bs-docs-sidebar .nav .nav>li>a {
+padding-top: 1px;
+padding-bottom: 1px;
+padding-left: 30px;
+font-size: 12px;
+font-weight: 400;
+}
+h5{
+color:#rgb(186, 193, 200);
+}
+.divider {
+height: 1px;
+margin: 9px 0;
+overflow: hidden;
+background-color: #e5e5e5;
+}
+</style>
+
+
+<div class="bs-docs-sidebar hidden-print affix-top" role="complementary">
+
+  <ul class="nav bs-docs-sidenav">
+
+    <li>
+      <h5 style="margin-top:0"><small>Software</small></h5>
+      <ul class="nav">
+        <li><a href="{% url 'package_list_redirect' %}"><span class="glyphicon glyphicon-folder-open"></span> Software </a></li>
+        <li><a href="{% url 'software_cloud' %}"><span class="glyphicon glyphicon-cloud"></span> Store</a></li>
+        <li class="divider">&nbsp;</li>
+        <li><a href="{% url 'package_create' %}"><span class="glyphicon glyphicon glyphicon glyphicon-open"></span> Upload</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="form-group">
+
+  </div>
+
+</div>
