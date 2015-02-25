@@ -26,7 +26,7 @@ from . import ldap
 def _get_widget(placeholder):
     return forms.TextInput(attrs={'placeholder':placeholder})
 
-class FarmCloneForm(forms.Form):
+class FarmForm(forms.Form):
 
     name = forms.CharField(label='New farm name')
 

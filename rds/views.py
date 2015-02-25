@@ -369,18 +369,33 @@ def farm_clone(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
 
     if request.method == 'POST':
-        form = forms.FarmCloneForm(request.POST)
+        form = forms.FarmForm(request.POST)
         if form.is_valid():
             new_farm = farm.clone(form.cleaned_data['name'])
             messages.success(request, '{} created'.format(new_farm))
             return http.HttpResponseRedirect(reverse('farm_list'))
 
     else:
-        form = forms.FarmCloneForm()
+        form = forms.FarmForm()
 
     return shortcuts.render(request, 'farm_clone_form.html', {
         'form': form,
         'farm': farm,
+        'farms': Farm.objects.all()
+    })
+
+def farm_add(request):
+    if request.method == 'POST':
+        form = forms.FarmForm(request.POST)
+        if form.is_valid():
+            farm = Farm.objects.create(**form.cleaned_data)
+            messages.success(request, '{} created'.format(farm))
+            return http.HttpResponseRedirect(reverse('farm_show', kwargs={'pk':farm.pk}))
+    else:
+        form = forms.FarmForm()
+
+    return shortcuts.render(request, 'rds/farm_form.html', {
+        'form': form,
         'farms': Farm.objects.all()
     })
 

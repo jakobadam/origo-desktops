@@ -1,10 +1,14 @@
-<div class="bs-docs-sidebar hidden-print affix-top" role="complementary">
+<div class="sidebar hidden-print affix-top" role="complementary">
 
   <ul class="nav">
     <li>
-      <a href=""><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
+      <a href="{% url 'farm_list' %}">
+        <span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
     </li>
-    <li><a href=""><span class="glyphicon glyphicon-file"></span>new</a></li>
+    <li>
+      <a href="{% url 'farm_add' %}">
+        <span class="glyphicon glyphicon-file"></span>Add</a>
+    </li>
   </ul>
 
   <ul class="nav sidebar">
