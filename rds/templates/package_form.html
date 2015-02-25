@@ -23,7 +23,7 @@
 
 <div class="col-xs-9">
 
-  <h3 style="margin-top:0">{% if object.id %}Update{% else %}Upload{% endif %} Software</h3>
+  <h3 style="margin-top:0">{% if object.id %}Update {{object}}{% else %}Upload Software{% endif %}</h3>
 
   <!-- <span class="btn btn-success fileinput-button"> -->
   <!--   <i class="glyphicon glyphicon-plus"></i> -->
@@ -45,7 +45,7 @@
     </form>
   </div>
 
-  <small><a href="{% url 'package_list' %}"><span class="fui-arrow-left"></span>Cancel</a></small>
+  <small><a href="{% url 'package_list_redirect' %}"><span class="fui-arrow-left"></span>Cancel</a></small>
 </div>
 
 

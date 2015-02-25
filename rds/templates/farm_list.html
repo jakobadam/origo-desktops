@@ -46,12 +46,15 @@
           <td>
 
             <form method="GET" action="{% url 'farm_clone' pk=o.pk %}" style="display:inline-block">
-              <button type="submit" title="Clone Farm"
+              <button type="submit" title="Clone Farm {{o}}"
                       class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon-duplicate"></span></button>
             </form>
 
-            <form method="POST" action="{% url 'farm_delete' pk=o.pk %}" class="delete-form" style="display:inline-block">
+            <form method="POST" action="{% url 'farm_delete' pk=o.pk %}" class="delete-form"
+                  data-toggle="confirm" title="Delete Farm {{o}}"
+                  data-confirm-body="Deleting this will ..."
+                  style="display:inline-block">
               <button type="submit" title="Delete Farm {{o}}"
                       class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-remove"></span></button>
@@ -74,8 +77,8 @@
 <script src="{% static 'rds/js/formconfirm.js' %}"></script>
 <script>
 $(document).ready(function(){
-  $('[data-toggle="tooltip"]').tooltip()
-  $(".delete-form").formconfirm();
+  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-toggle="confirm"]').formconfirm();
 });
 </script>
 {% endblock%}

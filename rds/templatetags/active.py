@@ -8,3 +8,4 @@ def active(context, path):
     if path in request_path:
         return 'active'
     return ''
+

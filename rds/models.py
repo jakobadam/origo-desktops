@@ -25,6 +25,15 @@ def generate_filename(instance, filename):
 
 SAMBA_SERVER_IP = None
 
+class Helper(object):
+
+    @classmethod
+    def first_or_create(cls):
+        s = cls.objects.first()
+        if not s:
+            s = cls.objects.create()
+        return s
+
 class Package(models.Model):
 
     class Meta:
@@ -269,15 +278,6 @@ class Package(models.Model):
         log.error('No installer found for "{}"'.format(self))
         return None
 
-class Helper(object):
-
-    @classmethod
-    def first_or_create(cls):
-        s = cls.objects.first()
-        if not s:
-            s = cls.objects.create()
-        return s
-
 class State(models.Model, Helper):
 
     LOCATION_AD_TYPE = 'ad_type'
@@ -325,13 +325,13 @@ class ServerRole(object):
         (RDS_ORCHESTRATOR, 'orchestrator')
     )
 
-class Farm(models.Model):
+class Farm(models.Model, Helper):
 
     STATUS_INSTALLING = 'installing'
     STATUS_INSTALLED = 'installed'
     STATUS_OPEN = 'open'
     
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, default='default')
     status = models.CharField(max_length=100, default=STATUS_OPEN)
     master = models.CharField(max_length=1000, blank=True)
 

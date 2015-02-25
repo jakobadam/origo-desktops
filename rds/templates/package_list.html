@@ -1,5 +1,6 @@
 {% extends 'project_base.html' %}
 {% load static %}
+{% load rds_package %}
 
 {% block page_title%}Software{% endblock %}
 {% block navbar %}RDP Services{% endblock %}
@@ -15,15 +16,28 @@
 
 <div class="col-xs-9">
 
+  <div class="form-inline pull-right">
+    Add to farm:
+    <select class="form-control" id="farm-select" data-toggle="redirect">
+      {% for f in farms %}
+      <option label="{% if f.status != 'open' %}{{f}} ({{f.status}}){% else %}{{f}}{% endif %}"
+              data-redirect-url="{% url 'package_list' pk=f.pk %}"
+              {% if f.pk == farm.pk and f.status == 'open'%}selected{% endif %}
+              >
+        {{f.pk}}
+      </option>
+      {% endfor %}
+    </select>
+   </div>
+
   <h1>Software</h1>
 
-  <!--  <select class="form-control"> -->
-  <!--   <option>1</option> -->
-  <!--   <option>2</option> -->
-  <!--   <option>3</option> -->
-  <!--   <option>4</option> -->
-  <!--   <option>5</option> -->
-  <!-- </select> -->
+  {% if farm.status != 'open' %}
+  <div class="alert alert-info alert-dismissible fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+    <strong>Info</strong> You can't add new software to a farm that's not open
+  </div>
+  {% endif %}
 
   {% if packages %}
   <div class="table-responsive">
@@ -36,31 +50,13 @@
         </tr>
       </thead>
       <tbody>
-        {% for p in packages %}        
+        {% for p in packages %}
         <tr>
           <td>{{p.name}}</td>
           <td>{{p.version}}</td>
           <td>
 
-            {% if not p.installed %}
-            <form method="POST" action="{% url 'package_install' pk=p.id%}" style="display:inline-block">
-              <button type="submit" title="Add {{p.name}} to farm"
-                      class="btn btn-info btn-xs">
-                <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
-            </form>
-            {% endif %}
-
-            <form method="GET" action="{% url 'package_update' pk=p.id %}" style="display:inline-block">
-              <button type="submit" title="Edit"
-                      class="btn btn-primary btn-xs">
-                <span class="glyphicon glyphicon-pencil"></span></button>
-            </form>
-
-            <form class="delete-form" method="POST" action="{% url 'package_delete' pk=p.id %}" style="display:inline-block">
-              <button type="submit" title="Delete {{p}}"
-                      class="btn btn-danger btn-xs">
-                <span class="glyphicon glyphicon-trash"></span></button>
-            </form>
+            {% package_actions p farm %}
 
           </td>
         </tr>
@@ -78,10 +74,21 @@
   {% endif %}
 </div>
 
-<script src="{% static 'rds/js/formconfirm.js' %}"></script>
-<script>
-  $(".delete-form").formconfirm();
-</script>
-
 {% endblock%}
 
+{% block scripts %}
+<script src="{% static 'rds/js/formconfirm.js' %}"></script>
+<script>
+$(document).ready(function(){
+
+  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-toggle="confirm"]').formconfirm();
+
+  $('[data-toggle="redirect"').on('change', function(){
+    var url = $(this).find(':selected').attr('data-redirect-url');
+    window.location.href = url;
+  });
+
+});
+</script>
+{% endblock %}

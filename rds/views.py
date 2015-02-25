@@ -61,10 +61,23 @@ class PackageEdit(object):
 class PackageUpdate(PackageEdit, UpdateView):
     pass
 
-def package_list(request):
-    packages = Package.objects.all()
+def package_list_redirect(request):
+    if Farm.objects.count() == 0:
+        farm = Farm.objects.create()
+    else:
+        farm = Farm.objects.filter(status='open').first()
+
+    if not farm:
+        farm = Farm.objects.first()
+
+    return http.HttpResponseRedirect(reverse('package_list', kwargs={'pk': farm.pk}))
+
+def package_list(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)   #
     return shortcuts.render(request, 'package_list.html', {
-        'packages': packages
+        'packages': Package.objects.all(),
+        'farms': Farm.objects.all(),
+        'farm': farm
     })
 
 def package_create(request):

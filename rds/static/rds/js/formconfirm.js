@@ -54,6 +54,10 @@
             var form_button = this.$form.find('button[type=submit]');
 
             this.$modal_title = this.$modal.find('.modal-title');
+            this.$modal_body = this.$modal.find('.modal-body');
+
+            this.$modal_body.text(this.$form.attr('data-confirm-body'));
+
             this.$modal_title.text(form_button.attr('title'));
             this.$modal.modal({});
 
