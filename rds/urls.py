@@ -29,7 +29,7 @@ urlpatterns = patterns('',
     url(r'^setup/cancel/$', 'rds.views.cancel', name='cancel'),
     url(r'^setup/server/$', 'rds.views.server_setup', name='server_setup'),
 
-    url(r'^software/$', RedirectView.as_view(url=reverse_lazy('package_list'), permanent=True), name='software'),
+    url(r'^software/$', RedirectView.as_view(url=reverse_lazy('package_list_redirect'), permanent=True), name='software'),
     url(r'^software/store/$', 'rds.views.software_cloud', name='software_cloud'),
 
     url(r'^software/local/$', 'rds.views.package_list_redirect', name='package_list_redirect'),

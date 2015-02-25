@@ -6,12 +6,12 @@
 {% block navbar %}RDP Services{% endblock %}
 
 {% block pre_body %}
-  {% include '_menu.html' %}
+  {% include 'rds/includes/menu.html' %}
 {% endblock %}
 
 {% block body %}
 <div class="col-xs-3">
-  {% include '_package_sidebar.html' %}
+  {% include 'rds/includes/package_sidebar.html' %}
 </div>
 
 <div class="col-xs-9">
@@ -32,7 +32,7 @@
 
   <h1>Software</h1>
 
-  {% if farm.status != 'open' %}
+  {% if farm.status == 'closed' %}
   <div class="alert alert-info alert-dismissible fade in" role="alert">
     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
     <strong>Info</strong> You can't add new software to a farm that's not open
