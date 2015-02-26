@@ -46,7 +46,7 @@ PACKAGE_DIR = '/srv/samba/'
 
 class PackageEdit(object):
     model = Package
-    template_name = 'package_form.html'
+    template_name = 'rds/package_form.html'
     form_class = PackageForm
     success_url = reverse_lazy('package_list_redirect')
 
@@ -75,7 +75,7 @@ def package_list_redirect(request):
 
 def package_list(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)   #
-    return shortcuts.render(request, 'package_list.html', {
+    return shortcuts.render(request, 'rds/package_list.html', {
         'packages': Package.objects.all(),
         'farms': Farm.objects.all(),
         'farm': farm
@@ -133,9 +133,6 @@ class ServerCreate(CreateView):
     #             })
     #     return kwargs
 
-class ServerList(ListView):
-    model = Server
-    template_name = 'server_list.html'
     
 @require_http_methods(['POST'])
 def package_install(request, pk=None):
@@ -292,7 +289,7 @@ def join(request):
     return http.HttpResponse()
 
 def software_cloud(request):
-    return shortcuts.render(request, 'software_store.html', {
+    return shortcuts.render(request, 'rds/package_store.html', {
     })
 
 def server_package_list(request):
@@ -352,7 +349,7 @@ def applications(request):
 
 def farm_list(request):
     farms = Farm.objects.all()
-    return shortcuts.render(request, 'farm_list.html', {
+    return shortcuts.render(request, 'rds/farm_list.html', {
         'farms': farms
     })
 
@@ -360,7 +357,7 @@ def farm_show(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
     farms = Farm.objects.all()
 
-    return shortcuts.render(request, 'farm_show.html', {
+    return shortcuts.render(request, 'rds/farm_show.html', {
         'farm': farm,
         'farms': farms
     })
@@ -378,7 +375,7 @@ def farm_clone(request, pk):
     else:
         form = forms.FarmForm()
 
-    return shortcuts.render(request, 'farm_clone_form.html', {
+    return shortcuts.render(request, 'rds/farm_clone_form.html', {
         'form': form,
         'farm': farm,
         'farms': Farm.objects.all()
@@ -424,9 +421,21 @@ def farm_package_delete(request, farm_package_pk):
     farm_package.delete()
     return http.HttpResponseRedirect(url)
 
+def farm_package_list(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+
+    return shortcuts.render(request, 'rds/farm_package_list.html', {
+        'farm': farm,
+        'farms': Farm.objects.all()
+    })
+
+class FarmServerList(ListView):
+    model = Server
+    template_name = 'rds/farm_server_list.html'
+
 def farm_setup(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
-    
+
     queryset = farm.servers.filter(roles__icontains=ServerRole.RDS_AD)
     ad = shortcuts.get_object_or_404(queryset)
 
@@ -457,10 +466,3 @@ def farm_deployment(request, pk):
         'farms': Farm.objects.all()
     })
 
-def farm_package_list(request, pk):
-    farm = shortcuts.get_object_or_404(Farm, pk=pk)
-
-    return shortcuts.render(request, 'farm_package_list.html', {
-        'farm': farm,
-        'farms': Farm.objects.all()
-    })

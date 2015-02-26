@@ -36,7 +36,7 @@
       </div>\
     </div><!-- /.modal-content -->\
   </div><!-- /.modal-dialog -->\
-</div><!-- /.modal -->';
+</div>';
 
     var FileProgress = function(element, options){
         this.options = options;
@@ -48,19 +48,17 @@
         constructor: function() {
             this.$form = this.$element.parents('form');
             this.$form.on('submit', $.proxy(this.submit, this));
-
-            $('body').append(template);
-            this.$modal = $('#file-progress-modal');
-            this.$modal_message = $('.modal-message');
-            this.$modal_title = $('.modal-title');
-            this.$modal_footer = $('.modal-footer');
-            this.$modal_bar = $('.progress-bar');
+            this.$modal = $(template);
+            this.$modal_message = this.$modal.find('.modal-message');
+            this.$modal_title = this.$modal.find('.modal-title');
+            this.$modal_footer = this.$modal.find('.modal-footer');
+            this.$modal_bar = this.$modal.find('.progress-bar');
 
             this.$modal.on('hidden.bs.modal', $.proxy(this.reset, this));
         },
 
         reset: function(){
-            this.$modal_title = $('.modal-title').text('Uploading');
+            this.$modal_title = this.$modal_title.text('Uploading');
             this.$modal_footer.hide();
             this.$modal_bar.addClass('progress-bar-success');
             this.$modal_bar.removeClass('progress-bar-danger');
@@ -74,7 +72,6 @@
                 backdrop: 'static',
                 keyboard: false
             });
-
 
             // We need the native XMLHttpRequest for the progress event
             var xhr = new XMLHttpRequest();

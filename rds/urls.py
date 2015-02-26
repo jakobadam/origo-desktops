@@ -13,7 +13,7 @@ from .views import (
     PackageUpdate,
     PackageCreate,
     ServerCreate,
-    ServerList
+    FarmServerList
     )
 
 urlpatterns = patterns('',
@@ -40,8 +40,8 @@ urlpatterns = patterns('',
     url(r'^software/local/install/(?P<pk>\d+)/$', 'rds.views.package_install', name='package_install'),
     url(r'^software/local/uninstall/(?P<pk>\d+)/$', 'rds.views.package_uninstall', name='package_uninstall'),
 
-    url(r'^software/server/packages$',      'rds.views.server_package_list',          name='server_package_list'),
-    url(r'^software/server/applications/$', 'rds.views.applications',                 name='applications'),
+    url(r'^software/server/packages/$',      'rds.views.server_package_list',          name='server_package_list'),
+    url(r'^software/server/applications/$',  'rds.views.applications',                 name='applications'),
     url(r'^software/server/applications/refresh/$', 'rds.views.applications_refresh', name='applications_refresh'),
 
     url(r'^farms/$',     'rds.views.farm_list', name='farm_list'),
@@ -57,7 +57,7 @@ urlpatterns = patterns('',
     url(r'^farms/package/(?P<farm_package_pk>\d+)/delete/$',          'rds.views.farm_package_delete', name='farm_package_delete'),
     url(r'^farms/(?P<farm_pk>\d+)/package/(?P<package_pk>\d+)/add/$', 'rds.views.farm_package_add',    name='farm_package_add'),
 
-    url(r'^farms/deployment/', ServerList.as_view(), name='deployment'),
+    url(r'^farms/deployment/', FarmServerList.as_view(), name='deployment'),
     url(r'^farms/deployment/publish/(?P<pk>\d+)/$', 'rds.views.deployment_publish', name='deployment_publish'),
     url(r'^farms/deployment/unpublish/(?P<pk>\d+)/$', 'rds.views.deployment_unpublish', name='deployment_unpublish'),
 
