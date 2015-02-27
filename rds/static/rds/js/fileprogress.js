@@ -66,6 +66,7 @@
 
         submit: function(e) {
             var form = this.$form;
+            var _this = this;
             e.preventDefault();
 
             this.$modal.modal({
@@ -75,12 +76,14 @@
 
             // We need the native XMLHttpRequest for the progress event
             var xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('load', $.proxy(this.success, this, xhr));
+            xhr.upload.addEventListener('error', $.proxy(this.error, this, xhr));
+            xhr.upload.addEventListener('progress', $.proxy(this.progress, this));
+
             xhr.open(form.attr('method'), window.location.href);
             xhr.setRequestHeader('X-REQUESTED-WITH', 'XMLHttpRequest');
 
-            xhr.onload = $.proxy(this.success, this, xhr);
-            xhr.onerror = $.proxy(this.error, this, xhr);
-            xhr.upload.onprogress = $.proxy(this.progress, this);
             var data = new FormData(form.get(0));
             xhr.send(data);
         },
@@ -103,7 +106,8 @@
                 // maybe do something
             }
             else{
-                // update form contents
+                // update the current form with the form
+                // within the returned error HTML page.
                 var h = $.parseHTML(xhr.responseText);
                 var new_form = $(h).find('form');
                 new_form.find(':file').filestyle({buttonBefore: true});
