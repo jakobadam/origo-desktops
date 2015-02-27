@@ -89,9 +89,12 @@
         },
 
         success: function(xhr) {
-            var response = $.parseJSON(xhr.responseText);
-            var url = response.location;
             this.set_progress(100);
+            var url = this.options.redirect_url;
+            if(!url){
+                var response = $.parseJSON(xhr.responseText);
+                url = response.location;
+            }
             window.location.href = url;
         },
 
