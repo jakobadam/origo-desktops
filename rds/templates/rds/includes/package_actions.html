@@ -1,11 +1,3 @@
-{% if not farm_package and farm.status == 'open' %}
-<form method="POST" action="{% url 'farm_package_add' farm_pk=farm.pk package_pk=package.pk %}" style="display:inline-block">
-  <button type="submit" title="Add {{package}} to farm {{farm}}"
-          class="btn btn-info btn-xs">Add
-    <span class="glyphicon glyphicon glyphicon-plus"></span></button>
-</form>
-{% endif %}
-
 <form method="GET" action="{% url 'package_update' pk=package.id %}" style="display:inline-block">
   <button type="submit" title="Edit"
           class="btn btn-primary btn-xs">Edit

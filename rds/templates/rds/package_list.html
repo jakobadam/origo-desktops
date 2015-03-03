@@ -30,7 +30,7 @@
     </select>
    </div>
 
-  <h1>Software</h1>
+  <h1>Software Packages</h1>
 
   {% if farm.status == 'closed' %}
   <div class="alert alert-info alert-dismissible fade in" role="alert">
@@ -46,18 +46,20 @@
         <tr>
           <th>Name</th>
           <th>Version</th>
-          <th style="min-width: 200px">Actions</th>
+          <th style="min-width: 150px">Farm</th>
+          <th style="min-width: 150px">Actions</th>
         </tr>
       </thead>
       <tbody>
-        {% for p in packages %}
+        {% for package in packages %}
         <tr>
-          <td>{{p.name}}</td>
-          <td>{{p.version}}</td>
+          <td>{{package.name}}</td>
+          <td>{{package.version}}</td>
           <td>
-
-            {% package_actions p farm %}
-
+            {% package_farm_actions package farm %}
+          </td>
+          <td>
+            {% include 'rds/includes/package_actions.html' %}
           </td>
         </tr>
         {% endfor %}

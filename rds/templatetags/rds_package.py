@@ -1,8 +1,8 @@
 from django.template import Library
 register = Library()
 
-@register.inclusion_tag('rds/includes/package_actions.html')
-def package_actions(package, farm):
+@register.inclusion_tag('rds/includes/package_farm_actions.html')
+def package_farm_actions(package, farm):
     """
     Generates the actions for a package
     """
