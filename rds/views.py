@@ -81,7 +81,7 @@ def package_list(request, pk):
         'farm': farm
     })
 
-def package_create(request):
+def package_add(request):
     status = 200
     if request.method == 'POST':
         form = PackageForm(request.POST, request.FILES)
@@ -102,12 +102,9 @@ def package_create(request):
     else:
         form = PackageForm()
 
-    return shortcuts.render(request, 'software_upload_form.html', {
+    return shortcuts.render(request, 'rds/package_form.html', {
         'form':form
     }, status=status)
-
-class PackageCreate(PackageEdit, CreateView):
-    pass
 
 class PackageDelete(PackageEdit, DeleteView):
     pass
@@ -429,9 +426,9 @@ def farm_package_list(request, pk):
         'farms': Farm.objects.all()
     })
 
-class FarmServerList(ListView):
-    model = Server
-    template_name = 'rds/farm_server_list.html'
+# class FarmServerList(ListView):
+#     model = Server
+#     template_name = 'rds/farm_server_list.html'
 
 def farm_setup(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
@@ -461,8 +458,12 @@ def farm_setup(request, pk):
 def farm_deployment(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
 
-    return shortcuts.render(request, 'farm_deployment.html', {
+    return shortcuts.render(request, 'rds/farm_server_list.html', {
         'farm':farm,
         'farms': Farm.objects.all()
     })
+
+
+def server_delete(request, pk):
+    pass
 

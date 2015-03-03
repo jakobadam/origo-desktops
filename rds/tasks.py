@@ -37,13 +37,13 @@ def package_install(package_id, server_id):
     res = server.cmd(package.install_cmd)
     success = res.status_code == 0
     if success:
-        message = u'Installed "{}". {}'.format(package, res.std_out)
+        message = u'Installed "{}" on {}. {}'.format(package, server, res.std_out)
         log.info(package.message)
         Message.success(message)
         package.message = message
         package.installed = True
     else:
-        message = u'Error deploying "{}": {}'.format(package, res.std_err)
+        message = u'Error deploying "{}" on {}: {}'.format(package, server, res.std_err)
         log.error(message)
         Message.error(message)
         package.message = message

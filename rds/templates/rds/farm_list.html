@@ -39,10 +39,10 @@
         </tr>
       </thead>
       <tbody>
-        {% for o in farms %}
+        {% for farm in farms %}
         <tr>
-          <td><a href="{% url 'farm_show' pk=o.pk %}">{{o.name}}</a></td>
-          <td>{{o.status}}</td>
+          <td><a href="{% url 'farm_show' pk=farm.pk %}">{{farm.name}}</a></td>
+          <td>{{farm.status}}</td>
           <td>
 
             {% include 'rds/includes/farm_actions.html' %}

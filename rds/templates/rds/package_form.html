@@ -20,7 +20,7 @@
 
 <div class="col-xs-9">
 
-  <h3 style="margin-top:0">{% if object.id %}Update {{object}}{% else %}Upload Software{% endif %}</h3>
+  <h3 style="margin-top:0">{% if object.id %}Update {{object}}{% else %}Add Software{% endif %}</h3>
 
   <!-- <span class="btn btn-success fileinput-button"> -->
   <!--   <i class="glyphicon glyphicon-plus"></i> -->
@@ -49,9 +49,9 @@
 {% block scripts %}
 <script src="{% static 'bootstrap-filestyle/src/bootstrap-filestyle.js' %}"></script>
 <script src="{% static 'rds/js/fileprogress.js' %}"></script>
-<script src="{% static 'rds/js/jQuery.FileDrop.js' %}"></script>
+<!-- <script src="{% static 'rds/js/jQuery.FileDrop.js' %}"></script> -->
 <script>
   $(":file").filestyle({buttonBefore: true});
-  $(":file").fileprogress();
+  $(":file").fileprogress({redirect_url: "{% url 'package_list_redirect' %}"});
 </script>
 {% endblock %}
