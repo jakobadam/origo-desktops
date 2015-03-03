@@ -1,0 +1,94 @@
+{% extends 'project_base.html' %}
+{% load static %}
+
+{% block page_title%}Deployment{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block pre_body %}
+  {% include 'rds/includes/menu.html' %}
+{% endblock %}
+
+{% block body %}
+
+<div class="col-xs-3">
+  {% include 'rds/includes/farm_sidebar.html' %}
+</div>
+
+<div class="col-xs-9">
+
+  <h1>Farm Servers <small>{{farm}}</small></h1>
+
+  <div class="alert alert-info alert-dismissible fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>Heads Up!</strong> This is a list of servers in your RDS farm. 
+  </div>
+
+  <div>
+  {% include 'rds/includes/farm_actions.html' %}
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>IP</th>
+          <th>Roles</th>
+          <th style="min-width: 200px">Links
+            <span data-toggle="tooltip"
+                  data-placement="left"
+                  data-original-title="">
+              <span class="fui-question-circle"></span>
+            </span>
+          </th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for server in farm.servers.all %}
+        <tr>
+          <td>{{server.name}}</td>
+          <td>{{server.ip}}</td>
+          <td>{{server.roles}}</td>
+          <td>
+            <ul>
+              {% if 'web' in server.roles %}
+              <a target="_blank" href="https://{{server.ip}}/rdweb"><span class="glyphicon glyphicon-globe"></span></a>
+              {% endif %}
+              <a target="_blank" href="{% url 'rdp_settings' pk=server.pk %}">
+                <img width="18px" src="{% static 'rdp_icon.png' %}" /></a>
+          </td>
+
+          <td>
+            {% if 'session_host' in server.roles %}
+            <form method="POST" action="{% url 'server_delete' pk=server.pk%}" class="delete-form"
+                  data-toggle="confirm" title="Delete Server from {{farm}}"
+                  data-confirm-body="Delete Session Host server from '{{farm}}'? You can always add additinal session host servers again"
+                  style="display:inline-block">
+              <button type="submit" title="Delete Server {{server}}"
+                      class="btn btn-danger btn-xs">Delete
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
+            </form>
+            {% endif %}
+          </td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+</div>
+{% endblock%}
+
+{% block scripts%}
+<script src="{% static 'rds/js/formconfirm.js' %}"></script>
+<script>
+$(document).ready(function(){
+  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-toggle="confirm"]').formconfirm();
+});
+
+</script>
+{% endblock%}

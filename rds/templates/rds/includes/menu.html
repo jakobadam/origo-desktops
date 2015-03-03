@@ -1,0 +1,28 @@
+{% load active %}
+
+{% url 'setup' as setup %}
+{% url 'package_list' as packages %}
+
+<div style="margin-bottom:30px">
+  <ul class="nav nav-tabs menu">
+
+    <li>
+      <a href="{% url 'setup' %}">Setup <span class="glyphicon fui-gear"></span></a>
+    </li>
+
+    <li>
+      <a href="{% url 'software' %}">Software <span class="glyphicon glyphicon-folder-open"></span></a>
+    </li>
+
+    <li>
+      <a href="{% url 'farm_list' %}">Farms <span class="glyphicon glyphicon-th"></span></a>
+    </li>
+
+    <li>
+      <a href="/deployment/">Deployment</a>
+    </li>
+
+  </ul>
+
+</div>
+
