@@ -1,0 +1,14 @@
+<form method="GET" action="{% url 'package_update' pk=package.id %}" style="display:inline-block">
+  <button type="submit" title="Edit"
+          class="btn btn-primary btn-xs">Edit
+    <span class="glyphicon glyphicon-pencil"></span></button>
+</form>
+
+<form method="POST"
+      data-toggle="confirm"
+      data-confirm-body="Deleting this package will also delete it from all farms"
+      action="{% url 'package_delete' pk=package.id %}" style="display:inline-block">
+  <button type="submit" title="Delete {{package}}"
+          class="btn btn-danger btn-xs">
+    <span class="glyphicon glyphicon-trash"></span></button>
+</form>

@@ -1,0 +1,121 @@
+{% extends 'project_base.html' %}
+{% load static %}
+
+{% block page_title%}Software Local{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block pre_body %}
+  {% include 'rds/includes/menu.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="col-xs-3">
+  {% include '_package_sidebar.html' %}
+</div>
+<div class="col-xs-9">
+  {% if applications %}
+
+  <div class="pull-right">
+    <a title="Refresh applications" href="{% url 'applications_refresh' %}">
+      <span class="glyphicon glyphicon-refresh"></span>
+    </a>
+  </div>
+
+  <h1>Applications <small>{{server.name}}.{{server.domain}}</small></h1>
+
+  <div class="alert alert-info alert-dismissible fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>Heads Up!</strong> This is a list of applications in the start menu on the server '{{server.name}}'. Apps are published by clicking the green publish icon
+    <button title="Publish Remote Apps" class="btn btn-primary btn-xs">
+      <span class="glyphicon glyphicon-share"></span>
+    </button>
+    
+    ; and removed again by clicking on
+    <button title="Remove from Remote Apps" class="btn btn-primary btn-danger btn-xs">
+      <span class="glyphicon glyphicon-remove"></span>
+    </button>.
+
+    New applications are added to this list by selecting them for install in the <a class="alert-link" href="{% url 'software_cloud'%}">packages cloud</a> or in the local store with your own uploaded packages.
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Path</th>          
+          <th style="min-width: 200px">Publish or Un-publish to Remote Apps
+            <span class="tooltip-wrapper" 
+                  data-toggle="tooltip" 
+                  data-placement="left" 
+                  data-original-title="Remote Apps are applications which are remotely accessible via RDP">
+              <span class="fui-question-circle"></span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in applications %}
+        <tr>
+          <td>{{o.name}}</td>
+          <td>{{o.path}}</td>
+          <td>
+            {% if o.published %}
+            <form method="POST" action="{% url 'deployment_unpublish' pk=o.id %}" style="display:inline-block">
+              <button type="submit" title="Remove '{{o.name}}' from Remote Apps"
+                      class="btn btn-primary btn-danger btn-xs">
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
+            </form>
+            {% else %}
+            <form method="POST" action="{% url 'deployment_publish' pk=o.id %}" style="display:inline-block">
+              <button type="submit" title="Publish '{{o.name}}' to Remote Apps"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-share"></span>
+              </button>
+            </form>
+            {% endif %}
+
+
+            {% comment %}
+            <form method="POST" action="{% url 'deploy_package' %}" style="display:inline-block">
+              <input type="hidden" name="id" value="{{p.id}}" />
+              <button type="submit" title="Install {{p.name}}"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
+            </form>
+
+            <form method="GET" action="{% url 'package_update' pk=p.id %}" style="display:inline-block">
+              <button type="submit" title="Edit"
+                      class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-pencil"></span></button>
+            </form>
+
+            <form method="POST" action="{% url 'package_delete' pk=p.id %}" style="display:inline-block">
+              <button type="submit" title="Delete"
+                      class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-trash"></span></button>
+            </form>
+            {% endcomment %}
+            
+          </td>
+        </tr>
+        {% endfor %}        
+      </tbody>
+
+    </table>
+  </div>
+  {% else %}
+
+  {% endif %}
+</div>
+{% endblock%}
+
+{% block scripts%}
+<script>
+$(document).ready(function(){
+  $('.tooltip-wrapper').tooltip()
+});
+
+</script>
+{% endblock%}

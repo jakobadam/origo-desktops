@@ -1,0 +1,24 @@
+<form method="GET" action="{% url 'farm_clone' pk=farm.pk %}" style="display:inline-block">
+  <button type="submit" title="Clone Farm {{farm}}"
+          class="btn btn-info btn-xs">Clone Farm
+    <span class="glyphicon glyphicon-duplicate"></span>
+  </button>
+</form>
+
+<form method="POST" action="{% url 'farm_delete' pk=farm.pk %}" class="delete-form"
+      data-toggle="confirm" title="Destroy Farm {{farm}}"
+      data-confirm-body="Destroy '{{farm}}' and all things associated with it?"
+      style="display:inline-block">
+  <button type="submit" title="Destroy Farm {{farm}}"
+          class="btn btn-danger btn-xs">Destroy Farm
+    <span class="glyphicon glyphicon-remove"></span>
+  </button>
+</form>
+
+<form method="POST" action=""
+      style="display:inline-block">
+  <button type="submit" title="Add Session Host"
+          class="btn btn-success btn-xs">Add Session Host
+    <span class="glyphicon glyphicon-plus"></span>
+  </button>
+</form>
