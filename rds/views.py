@@ -226,7 +226,7 @@ def ad_type(request):
             state.location = State.LOCATION_SERVER_WAIT
         state.save()
         return http.HttpResponseRedirect(reverse('setup'))
-    return shortcuts.render(request, 'ad_type.html')
+    return shortcuts.render(request, 'rds/active_directory_type.html')
 
 def ad_external_setup(request):
     # from django.http import HttpResponse
