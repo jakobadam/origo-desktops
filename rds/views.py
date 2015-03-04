@@ -251,7 +251,7 @@ def ad_external_setup(request):
     else:
         form = ActiveDirectoryForm()
 
-    return shortcuts.render(request, 'ad_setup.html', {
+    return shortcuts.render(request, 'rds/active_directory_setup.html', {
         'form':form
         })
 
