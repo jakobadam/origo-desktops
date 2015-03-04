@@ -61,12 +61,13 @@ class ServerForm(forms.ModelForm):
 class ActiveDirectoryForm(ServerForm):
 
     class Meta:
-        model = Server
-        fields = ('ip', 'domain', 'user', 'password')
+        model = ActiveDirectory
+        fields = ('ip', 'name', 'domain', 'user', 'password')
         widgets = {
             'ip': _get_widget('IP address of Active Directory Server'),
             'domain': _get_widget('Enter FQDN e.g., example.com'),
-            'user': _get_widget('User with administrative rights'),
+            'user': _get_widget('AD user with administrative rights'),
+            'password': forms.PasswordInput
         }
 
     def clean_ip(self):
@@ -92,16 +93,15 @@ class ActiveDirectoryForm(ServerForm):
         domain_account = "{}\{}".format(domain.split('.')[0], user)
 
         try:
-            result = ldap.find_user(ip, domain, user, auth=(domain_account,password))
-            Message.info('LDAP results: <pre>{}</pre>'.format(result))
+            ldap.find_user(ip, domain, user, auth=(domain_account,password))
         except ldap.LdapException, e:
-            Message.error('Tried with AD username is {}'.format(domain_account))
+            Message.error('Could not connect to Active Directory with username {}'.format(domain_account))
             raise forms.ValidationError(str(e))
 
 class ActiveDirectoryInternalForm(forms.ModelForm):
 
     class Meta:
-        model = Server
+        model = ActiveDirectory
         fields = ('domain', )
         widgets = {
             'domain': _get_widget('Enter FQDN e.g., example.com'),
