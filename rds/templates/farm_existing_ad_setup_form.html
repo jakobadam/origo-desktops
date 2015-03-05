@@ -1,0 +1,31 @@
+{% extends 'project_base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block page_title%}Existing AD Information{% endblock %}
+{% block navbar %}RDP Services{% endblock %}
+
+{% block pre_body %}
+  {% include 'rds/includes/menu.html' %}
+{% endblock%}
+
+{% block body%}
+<div class="col-xs-3">
+  {% include 'rds/includes/farm_sidebar.html' %}
+</div>
+
+<style>
+#spinner-wrapper {
+height: 200px;
+}
+</style>
+
+<div class="col-xs-9">
+
+      {% include '_farm_ad_type_form.html' %}
+
+      {% include '_farm_ad_existing_configure.html' %}
+
+</div>
+{% endblock%}

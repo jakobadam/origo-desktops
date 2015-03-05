@@ -1,0 +1,45 @@
+<div class="sidebar hidden-print affix-top" role="complementary">
+
+  <ul class="nav">
+    <li>
+      <a href="{% url 'farm_list' %}">
+        <span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
+    </li>
+    <li>
+      <a href="{% url 'farm_add' %}">
+        <span class="glyphicon glyphicon-file"></span>Add</a>
+    </li>
+  </ul>
+
+  <ul class="nav sidebar">
+    {% for o in farms %}
+    <h5 style="margin-top:0"><small>Farm {{o}}</small></h5>
+    <li>
+      <ul class="nav">
+        <li>
+          <a href="{% url 'farm_setup' pk=o.pk %}">
+            <span class="glyphicon glyphicon-cog"></span> Setup</a>
+        </li>
+
+        <li>
+          <a href="{% url 'farm_package_list' pk=o.pk %}">
+            <span class="glyphicon glyphicon-folder-open"></span> Software</a>
+        </li>
+
+        <li>
+          <a href="{% url 'farm_deployment' pk=o.pk %}">
+            <span class="glyphicon glyphicon-th"></span> Servers</a>
+        <li>
+
+        <li class="nav-divider"></li>
+
+      </ul>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <div class="form-group">
+
+  </div>
+
+</div>
