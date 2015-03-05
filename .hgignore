@@ -13,3 +13,4 @@ rds/lib
 rds/bin
 .venvlog/*
 log/*
+docs/_build
