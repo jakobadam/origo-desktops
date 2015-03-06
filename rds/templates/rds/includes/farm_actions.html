@@ -15,6 +15,7 @@
   </button>
 </form>
 
+{% if farm.status == 'running' %}
 <form method="POST" action=""
       style="display:inline-block">
   <button type="submit" title="Add Session Host"
@@ -22,3 +23,14 @@
     <span class="glyphicon glyphicon-plus"></span>
   </button>
 </form>
+{% endif %}
+
+{% if farm.status == 'open' or farm.status == 'error' %}
+<form method="GET" action="{% url 'farm_clone' pk=farm.pk %}" style="display:inline-block">
+  <button type="submit" title="Clone Farm {{farm}}"
+          class="btn btn-info btn-xs">Install Software
+    <span class="glyphicon glyphicon-download-alt"></span>
+  </button>
+</form>
+{% endif %}
+

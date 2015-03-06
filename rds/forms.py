@@ -26,9 +26,16 @@ from . import ldap
 def _get_widget(placeholder):
     return forms.TextInput(attrs={'placeholder':placeholder})
 
-class FarmForm(forms.Form):
+class FarmAddForm(forms.Form):
 
     name = forms.CharField(label='New farm name')
+
+class FarmForm(forms.ModelForm):
+
+    class Meta:
+        model = Farm
+        exclude = ['master', 'status']
+
 
 class ServerForm(forms.ModelForm):
 

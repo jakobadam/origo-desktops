@@ -20,6 +20,7 @@ from django.views.generic.edit import (
 from . import forms
 from rds.forms import (
     ServerForm,
+    FarmForm,
     PackageForm,
     ActiveDirectoryForm,
     ActiveDirectoryInternalForm
@@ -365,14 +366,14 @@ def farm_clone(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
 
     if request.method == 'POST':
-        form = forms.FarmForm(request.POST)
+        form = forms.FarmAddForm(request.POST)
         if form.is_valid():
             new_farm = farm.clone(form.cleaned_data['name'])
             messages.success(request, '{} created'.format(new_farm))
             return http.HttpResponseRedirect(reverse('farm_list'))
 
     else:
-        form = forms.FarmForm()
+        form = forms.FarmAddForm()
 
     return shortcuts.render(request, 'rds/farm_clone_form.html', {
         'form': form,
@@ -382,15 +383,15 @@ def farm_clone(request, pk):
 
 def farm_add(request):
     if request.method == 'POST':
-        form = forms.FarmForm(request.POST)
+        form = forms.FarmAddForm(request.POST)
         if form.is_valid():
             farm = Farm.objects.create(**form.cleaned_data)
             messages.success(request, '{} created'.format(farm))
             return http.HttpResponseRedirect(reverse('farm_show', kwargs={'pk':farm.pk}))
     else:
-        form = forms.FarmForm()
+        form = forms.FarmAddForm()
 
-    return shortcuts.render(request, 'rds/farm_form.html', {
+    return shortcuts.render(request, 'rds/farm_add_form.html', {
         'form': form,
         'farms': Farm.objects.all()
     })
@@ -435,12 +436,16 @@ def farm_package_list(request, pk):
 def farm_setup(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
 
-    queryset = farm.servers.filter(roles__icontains=ServerRole.RDS_AD)
-    ad = shortcuts.get_object_or_404(queryset)
+    if request.method == 'POST':
+        form = FarmForm(data=request.POST, instance=farm)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Updated {}'.format(farm))
+            return http.HttpResponseRedirect(reverse('farm_list'))
+    else:
+        form = FarmForm(instance=farm)
 
-    form = ActiveDirectoryForm(instance=ad)
-
-    return shortcuts.render(request, 'farm_existing_ad_setup_form.html', {
+    return shortcuts.render(request, 'rds/farm_form.html', {
         'farms': Farm.objects.all(),
         'farm':farm,
         'form':form

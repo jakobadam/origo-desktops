@@ -329,6 +329,7 @@ class Farm(models.Model, Helper):
     name = models.CharField(max_length=100, default='default')
     status = models.CharField(max_length=100, default=STATUS_OPEN)
     master = models.CharField(max_length=1000, blank=True)
+    user_group = models.CharField(max_length=1000, blank=True)
 
     def __str__(self):
         return self.name
