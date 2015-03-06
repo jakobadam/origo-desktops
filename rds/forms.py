@@ -34,7 +34,7 @@ class FarmForm(forms.ModelForm):
 
     class Meta:
         model = Farm
-        exclude = ['master', 'status']
+        exclude = ['master', 'status', 'session_hosts']
 
 
 class ServerForm(forms.ModelForm):

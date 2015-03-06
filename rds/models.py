@@ -330,6 +330,7 @@ class Farm(models.Model, Helper):
     status = models.CharField(max_length=100, default=STATUS_OPEN)
     master = models.CharField(max_length=1000, blank=True)
     user_group = models.CharField(max_length=1000, blank=True)
+    session_hosts = models.PositiveIntegerField(default=1)
 
     def __str__(self):
         return self.name
