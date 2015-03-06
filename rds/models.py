@@ -28,10 +28,10 @@ SAMBA_SERVER_IP = None
 class Helper(object):
 
     @classmethod
-    def first_or_create(cls):
+    def first_or_create(cls, **kwargs):
         s = cls.objects.first()
         if not s:
-            s = cls.objects.create()
+            s = cls.objects.create(**kwargs)
         return s
 
 class Package(models.Model):
@@ -287,6 +287,8 @@ class State(models.Model, Helper):
     LOCATION_SERVER_WAIT = 'server_wait'
     LOCATION_SERVER_SETUP = 'server_setup'
 
+    LOCATION_FINISHED = 'finished'
+
     EXTERNAL = 'external'
     INTERNAL = 'internal'
 
@@ -299,13 +301,6 @@ class State(models.Model, Helper):
         if not s:
             s = cls.objects.create()
         return s
-
-class ActiveDirectory(models.Model, Helper):
-
-    domain = models.CharField(max_length=1000)
-    user = models.CharField(max_length=200)
-    # TODO: hash it? Just one anyways
-    password = models.CharField(max_length=200)
 
 class ServerRole(object):
 
@@ -334,6 +329,8 @@ class Farm(models.Model, Helper):
     name = models.CharField(max_length=100, default='default')
     status = models.CharField(max_length=100, default=STATUS_OPEN)
     master = models.CharField(max_length=1000, blank=True)
+    user_group = models.CharField(max_length=1000, blank=True)
+    session_hosts = models.PositiveIntegerField(default=1)
 
     def __str__(self):
         return self.name
@@ -430,7 +427,15 @@ class Server(models.Model):
                     Application.objects.get_or_create(name=name, path=path, server=self)
 
         # TODO: remove apps?
-    
+
+class ActiveDirectory(models.Model, Helper):
+
+    ip = models.IPAddressField()
+    name = models.CharField(max_length=100, verbose_name='Computer name')
+    domain = models.CharField(max_length=100)
+    user = models.CharField(max_length=100)
+    password = models.CharField(max_length=128, verbose_name='Password')
+
 class Application(models.Model):
 
     name = models.CharField(max_length=100)

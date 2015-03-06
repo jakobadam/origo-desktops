@@ -3,7 +3,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block page_title%}Add Program{% endblock %}
+{% block page_title%}Upload Software Package{% endblock %}
 {% block navbar %}RDP Services{% endblock %}
 
 {% block head %}
@@ -20,7 +20,7 @@
 
 <div class="col-xs-9">
 
-  <h3 style="margin-top:0">{% if object.id %}Update {{object}}{% else %}Add Software{% endif %}</h3>
+  <h3 style="margin-top:0">{% if object.id %}Update {{object}}{% else %}Upload Software Package{% endif %}</h3>
 
   <!-- <span class="btn btn-success fileinput-button"> -->
   <!--   <i class="glyphicon glyphicon-plus"></i> -->
@@ -28,17 +28,16 @@
   <!--   <input type="file" name="file" multiple> -->
   <!-- </span> -->
 
-  <div class="share mrl">
+  <div class="login-form">
     <form role="form" enctype="multipart/form-data" method="POST">
-      <ul>
-        <li>
-          {{form|crispy}}
-        </li>
-      </ul>
+
+      {{form|crispy}}
+
       <button type="submit"
               class="btn btn-primary btn-block">{% if object.id %}Update{% else %}Upload{% endif %}
         <span class="glyphicon glyphicon-upload"></span>
       </button>
+
     </form>
   </div>
 

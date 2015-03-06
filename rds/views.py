@@ -20,6 +20,7 @@ from django.views.generic.edit import (
 from . import forms
 from rds.forms import (
     ServerForm,
+    FarmForm,
     PackageForm,
     ActiveDirectoryForm,
     ActiveDirectoryInternalForm
@@ -177,29 +178,29 @@ def setup(request, **kwargs):
     if state.location == State.LOCATION_SERVER_WAIT:
         return shortcuts.render(request, 'server_wait.html')
 
-    if state.location == State.LOCATION_SERVER_SETUP:
-        return http.HttpResponseRedirect(reverse('server_setup'))
+    if state.location == State.LOCATION_FINISHED:
+        return http.HttpResponseRedirect(reverse('software'))
 
     raise Exception('TODO: Should not happen')
 
-def server_setup(request):
-    server = Server.objects.first()
+# def server_setup(request):
+#     server = Server.objects.first()
 
-    if not server:
-        msg = 'There is no server in the database! Wait for it to join.'
-        return http.HttpResponseBadRequest(msg)
+#     if not server:
+#         msg = 'There is no server in the database! Wait for it to join.'
+#         return http.HttpResponseBadRequest(msg)
 
-    if request.method == 'POST':
-        form = ServerForm(data=request.POST, instance=server)
-        if form.is_valid():
-            form.save()
-            return http.HttpResponseRedirect(reverse('software'))
-    else:
-        form = ServerForm(instance=server)
+#     if request.method == 'POST':
+#         form = ServerForm(data=request.POST, instance=server)
+#         if form.is_valid():
+#             form.save()
+#             return http.HttpResponseRedirect(reverse('software'))
+#     else:
+#         form = ServerForm(instance=server)
 
-    return shortcuts.render(request, 'server_setup.html', {
-        'form':form
-    })
+#     return shortcuts.render(request, 'server_setup.html', {
+#         'form':form
+#     })
 
 @require_http_methods(['POST'])
 def cancel(request):
@@ -226,32 +227,33 @@ def ad_type(request):
             state.location = State.LOCATION_SERVER_WAIT
         state.save()
         return http.HttpResponseRedirect(reverse('setup'))
-    return shortcuts.render(request, 'ad_type.html')
+    return shortcuts.render(request, 'rds/active_directory_type.html')
 
 def ad_external_setup(request):
-    # from django.http import HttpResponse
-    # from django.template import RequestContext, loader
-
     if request.method == 'POST':
 
-        # There is one and only one AD
-        ad = ActiveDirectory.first_or_create()
         state = State.first_or_create()
 
-        form = ActiveDirectoryForm(request.POST, instance=ad)
+        # There is one and only one AD
+        ad = ActiveDirectory.objects.first()
+        if ad:
+            form = ActiveDirectoryForm(request.POST, instance=ad)
+        else:
+            form = ActiveDirectoryForm(request.POST)
+
         if form.is_valid():
             form.save()
 
-            state.location = State.LOCATION_SERVER_WAIT
+            state.location = State.LOCATION_FINISHED
             state.save()
 
-            msg = 'Updated Active Directory Information'
+            msg = 'Updated RDS Active Directory Information'
             messages.info(request, msg)
             return http.HttpResponseRedirect(reverse('setup'))
     else:
         form = ActiveDirectoryForm()
 
-    return shortcuts.render(request, 'ad_setup.html', {
+    return shortcuts.render(request, 'rds/active_directory_setup.html', {
         'form':form
         })
 
@@ -274,9 +276,10 @@ def join(request):
     if not form.is_valid():
         return http.HttpResponseBadRequest(json.dumps(form.errors))
 
+    # TODO:!!!
     state = State.first_or_create()
     if state.location == State.LOCATION_SERVER_WAIT:
-        state.location = State.LOCATION_SERVER_SETUP
+        state.location = State.LOCATION_FINISHED
         state.save()
 
     server, created = Server.objects.get_or_create(
@@ -363,14 +366,14 @@ def farm_clone(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
 
     if request.method == 'POST':
-        form = forms.FarmForm(request.POST)
+        form = forms.FarmAddForm(request.POST)
         if form.is_valid():
             new_farm = farm.clone(form.cleaned_data['name'])
             messages.success(request, '{} created'.format(new_farm))
             return http.HttpResponseRedirect(reverse('farm_list'))
 
     else:
-        form = forms.FarmForm()
+        form = forms.FarmAddForm()
 
     return shortcuts.render(request, 'rds/farm_clone_form.html', {
         'form': form,
@@ -380,15 +383,15 @@ def farm_clone(request, pk):
 
 def farm_add(request):
     if request.method == 'POST':
-        form = forms.FarmForm(request.POST)
+        form = forms.FarmAddForm(request.POST)
         if form.is_valid():
             farm = Farm.objects.create(**form.cleaned_data)
             messages.success(request, '{} created'.format(farm))
             return http.HttpResponseRedirect(reverse('farm_show', kwargs={'pk':farm.pk}))
     else:
-        form = forms.FarmForm()
+        form = forms.FarmAddForm()
 
-    return shortcuts.render(request, 'rds/farm_form.html', {
+    return shortcuts.render(request, 'rds/farm_add_form.html', {
         'form': form,
         'farms': Farm.objects.all()
     })
@@ -433,12 +436,16 @@ def farm_package_list(request, pk):
 def farm_setup(request, pk):
     farm = shortcuts.get_object_or_404(Farm, pk=pk)
 
-    queryset = farm.servers.filter(roles__icontains=ServerRole.RDS_AD)
-    ad = shortcuts.get_object_or_404(queryset)
+    if request.method == 'POST':
+        form = FarmForm(data=request.POST, instance=farm)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Updated {}'.format(farm))
+            return http.HttpResponseRedirect(reverse('farm_list'))
+    else:
+        form = FarmForm(instance=farm)
 
-    form = ActiveDirectoryForm(instance=ad)
-
-    return shortcuts.render(request, 'farm_existing_ad_setup_form.html', {
+    return shortcuts.render(request, 'rds/farm_form.html', {
         'farms': Farm.objects.all(),
         'farm':farm,
         'form':form

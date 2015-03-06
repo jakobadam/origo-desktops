@@ -18,3 +18,12 @@ padding-left: 30px;
 font-size: 14px;
 font-weight: 400;
 }
+
+h1{
+    font-size: 51px;
+}
+h1,h2,h3{
+    margin-top:0;
+    padding-top:0;
+}
+
