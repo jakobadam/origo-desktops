@@ -19,7 +19,7 @@ pieces of a working production ready RDS infrastructure. In
 addition, you're left in the dark when it comes to rolling out new
 software, and handling upgrades.
 
-Things should **not** be like this. We think it should be within a few
+Things should *not* be like this. We think it should be within a few
 clicks on an icon to get your own RDS infrastructure running, software
 upgrades should be seamless, and scaling a breeze.
 
@@ -35,12 +35,3 @@ User Guide
       user/certificates
       user/software
       user/licensing
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
