@@ -1,6 +1,6 @@
 <form method="GET" action="{% url 'farm_clone' pk=farm.pk %}" style="display:inline-block">
   <button type="submit" title="Clone Farm {{farm}}"
-          class="btn btn-info btn-xs">Clone Farm
+          class="btn btn-info btn-xs">Copy Farm
     <span class="glyphicon glyphicon-duplicate"></span>
   </button>
 </form>
@@ -28,7 +28,7 @@
 {% if farm.status == 'open' or farm.status == 'error' %}
 <form method="GET" action="{% url 'farm_clone' pk=farm.pk %}" style="display:inline-block">
   <button type="submit" title="Clone Farm {{farm}}"
-          class="btn btn-info btn-xs">Install Software
+          class="btn btn-info btn-xs">Install All Software
     <span class="glyphicon glyphicon-download-alt"></span>
   </button>
 </form>
