@@ -20,7 +20,7 @@
 
   <div class="clearfix">
     <div class="form-inline pull-right">
-      Add to farm:
+      Install on farm:
       <select class="form-control" id="farm-select" data-toggle="redirect">
         {% for f in farms %}
         <option label="{% if f.status != 'open' %}{{f}} ({{f.status}}){% else %}{{f}}{% endif %}"

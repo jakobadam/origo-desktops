@@ -33,12 +33,12 @@
           <td>{{fp.package.name}}</td>
           <td>{{fp.package.version}}</td>
           <td>
-            {% if fp.installing %}
+            {% if fp.status == 'installing' %}
             <div class="spinner-wrapper" style="position:relative">&nbsp;
               <div class="spinner"></div>
             </div>
             {% else %}
-              {% if fp.installed == True %}
+              {% if fp.status == 'installed' %}
             <span class="glyphicon glyphicon-ok"></span>
               {% else %}
             <span class="glyphicon glyphicon-remove"></span>
@@ -47,13 +47,26 @@
           </td>
           <td>
 
-            {% if not fp.installed %}
+            {% if farm.status == 'open' %}
+                {% if fp.status != 'installed' %}
             <form method="POST" action="{% url 'package_install' pk=fp.id%}" style="display:inline-block">
               <button type="submit" title="Install {{fp.name}}"
                       class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon glyphicon-download-alt"></span></button>
             </form>
+                {% endif %}
+
+                {% if fp.status == 'open' %}
+            <form method="POST" action="{% url 'farm_package_delete' farm_package_pk=fp.id %}" 
+                  style="display:inline-block">
+              <button type="submit" title="Remove {{fp}}"
+                      class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-trash"></span></button>
+            </form>
+                {% endif %}
+
             {% endif %}
+
 
             <!-- <form method="GET" action="{% url 'package_update' pk=fp.id %}" style="display:inline-block"> -->
             <!--   <button type="submit" title="Edit" -->
@@ -69,12 +82,6 @@
             </form>
             {% endif %}
 
-            <form method="POST" action="{% url 'farm_package_delete' farm_package_pk=fp.id %}" style="display:inline-block">
-              <button type="submit" title="Remove {{fp}}"
-                      class="btn btn-danger btn-xs">
-                <span class="glyphicon glyphicon-trash"></span></button>
-            </form>
-            
           </td>
         </tr>
         {% endfor %}
