@@ -5,7 +5,8 @@ from rds.models import (
     FarmPackage,
     Package,
     Server,
-    ActiveDirectory
+    ActiveDirectory,
+    State
     )
 
 class FarmPackageInline(admin.TabularInline):
@@ -28,3 +29,4 @@ admin.site.register(Package, PackageAdmin)
 admin.site.register(Server, ServerAdmin)
 admin.site.register(Farm, FarmAdmin)
 admin.site.register(ActiveDirectory)
+admin.site.register(State)

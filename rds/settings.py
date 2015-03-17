@@ -129,7 +129,7 @@ LOGGING = {
             'level':'DEBUG',
             'class':'logging.FileHandler',
             # 'filename': '/var/log/gunicorn/django.log',
-            'filename': 'django.log',
+            'filename': 'log/django.log',
             'formatter':'verbose'
             }
     },

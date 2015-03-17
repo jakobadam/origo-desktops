@@ -169,11 +169,8 @@ def package_uninstall(request, pk=None):
 def setup(request, **kwargs):
     state = State.first_or_create()
 
-    if state.location == State.LOCATION_AD_TYPE:
-        return http.HttpResponseRedirect(reverse('ad_type'))
-
-    if state.location == State.LOCATION_AD_EXTERNAL_SETUP:
-        return http.HttpResponseRedirect(reverse('ad_external_setup'))
+    if state.location == State.LOCATION_AD_SETUP:
+        return http.HttpResponseRedirect(reverse('ad_setup'))
 
     if state.location == State.LOCATION_SERVER_WAIT:
         return shortcuts.render(request, 'server_wait.html')
@@ -212,7 +209,7 @@ def cancel(request):
 
     # TODO: destroy virtual machines
 
-    state.location = State.LOCATION_AD_TYPE
+    state.location = State.LOCATION_AD_SETUP
     state.save()
     return http.HttpResponseRedirect(reverse('setup'))
 
@@ -221,7 +218,7 @@ def ad_type(request):
     if request.method == 'POST':
         if request.POST.get('existing_active_directory'):
             state.existing_active_directory = True
-            state.location = State.LOCATION_AD_EXTERNAL_SETUP
+            state.location = State.LOCATION_AD_SETUP
         else:
             state.existing_active_directory = False
             state.location = State.LOCATION_SERVER_WAIT
@@ -229,7 +226,7 @@ def ad_type(request):
         return http.HttpResponseRedirect(reverse('setup'))
     return shortcuts.render(request, 'rds/active_directory_type.html')
 
-def ad_external_setup(request):
+def ad_setup(request):
     if request.method == 'POST':
 
         state = State.first_or_create()

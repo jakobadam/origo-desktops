@@ -23,8 +23,8 @@ urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(url=reverse_lazy('setup'), permanent=True)),
 
     url(r'^setup/$',             'rds.views.setup',             name='setup'),             
-    url(r'^setup/ad/external/$', 'rds.views.ad_external_setup', name='ad_external_setup'), 
-    url(r'^setup/ad/type/$',     'rds.views.ad_type',           name='ad_type'),           
+    url(r'^setup/ad/external/$', 'rds.views.ad_setup',          name='ad_setup'), 
+    # url(r'^setup/ad/type/$',     'rds.views.ad_type',           name='ad_type'),           
     url(r'^setup/cancel/$',      'rds.views.cancel',            name='cancel'),            
     # url(r'^setup/server/$',      'rds.views.server_setup',      name='server_setup'),      
 

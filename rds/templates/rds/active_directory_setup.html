@@ -17,7 +17,7 @@ height: 200px;
   <h3>Connect to Active Directory</h3>
 
   <div class="login-form">
-    <form method="POST" action="{% url 'ad_external_setup' %}">
+    <form method="POST" action="{% url 'ad_setup' %}">
 
       {{form|crispy}}
 
@@ -28,9 +28,14 @@ height: 200px;
     </form>
   </div>
 
-  <form method="POST" action="{% url 'cancel' %}">
-    <button class="btn btn-link"><span class="fui-arrow-left"></span>Cancel</button>
-  </form>
+  <!-- <form method="POST" action="{% url 'cancel' %}"> -->
+  <!--   <button class="btn btn-link"><span class="fui-arrow-left"></span>Cancel</button> -->
+  <!-- </form> -->
+
+  <p><span class="fui-question-circle"></span> Remote Desktop Services (RDS) must connect to an Active
+    Directory (AD). Therefore you have the option to <i>connect to
+      your existing AD</i> or install a new one.
+  </p>
 
 </div>
 {% endblock%}
