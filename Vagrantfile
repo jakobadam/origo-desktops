@@ -8,6 +8,11 @@ Vagrant.configure("2") do |config|
     # c.vm.box_url = "https://dl.dropboxusercontent.com/u/835753/ubuntu-1404-server-vagrant-kvm.box"
     c.vm.hostname = "ubuntu"
 
+    c.vm.provider :libvirt do |domain|
+      domain.memory = 2048
+      domain.cpus = 2
+    end
+
     # Private networks doesn't work at the moment
     # c.vm.network :private_network, ip: "192.168.50.10"
 
@@ -17,9 +22,13 @@ Vagrant.configure("2") do |config|
     c.vm.network :forwarded_port, guest: 8000, host: 8000
 
     # dev server hangs
-    # c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant"
+    c.vm.synced_folder ".", "/vagrant", :nfs => true
 
-    c.vm.synced_folder ".", "/vagrant", :type => '9p'
+    # slow slow slow
+    # c.vm.synced_folder ".", "/vagrant", :type => '9p'
+
+    # not available
+    # c.vm.synced_folder ".", "/vagrant", :type => 'rsync-auto'
   end
 
   config.vm.define :u do |c|
