@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
-    c.vm.box_url = "http://192.168.50.137/rds.box"
+    c.vm.box_url = "http://192.168.50.63/rds.box"
     c.vm.box = "rds"
     c.vm.guest = :windows
 
@@ -43,13 +43,13 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :sh1 do |c|
-    c.vm.box_url = "http://192.168.50.137/windows-2012R2.box"
+    c.vm.box_url = "http://192.168.50.63/windows-2012R2.box"
     c.vm.box = "windows-2012R2"
     c.vm.guest = :windows
   end
 
   config.vm.define :ad do |c|
-    c.vm.box_url = "http://192.168.50.137/windows-ad.box"
+    c.vm.box_url = "http://192.168.50.63/windows-2012R2-ad.box"
     c.vm.box = "windows-ad"
     c.vm.guest = :windows
   end
@@ -57,7 +57,7 @@ Vagrant.configure("2") do |config|
   config.vm.define :windows do |c|
     # Uhh. Works now:)
     # c.vm.hostname = "test"
-    c.vm.box_url = "http://192.168.50.137/windows-2012R2.box"
+    c.vm.box_url = "http://192.168.50.63/windows-2012R2.box"
     # c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
     c.vm.box = "windows-2012R2"
     c.vm.guest = :windows

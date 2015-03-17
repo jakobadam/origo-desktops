@@ -1,6 +1,6 @@
 -e git+https://github.com/jakobadam/django-caboskin.git#egg=caboskin
 -e git+https://github.com/jakobadam/pywinrm@cli#egg=pywinrm
-django==1.7.1
+django==1.7
 django-bower
 django-crispy-forms
 django-debug-toolbar
