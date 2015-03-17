@@ -5,9 +5,9 @@ Introduction
 
 .. _`Remote Desktop Services`: https://technet.microsoft.com/en-us/windowsserver/ee236407.aspx 
 
-`Remote Desktop Services`_ (RDS) is a Windows Server 2012 R2 bundled
+`Remote Desktop Services`_ (RDS) is a product Windows Server 2012 R2 bundled
 product that brings native windows applications to any device
-anywhere. The infrastructure of RDS consists of quite a few
+anywhere. The infrastructure of RDS consists of these
 components:
 
 #. Broker
@@ -17,43 +17,45 @@ components:
 #. Session Host
 #. Database
 
-It's possible to place some of the components on the same server,
-others, e.g., broker and database, not! In addition, the get a working
-RDS solution, the following non-RDS components are also needed:
+Some of the components may reside on the same server, others not. In
+addition, to get a working RDS solution, the following non-RDS
+components are also needed:
 
 #. Active Directory
 #. Public DNS
 
-To make things easy for you we have pre-baked an opinionated
-architecture, ready to spin up; it's depicted below.
+To make things easy for you we have pre-baked an architecture, ready
+to spin up; it's depicted below.
 
 .. image:: /_static/rds-architecture.png
 
 RDS Orchestrator helps orchestrate and spin up several RDS farms with
-the architecture above. Initially to do so is a four step process
-consisting of:
+the architecture above. To do so is a four step process consisting of:
 
 #. `Configuring Active Directory`_
 #. `Uploading software`_
-#. `Installing software to farm`_
-#. `Start farm`_
+#. `Installing software`_
+#. `Deploying farm`_
 
-Underneath the different states of the farm is depicted:
+The different states of the farm are:
 
 .. image:: /_static/rds-farm-states.png
 
-Initially a farm is *open* for installing software. When all
-software is installed, the farm can be *sealed*. In practice,
-software is installed on a single server, and when finished, the disk
-on that server is sealed and thereafter used as a base for all future
-RDS Session Hosts on the farm.
+To begin with, a farm is *open* for installing software. When all
+software is installed, the farm can be *sealed*, preventing further
+software modifications.
+
+In practice, software is installed on a single RDS Session Host
+server. The administrator can then test and adapt the farm to
+feedback, and when finished, seal it and deploy it in multiple
+instances to production.
 
 Configuring Active Directory
 ============================
 
 A required component of RDS is the Active Directory (AD). There are
 two options for AD: either use the one bundled with RDS Orchestrator
-or connect to your existing AD.
+or connect your existing AD.
 
 In order to register new RDS servers and DNS entries in the AD you
 *must* provide RDS Orchestrator with credentials for a user with
@@ -65,8 +67,7 @@ the form; a screenshot of the form is shown below.
 .. image:: /_static/rds-connect-active-directory.png
 
 All administrative traffic between the RDS Orchestrator, the Active
-Directory and the RDS Servers use Kerberos, avoiding passing
-credentials around in the clear.
+Directory and the RDS Servers use Kerberos authentication.
 
 .. TODO: What about the WEB UI when iframed in origo.io?
 .. TODO: Currently user credentials are saved in cleartext. If
@@ -77,22 +78,21 @@ Uploading software
 
 RDS Orchestrator includes a catalog of software to which new software
 installers should be uploaded; supported installers can be of the
-types MSI, EXE or BAT. These installers *must* be able to run
-without any user input during installation. The point is to completely
-automate installation of all software on the RDS session host.
+types MSI, EXE or BAT. The installers must run without any user input
+during installation, allowing a completely automated installation of
+all software on the RDS session host.
 
-If the installer consists of multiple files it *must* be zipped,
-before uploading. After the ZIP is uploaded, the software is
-extracted, and a qualified guess on which file is the installer is
-made. Executable files which name contains 'install' or 'setup' are
-prioritized first. If not present, the first of any executable is
+If the installer consists of multiple files it can be zipped before
+uploading. After the ZIP is uploaded, the software is automatically
+extracted, and a heuristic determines which file is the
+installer. Executable files whose name contains 'install' or 'setup'
+are prioritized first. If not present, the first of any executable is
 chosen.
 
-Installers might require additional arguments. This can be put into
-`args` when adding or updating a software package; e.g., in the
-screenshot below a silent install flag `-ms` is added to the Firefox
-package in order to avoid any GUI prompts during installation -- a GUI
-which is not available during the automated setup.
+Installers might require additional arguments which you can supply
+when uploading. As an example, the screenshot shows a silent install
+flag `-ms` added to the Firefox package in order to suppress GUI
+prompts during installation.
 
 .. image:: /_static/rds-software-add.png
 
@@ -116,25 +116,23 @@ dirname path of `install.bat`:
     md %DIR%
     xcopy %~dp0* %DIR% /s /e
 
-Installing software to farm
-=======================
+Installing software
+===================
 
 After you have uploaded a software package you install it on the farm
-by clicking on the install button on the software packages page. Here's a
-screenshot of it:
+by clicking on the install button on the software packages page:
 
 .. image:: /_static/rds-software-list.png
 
 On the page there's a dropdown with your farms. To install software to
 another of these farms first select it from that dropdown.
 
-If the install process is un-successful you will get an option to view
-the error message, you can then edit the software package
-appropriately and then re-run the installation for the specific
-erroneous software packages.
+If the install process is unsuccessful you will get an option to view
+the error message. You can then edit the software package
+appropriately and re-run the installation.
 
-Start farm
-=========
+Deploying farm
+==============
 
 When your required software is installed successfully on the farm, the
 next step is to start the farm; this process shuts down the server
@@ -157,4 +155,3 @@ Farm Servers
 Overview of the servers in a farm:
 
 .. image:: /_static/rds-farm-servers.png
-
