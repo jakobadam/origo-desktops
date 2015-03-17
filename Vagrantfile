@@ -15,7 +15,11 @@ Vagrant.configure("2") do |config|
     c.vm.network :forwarded_port, guest: 80, host: 8080
     # django 
     c.vm.network :forwarded_port, guest: 8000, host: 8000
-    c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant-root"
+
+    # dev server hangs
+    # c.vm.synced_folder ".", "/vagrant", :nfs => true, id: "vagrant"
+
+    c.vm.synced_folder ".", "/vagrant", :type => '9p'
   end
 
   config.vm.define :u do |c|
