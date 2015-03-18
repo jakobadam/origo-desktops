@@ -10,4 +10,6 @@ if($args.Count -eq 0){
 }
 
 $dns_server = $args[0]
+
+# FIXME: This fails if the network is not named Ethernet
 netsh dnsclient set dnsservers name="Ethernet" source=static address="$dns_server"
