@@ -1,15 +1,28 @@
+$dns_ip = $args[0]
+$interfaces = Get-DnsClientServerAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet*"
+
 function usage(){
     $path = $MyInvocation.ScriptName
     echo "Usage: powershell $path DNS"
 }
 
-if($args.Count -eq 0){
-    echo 'Error. Missing DNS argument'
-    usage
-    exit 1
+function get_dns(){
+    ForEach($interface in $interfaces){
+        ForEach($ip in $interface.ServerAddresses){
+            echo "$ip"
+        }
+    }
 }
 
-$dns_server = $args[0]
+function set_dns(){
+    ForEach($interface in $interfaces){
+        Set-DnsClientServerAddress -InputObject $interface -ServerAddresses $dns_ip
+    }
+}
 
-# FIXME: This fails if the network is not named Ethernet
-netsh dnsclient set dnsservers name="Ethernet" source=static address="$dns_server"
+if(!$dns_ip){
+    get_dns
+}
+else{
+    set_dns
+}

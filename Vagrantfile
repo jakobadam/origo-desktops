@@ -25,22 +25,11 @@ Vagrant.configure("2") do |config|
     # c.vm.synced_folder ".", "/vagrant", :nfs => true
 
     # slow slow slow
-    # c.vm.synced_folder ".", "/vagrant", :type => '9p'
+    c.vm.synced_folder ".", "/vagrant", :type => '9p'
 
     # not available
     # c.vm.synced_folder ".", "/vagrant", :type => 'rsync-auto'
   end
-
-  config.vm.define :u do |c|
-    c.vm.box = "u"
-    # c.vm.box_url = "https://dl.dropboxusercontent.com/u/835753/ubuntu-1404-server-vagrant-kvm.box"
-    c.vm.hostname = "ubuntu"
-
-    # Private networks doesn't work at the moment
-    # c.vm.network :private_network, ip: "192.168.50.10"
-
-  end
-
 
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
@@ -65,18 +54,26 @@ Vagrant.configure("2") do |config|
     c.vm.box_url = "http://192.168.50.63/windows-2012R2-ad.box"
     c.vm.box = "windows-ad"
     c.vm.guest = :windows
+    c.ssh.insert_key = false
+
+    c.vm.provider :libvirt do |domain|
+      domain.memory = 4048
+      domain.cpus = 2
+    end
+
   end
 
   config.vm.define :windows do |c|
-    # Uhh. Works now:)
-    # c.vm.hostname = "test"
     c.vm.box_url = "http://192.168.50.63/windows-2012R2.box"
-    # c.vm.box_url = "file:///srv/boxes/windows-2012R2.box"
     c.vm.box = "windows-2012R2"
     c.vm.guest = :windows
     c.ssh.insert_key = false
 
-    # 
+    c.vm.provider :libvirt do |domain|
+      domain.memory = 4048
+      domain.cpus = 2
+    end
+
     # c.vm.synced_folder ".", "S:", :nfs => true, id: "vagrant-root"
 
     # Works, but sub-optimal due to manual sync
@@ -90,8 +87,16 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :windows2 do |c|
-    c.vm.box = "windows-2012-R2-1"
+    c.vm.box_url = "http://192.168.50.63/windows-2012R2.box"
+    c.vm.box = "windows-2012R2"
     c.vm.guest = :windows
+    c.ssh.insert_key = false
+
+    c.vm.provider :libvirt do |domain|
+      domain.memory = 4048
+      domain.cpus = 2
+    end
+    c.vm.network :forwarded_port, guest: 3389, host: 3389
   end
 
 end
