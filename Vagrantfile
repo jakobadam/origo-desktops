@@ -77,7 +77,7 @@ Vagrant.configure("2") do |config|
     # c.vm.synced_folder ".", "S:", :nfs => true, id: "vagrant-root"
 
     # Works, but sub-optimal due to manual sync
-    # c.vm.synced_folder ".", "/cygdrive/c/vagrant", type: "rsync", rsync__exclude: [".hg/", "software"]
+    c.vm.synced_folder ".", "/cygdrive/c/vagrant", type: "rsync", rsync__exclude: [".hg/", "software"]
 
     # Would prefer this, but is not supported
     # c.vm.synced_folder ".", "/vagrant", :type => "smb"
