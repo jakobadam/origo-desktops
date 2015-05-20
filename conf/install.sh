@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#
+# Install the Origo Desktop Controller on an empty Ubuntu Server
 
 if [ "$(id -u)" != "0" ]; then
     echo "ERROR! You must execute the script as the 'root' user."
@@ -28,7 +30,7 @@ ldap-utils
 "
 apt-get --yes install $PACKAGES
 
-# NOTE: We don't need this in production just the files
+# NOTE: We don't need nodejs in production just the static files
 # bower
 DEV_PACKAGES="
 nodejs
@@ -52,8 +54,29 @@ pip install -r /vagrant/conf/requirements.txt --src=$HOME
 su $USER -c 'yes n | /vagrant/manage.py bower install'
 /vagrant/manage.py collectstatic --noinput
 
-# samba-tool domain provision --use-rfc2307 --interactive
-. install_samba.sh
+echo '==> Installing Samba'
+mkdir /srv/samba
+chown -R www-data: /srv/samba
+
+cat >> /etc/samba/smb.conf <<EOF
+[share]
+    comment = Software
+    writable = yes
+    path = /srv/samba
+    browsable = yes
+    guest ok = yes
+    read only = no
+    create mask = 0755
+
+[scripts]
+    comment = Scripts
+    writable = yes
+    path = /srv/www/rds/scripts
+    browsable = yes
+    guest ok = yes
+    read only = no
+    create mask = 0777
+EOF
 
 echo '==> Enable Celery Service'
 # Celery init script uses su => www-data must be able to login

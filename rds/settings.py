@@ -124,27 +124,27 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
-            },
-        'file': {
-            'level':'DEBUG',
-            'class':'logging.FileHandler',
-            # 'filename': '/var/log/gunicorn/django.log',
-            'filename': 'log/django.log',
-            'formatter':'verbose'
             }
+        #,
+        # 'file': {
+        #     'level':'DEBUG',
+        #     'class':'logging.FileHandler',
+        #     'filename': '/var/log/gunicorn/django.log',
+        #     'formatter':'verbose'
+        #     }
     },
     'loggers': {
         '':{
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO'
         },
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'propagate': False,
             'level': 'INFO',
         },
         'rds': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'propagate': False,
             'level': 'DEBUG'
         }
