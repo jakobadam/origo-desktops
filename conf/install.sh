@@ -10,6 +10,7 @@ fi
 # NOTE: When run with vagrant this script is present in /tmp
 echo '==> Copying configuration to /etc'
 rsync -rlptv /vagrant/conf/etc/ /etc/
+chmod 640 /etc/default/celeryd
 
 mkdir -p /srv/www
 ln -s /vagrant /srv/www/rds

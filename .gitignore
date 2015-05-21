@@ -1,0 +1,4 @@
+*.pyc
+.vagrant
+static
+db.sqlite3
