@@ -1,67 +1,44 @@
 # One-Click RDP Services
 
-## Quick Start
+## Development Quick Start
 
 Install prerequisites:
-* vagrant
-* vagrant-kvm
+* Download and install [vagrant](https://www.vagrantup.com/downloads.html)
+* install vagrant-libvirt ```vagrant plugin install vagrant-libvirt```
 
+Start controller server:
 ```
-$ vagrant up ubuntu
-```
-
-Point browser to http://host:8080
-
-## Installing prerequsites
-
-### Vagrant
-
-I use vagrant to setup a test environment with a Ubuntu server and
-Windows server.
-
-Install vagrant:
-```
-$ wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.5_x86_64.deb
-$ sudo dpkg -i vagrant_1.6.5_x86_64.deb
+$ vagrant up ubuntu --provider=libvirt
 ```
 
-Install vagrant-kvm plugin
+Provision the server:
+```
+$ vagrant ssh ubuntu
+$ cd /vagrant/conf
+$ ./install.sh
+```
 
-**More: Website: https://github.com/adrahon/vagrant-kvm/blob/master/README.md**
-```bash
-PACKAGES="
-bsdtar
-gcc
-git
-libvirt-bin
-libvirt-dev
-libxml2-dev
-libxslt-dev
-nfs-kernel-server
-qemu
-qemu-kvm
-ruby2.0-dev
-redir"
-sudo apt-get -y install $PACKAGES
+Point browser to http://localhost:8080
+
+## Images
+
+Images are built with [Packer](//packer.io). Templates for creating
+Ubuntu 14.04 Server are Windows 2012 R2 are available at
+https://github.com/jakobadam/packer-qemu-templates
+
+Note: The server running the RDS required Active Directory must be
+sysprep'ed. Otherwise, Windows won't join servers to the domain due to
+a duplicate id.
+
 ```
 
 ```
-sudo vagrant plugin install vagrant-kvm
-```
 
-Otherwise complains about permission errors:
-```
-sudo aa-complain /usr/lib/libvirt/virt-aa-helper
-```
-
-Add user to libvirtd group:
-```
-groups $USER | grep 'libvirtd' || adduser $USER kvm
-```
-
-su - $USER
+TODO: Add script to the Windows Packer template to setup
+RDS.
 
 ## RDS
+
 
 ### RD Session Deployment
 

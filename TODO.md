@@ -61,11 +61,4 @@ Can only be run from the controlling computer:
 Get-RDRemoteApp
 ```
 
-## SSH public key auth
-
-"Authentication refused: bad ownership or modes for directory
-/cygdrive/c/Users/vagrant"
-
-Fix:
-* StrictModes off in /etc/sshd_config
 
