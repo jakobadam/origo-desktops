@@ -1,4 +1,9 @@
-# One-Click RDP Services
+# Origo Desktops: One-Click Remote Desktop Services
+
+Windows Remote Desktop Services (RDS) provides access to native Windows apps from anywhere. This is great, but setting up the infrastructure is difficult; handling software deployment and scaling as you go even more so.
+Windows Server 2012 R2 provides most of the pieces of a powerful RDS setup, but the setup is thoroughly cumbersome to get right. 
+
+We aim to improve this with Origo Desktops.
 
 ## Development Quick Start
 
