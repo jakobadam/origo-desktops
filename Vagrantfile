@@ -8,15 +8,14 @@ Vagrant.configure("2") do |config|
     c.vm.hostname = "ubuntu"
 
     c.vm.provider :libvirt do |domain|
-      domain.memory = 2048
-      domain.cpus = 2
+      domain.memory = 512
+      domain.cpus = 1
     end
 
     # port 80 on localhost:8080
     c.vm.network :forwarded_port, guest: 80, host: 8080
 
-    # access Django directly
-    # port 8000 on localhost:8000
+    # access Django directly: port 8000 on localhost:8000
     c.vm.network :forwarded_port, guest: 8000, host: 8000
 
     # dev server hangs
@@ -32,19 +31,18 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :rds do |c|
+    c.vm.provider :libvirt do |domain|
+      domain.memory = 2048
+      domain.cpus = 2
+    end
+
     c.vm.hostname = "rds"
     c.vm.box_url = "http://static.aarhusworks.com/boxes/windows-2012R2-standard-amd64.box"
     c.vm.box = "windows-2012-R2"
     c.vm.guest = :windows
-
     c.vm.communicator = "winrm"
-    c.ssh.insert_key = false
 
-    # c.vm.synced_folder ".", "/cygdrive/c/vagrant", type: "rsync", rsync__exclude: [".hg/", "software"]
-    # c.vm.synced_folder ".", "/vagrant", :type => "smb"
-
-    # Forward IIS
-    # c.vm.network :forwarded_port, guest: 80, host: 8001
+    c.winrm.password = "V@grant"
   end
 
   config.vm.define :ad do |c|
