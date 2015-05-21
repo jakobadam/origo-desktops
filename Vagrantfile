@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :ubuntu do |c|
     c.vm.box = "ubuntu-1404-server"
-    c.vm.box_url = "//static.aarhusworks.com/boxes/ubuntu-1404-server.box"
+    c.vm.box_url = "http://static.aarhusworks.com/boxes/ubuntu-1404-server.box"
     c.vm.hostname = "ubuntu"
 
     c.vm.provider :libvirt do |domain|
@@ -33,8 +33,8 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :rds do |c|
     c.vm.hostname = "rds"
-    c.vm.box_url = "//static.aarhusworks.com/boxes/windows-2012R2-standard-amd64.box"
-    c.vm.box = "rds"
+    c.vm.box_url = "http://static.aarhusworks.com/boxes/windows-2012R2-standard-amd64.box"
+    c.vm.box = "windows-2012-R2"
     c.vm.guest = :windows
 
     c.vm.communicator = "winrm"
