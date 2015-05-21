@@ -1,1 +1,1 @@
-c:/windows/system32/sysprep/sysprep.exe /generalize /oobe /quiet 
+c:/windows/system32/sysprep/sysprep.exe /generalize /oobe /quiet /reboot
