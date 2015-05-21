@@ -52,7 +52,7 @@ echo '==> Installing Webapp'
 pip install -r /vagrant/conf/requirements.txt --src=$HOME
 
 /vagrant/manage.py syncdb --noinput
-su $USER -c 'yes n | /vagrant/manage.py bower install'
+su $SUDO_USER -c 'yes n | /vagrant/manage.py bower install'
 /vagrant/manage.py collectstatic --noinput
 
 echo '==> Installing Samba'
