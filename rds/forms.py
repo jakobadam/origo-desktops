@@ -97,7 +97,7 @@ class ActiveDirectoryForm(ServerForm):
         password = data.get('password')
 
         # TODO: Is this always the case sub.example.com => sub\username
-        domain_account = "{}\{}".format(domain.split('.')[0], user)
+        domain_account = "{}@{}".format(user, domain)
 
         try:
             ldap.find_user(ip, domain, user, auth=(domain_account,password))
