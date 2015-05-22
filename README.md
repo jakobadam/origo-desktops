@@ -23,7 +23,13 @@ $ cd /vagrant/conf
 $ ./install.sh
 ```
 
-Point browser to http://localhost:8080
+Point browser to http://localhost:8080 or http://GUEST_IP.
+
+During development you'll likely want to run the Django development server instead of gunicorn / nginx. This enables Python debug info and changes to Javascript are immediately available:
+```
+$ sudo service stop gunicorn
+$ /vagrant/runserver.sh
+```
 
 ### Install Active Directory
 
