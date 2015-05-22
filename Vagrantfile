@@ -46,24 +46,16 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :ad do |c|
-    c.vm.box_url = "/srv/boxes/windows-2012R2-ad.box"
-    c.vm.box = "ad"
-    c.vm.guest = :windows
-    c.vm.communicator = "winrm"
-
-    # something is wrong with the vagrant keys?!?
-    c.vm.synced_folder ".", "/vagrant", disabled: true
-    #c.ssh.password = "V@grant"
-    c.winrm.password = "V@grant"
-
-    # c.vm.network :private_network, ip: "192.168.121.10"
-
-    c.ssh.insert_key = true
-
     c.vm.provider :libvirt do |domain|
       domain.memory = 2048
       domain.cpus = 2
     end
+    c.vm.hostname = "ad"
+    c.vm.box_url = "http://static.aarhusworks.com/boxes/windows-2012R2-standard-amd64.box"
+    c.vm.box = "windows-2012-R2"
+    c.vm.guest = :windows
+    c.vm.communicator = "winrm"
+    c.winrm.password = "V@grant"
   end
 
   config.vm.define :sh1 do |c|
