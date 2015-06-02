@@ -91,15 +91,9 @@ def package_add(request):
             instance = form.save(commit=False)
             instance.save(file_updated=True)
             messages.success(request, u'{} uploaded'.format(instance))
-            url = reverse('package_list_redirect')
-            if request.is_ajax():
-                return http.JsonResponse({'location': url})
-            else:
-                return http.HttpResponseRedirect(url)
+            return http.HttpResponseRedirect(reverse('package_list_redirect'))
         else:
-            if request.is_ajax():
-                # trigger ajax error handler
-                status = 422
+            status = 422
     else:
         form = PackageForm()
 

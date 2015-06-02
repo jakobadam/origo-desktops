@@ -52,7 +52,7 @@ BOWER_INSTALLED_APPS = (
     #'zxcvbn',
     'spin.js',
     'bootstrap-filestyle',
-    'bootstrap-fileprogress'
+    'bootstrap-uploadprogress'
 )
 
 MIDDLEWARE_CLASSES = (
