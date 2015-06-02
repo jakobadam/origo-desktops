@@ -33,6 +33,8 @@ $ /vagrant/runserver.sh
 
 ### Install Active Directory
 
+RDS must connect to an Active Directory. Below are the commands to install it:
+
 ```bash
 $ vagrant up ad
 $ AD_IP=$(vagrant ssh-config ad | grep HostName | awk '{print $2}')
