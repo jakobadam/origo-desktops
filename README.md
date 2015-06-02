@@ -33,7 +33,7 @@ $ /vagrant/runserver.sh
 
 ### Install Active Directory
 
-RDS must connect to an Active Directory. Below are the commands to install it:
+RDS must connect to an Active Directory. Below are the commands to install it on Windows Server 2012 R2:
 
 ```bash
 $ vagrant up ad
