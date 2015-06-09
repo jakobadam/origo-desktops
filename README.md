@@ -5,6 +5,19 @@ Windows Server 2012 R2 provides most of the pieces of a powerful RDS setup, but 
 
 We aim to improve this with Origo Desktops.
 
+## Overview of RDS
+
+Components of an RDS deployment are:
+* RD Gateway: 
+* RD Connection Broker:
+* RD Session Host(s): Pool of servers (session hosts) that handles connections.
+* [RDS Factor](https://github.com/jakobadam/RDSFactor)
+* RD Web Access: Web-UI with published windows applications.  
+
+![Architecture](https://github.com/jakobadam/RDSFactor/raw/master/architecture.png)
+
+Origo Desktops helps orchestrate and spin up all components.
+
 ## Development Quick Start
 
 Install prerequisites:
@@ -81,19 +94,6 @@ a duplicate id.
 TODO: Add script to the Windows Packer template to setup
 RDS.
 
-## RDS
-
-
-### RD Session Deployment
-
-Components of a RD deployment are:
-* RD Connection Broker
-* RD Web Access
-* RD Session Host(s)
-
-### RD Session Collection
-
-Pool of servers (session hosts) that handles connections.
 
 ## Celery
 
