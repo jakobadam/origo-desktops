@@ -100,3 +100,7 @@ RDS.
 ```
 $ runcelery.sh
 ```
+
+## License
+
+Origo Desktops is an open source project, sponsored by Origo Systems A/S, and released under terms of the GNU General Public License, version 3.
