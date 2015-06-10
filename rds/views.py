@@ -132,12 +132,13 @@ def package_install(request, pk=None):
     TODO: take the server to install on as a query arg
     """
     farm_package = shortcuts.get_object_or_404(FarmPackage, pk=pk)
+    farm = farm_package.farm
     server = Server.objects.filter(roles__icontains='session_host').first()
 
     if not server or not server.user or not server.password:
         err = 'You must set the username and password before doing this'
         messages.error(request, err)
-        return http.HttpResponseRedirect(reverse('package_list_redirect'))
+        return http.HttpResponseRedirect(reverse('farm_package_list', kwargs={'pk': farm.pk}))
 
     farm_package.status = FarmPackage.STATUS_INSTALLING
     tasks.package_install.delay(farm_package.pk, server.pk)
@@ -145,7 +146,7 @@ def package_install(request, pk=None):
     msg = u'Installing {} on {}'.format(farm_package.package, server)
     log.info(msg)
     messages.info(request, msg)
-    return http.HttpResponseRedirect(reverse('package_list_redirect'))
+    return http.HttpResponseRedirect(reverse('farm_package_list', kwargs={'pk': farm.pk}))
 
 @require_http_methods(['POST'])
 def package_uninstall(request, pk=None):
