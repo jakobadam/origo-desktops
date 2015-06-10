@@ -79,7 +79,7 @@ Above I'm using winrm from the host machine. Winrm is already installed on the `
 $ pip install -e git+https://github.com/jakobadam/pywinrm@cli#egg=pywinrm
 ```
 
-Note: I have an outstanding pull-request in the upstream pywinrm repo: https://github.com/diyan/pywinrm/pull/42. Therefore I pip install the branch.
+Note: I have an outstanding pull-request in the upstream pywinrm repo: https://github.com/diyan/pywinrm/pull/42. Therefore I pip install the branch. For more example of how to use the winrm cli have a look at: https://github.com/jakobadam/pywinrm/blob/cli/winrm/cli.py
 
 
 
