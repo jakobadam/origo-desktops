@@ -93,18 +93,13 @@ Note: The server running the RDS required Active Directory must be
 sysprep'ed. Otherwise, Windows won't join servers to the domain due to
 a duplicate id.
 
-```
+Note: Origo Desktops uses pywinrm to control the windows servers, we don't support kerberos yet. Until then Windows servers must have their requirements for winrm relaxed:
 
 ```
-
-TODO: Add script to the Windows Packer template to setup
-RDS.
-
-
-## Celery
-
-```
-$ runcelery.sh
+call winrm set winrm/config/client/auth @{Basic="true"}
+call winrm set winrm/config/service/auth @{Basic="true"}
+call winrm set winrm/config/service @{AllowUnencrypted="true"}
+call winrm set winrm/config @{MaxTimeoutms = "3600000"}
 ```
 
 ## License
