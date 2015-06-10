@@ -464,6 +464,16 @@ def farm_deployment(request, pk):
         'farms': Farm.objects.all()
     })
 
+@require_http_methods(['POST'])
+def farm_install_packages(request, pk):
+    farm = shortcuts.get_object_or_404(Farm, pk=pk)
+    farm.install_packages()
+    
+    msg = u'Installing all packages on {}'.format(farm)
+
+    log.info(msg)
+    messages.info(request, msg)
+    return http.HttpResponseRedirect(reverse('farm_package_list', kwargs={'pk': farm.pk}))
 
 def server_delete(request, pk):
     pass

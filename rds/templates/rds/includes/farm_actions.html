@@ -1,6 +1,6 @@
 <form method="GET" action="{% url 'farm_clone' pk=farm.pk %}" style="display:inline-block">
   <button type="submit" title="Clone Farm {{farm}}"
-          class="btn btn-info btn-xs">Copy Farm
+          class="btn btn-info btn-xs">Clone Farm
     <span class="glyphicon glyphicon-duplicate"></span>
   </button>
 </form>
@@ -26,8 +26,8 @@
 {% endif %}
 
 {% if farm.status == 'open' or farm.status == 'error' %}
-<form method="GET" action="{% url 'farm_clone' pk=farm.pk %}" style="display:inline-block">
-  <button type="submit" title="Clone Farm {{farm}}"
+<form method="POST" action="{% url 'farm_install_packages' pk=farm.pk %}" style="display:inline-block">
+  <button type="submit" title="Install all software"
           class="btn btn-info btn-xs">Install All Software
     <span class="glyphicon glyphicon-download-alt"></span>
   </button>

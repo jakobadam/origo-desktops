@@ -339,6 +339,16 @@ class Farm(models.Model, Helper):
 
         return new_farm
 
+    def install_packages(self):
+        from . import tasks
+        session_hosts = self.servers.filter(roles__icontains='session_host')
+        for server in session_hosts:
+            for farm_package in self.farm_packages.exclude(status=FarmPackage.STATUS_INSTALLED):
+                farm_package.status = FarmPackage.STATUS_INSTALLING
+                farm_package.save()
+                tasks.package_install.delay(farm_package.pk, server.pk)
+
+
 class FarmPackage(models.Model):
 
     STATUS_INSTALLING = 'installing'
