@@ -131,7 +131,7 @@ def package_install(request, pk=None):
     """
     TODO: take the server to install on as a query arg
     """
-    package = shortcuts.get_object_or_404(Package, pk=pk)
+    farm_package = shortcuts.get_object_or_404(FarmPackage, pk=pk)
     server = Server.objects.filter(roles__icontains='session_host').first()
 
     if not server or not server.user or not server.password:
@@ -139,8 +139,10 @@ def package_install(request, pk=None):
         messages.error(request, err)
         return http.HttpResponseRedirect(reverse('package_list_redirect'))
 
-    package.install(server)
-    msg = u'Installing {} on {}'.format(package, server)
+    farm_package.status = FarmPackage.STATUS_INSTALLING
+    tasks.package_install.delay(farm_package.pk, server.pk)
+    farm_package.save()
+    msg = u'Installing {} on {}'.format(farm_package.package, server)
     log.info(msg)
     messages.info(request, msg)
     return http.HttpResponseRedirect(reverse('package_list_redirect'))

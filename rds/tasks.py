@@ -1,14 +1,15 @@
 from __future__ import absolute_import
 
 from celery import shared_task
+from celery.utils.log import get_task_logger
 
 import logging
 import traceback
 
-from rds.models import (Package, Server)
+from rds.models import (Package, Server, FarmPackage)
 from async_messages.models import Message
 
-log = logging.getLogger(__name__)
+log = get_task_logger(__name__)
 
 @shared_task
 def process_upload(package_id):
@@ -30,31 +31,36 @@ def process_upload(package_id):
 
 
 @shared_task
-def package_install(package_id, server_id):
-    package = Package.objects.get(pk=package_id)
+def package_install(farm_package_id, server_id):
+    farm_package = FarmPackage.objects.get(pk=farm_package_id)
+    package = farm_package.package
     server = Server.objects.get(pk=server_id)
 
-    res = server.cmd(package.install_cmd)
-    success = res.status_code == 0
-    if success:
-        message = u'Installed "{}" on {}. {}'.format(package, server, res.std_out)
-        log.info(package.message)
-        Message.success(message)
-        package.message = message
-        package.installed = True
-    else:
-        message = u'Error deploying "{}" on {}: {}'.format(package, server, res.std_err)
-        log.error(message)
+    cmd = package.install_cmd
+
+    try:
+        res = server.cmd(cmd)
+        success = res.status_code == 0
+        if success:
+            message = u'Installed "{}" on {}. {}'.format(package, server, res.std_out)
+            log.info(package.message)
+            Message.success(message)
+            farm_package.message = message
+            server.updated = True
+            farm_package.status = FarmPackage.STATUS_INSTALLED
+        else:
+            message = u'Error deploying "{}" on {}: {}'.format(package, server, res.std_err)
+            log.error(message)
+            Message.error(message)
+            farm_package.message = message
+            farm_package.status = FarmPackage.STATUS_ERROR
+    except Exception,e:
+        message = u'Error deploying "{}" on {}: {}'.format(package, server, str(e))
+        log.error(str(e))
         Message.error(message)
-        package.message = message
-        package.installed = False
 
-    package.installing = False
-
-    server.updated = True
     server.save()
-
-    package.save()
+    farm_package.save()
 
 @shared_task
 def unpackage_install(package_id, server_id):

@@ -329,9 +329,6 @@ class Farm(models.Model, Helper):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse('blueprint_show', kwargs={'pk': self.pk})
-
     def clone(self, new_name):
         new_farm = Farm(name=new_name)
         new_farm.save()
@@ -357,6 +354,7 @@ class FarmPackage(models.Model):
     farm = models.ForeignKey(Farm, related_name='farm_packages')
     package = models.ForeignKey(Package, related_name='farm_packages')
     status = models.CharField(max_length=100, blank=True, choices=STATUS_CHOICES)
+    message = models.TextField(blank=True)
 
     def __str__(self):
         return u'{} farm {}'.format(self.package, self.farm)
