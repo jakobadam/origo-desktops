@@ -40,8 +40,14 @@ Point browser to http://localhost:8080 or http://GUEST_IP.
 
 During development you'll likely want to run the Django development server instead of gunicorn / nginx. This enables Python debug info and changes to Javascript are immediately available:
 ```
-$ sudo service stop gunicorn
+$ sudo service gunicorn stop
 $ /vagrant/runserver.sh
+```
+
+In addition, you'll likely also want to run the Celery workers manually during development: 
+```
+$ sudo service celeryd stop
+$ /vagrant/runcelery.sh
 ```
 
 ### Install Active Directory
@@ -73,9 +79,13 @@ Above I'm using winrm from the host machine. Winrm is already installed on the `
 $ pip install -e git+https://github.com/jakobadam/pywinrm@cli#egg=pywinrm
 ```
 
-Note: I have an outstanding pull-request in the upstream pywinrm repo: https://github.com/diyan/pywinrm/pull/42. Therefore I pip install the branch.
+Note: I have an outstanding pull-request in the upstream pywinrm repo: https://github.com/diyan/pywinrm/pull/42. Therefore I pip install the branch. For more example of how to use the winrm cli have a look at: https://github.com/jakobadam/pywinrm/blob/cli/winrm/cli.py
 
-
+Example of using winrm with kerberos and a domain user:
+```
+$ kinit admin@ADM.EXAMPLE.COM
+$ winrm -v -t kerberos user\adm@rds.adm.example.com 'dir'
+```
 
 ## Images
 
@@ -87,18 +97,13 @@ Note: The server running the RDS required Active Directory must be
 sysprep'ed. Otherwise, Windows won't join servers to the domain due to
 a duplicate id.
 
-```
+Note: Origo Desktops uses pywinrm to control the windows servers, we don't support kerberos yet. Until then Windows servers must have their requirements for winrm relaxed:
 
 ```
-
-TODO: Add script to the Windows Packer template to setup
-RDS.
-
-
-## Celery
-
-```
-$ runcelery.sh
+call winrm set winrm/config/client/auth @{Basic="true"}
+call winrm set winrm/config/service/auth @{Basic="true"}
+call winrm set winrm/config/service @{AllowUnencrypted="true"}
+call winrm set winrm/config @{MaxTimeoutms = "3600000"}
 ```
 
 ## License
