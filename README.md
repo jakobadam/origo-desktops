@@ -40,8 +40,14 @@ Point browser to http://localhost:8080 or http://GUEST_IP.
 
 During development you'll likely want to run the Django development server instead of gunicorn / nginx. This enables Python debug info and changes to Javascript are immediately available:
 ```
-$ sudo service stop gunicorn
+$ sudo service gunicorn stop
 $ /vagrant/runserver.sh
+```
+
+In addition, you'll likely also want to run the Celery workers manually during development: 
+```
+$ sudo service celeryd stop
+$ /vagrant/runcelery.sh
 ```
 
 ### Install Active Directory
