@@ -118,7 +118,7 @@ class ActiveDirectoryInternalForm(forms.ModelForm):
         }
 
 # subset of ascii
-RE_ASCII = re.compile(r'^[-a-zA-Z0-9_() .]+$')
+RE_ASCII = re.compile(r'^[-a-zA-Z0-9_() ./]+$')
 ASCII_VALIDATOR = RegexValidator(RE_ASCII, 'Filename must contain ASCII characters only')
 
 class PackageForm(forms.ModelForm):
