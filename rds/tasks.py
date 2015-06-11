@@ -58,6 +58,8 @@ def package_install(farm_package_id, server_id):
         message = u'Error deploying "{}" on {}: {}'.format(package, server, str(e))
         log.error(str(e))
         Message.error(message)
+        farm_package.message = str(e)
+        farm_package.status = FarmPackage.STATUS_INSTALLED
 
     server.save()
     farm_package.save()
