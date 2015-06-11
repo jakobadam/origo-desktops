@@ -70,7 +70,7 @@ STATICFILES_FINDERS = (
     'djangobower.finders.BowerFinder',
     )
 
-BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
+BOWER_COMPONENTS_ROOT = 'components'
 
 ROOT_URLCONF = 'rds.urls'
 
@@ -126,26 +126,26 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
             }
-        #,
-        # 'file': {
-        #     'level':'DEBUG',
-        #     'class':'logging.FileHandler',
-        #     'filename': '/var/log/gunicorn/django.log',
-        #     'formatter':'verbose'
-        #     }
+        ,
+        'file': {
+            'level':'DEBUG',
+            'class':'logging.FileHandler',
+            'filename': '/var/log/gunicorn/django.log',
+            'formatter':'verbose'
+            }
     },
     'loggers': {
         '':{
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'INFO'
         },
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'propagate': False,
             'level': 'INFO',
         },
         'rds': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'propagate': False,
             'level': 'DEBUG'
         }
